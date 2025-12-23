@@ -11,11 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GapFix">
-        <activity
-            android:name=".MainActivity2"
-            android:exported="false"
-            android:label="Activity 2"
-            android:parentActivityName=".MainActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
