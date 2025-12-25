@@ -7,6 +7,10 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+<!--    <string name="invalid_password">Password must be >5 characters</string>-->
     <string name="login_failed">"Login failed"</string>
+    <string name="back">Back</string>
+    <string name="back_arrow">Back Arrow</string>
+    <string name="create_account">Create Account</string>
+    <string name="log_in">Log In</string>
 </resources>

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#121212</color>
-    <color name="purple_500">#FF6200EE</color>
+    <color name="gapfix_green">#00A86B</color>
+    <color name="gapfix_bg">#121212</color>
+    <color name="bg_tint">#2F3232</color>
+    <color name="gapfix_text_dark">#FFFFFF</color>
+    <color name="gapfix_text_secondary">#B0B0B0</color>
+    <color name="white">#FFFFFF</color>
 </resources>
