@@ -8,6 +8,7 @@
     tools:context=".LoginActivity">
 
     <LinearLayout
+        android:id="@+id/back"
         android:layout_width="144dp"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
