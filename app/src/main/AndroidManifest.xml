@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GapFix">
         <activity
+            android:name=".SignUpRole"
+            android:exported="false" />
+        <activity
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
