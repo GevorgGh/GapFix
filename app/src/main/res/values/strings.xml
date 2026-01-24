@@ -17,4 +17,11 @@
     <string name="em_us">Email or Username</string>
     <string name="sign_up">Sign Up</string>
     <string name="choose_your_role">Choose your role</string>
+    <string name="tutor">Tutor</string>
+    <string name="a_person_who_helps_to_learn">A person who helps to learn</string>
+    <string name="student">Student</string>
+    <string name="a_person_who_is_dedicated_to_learn">A person who is dedicated to learn</string>
+    <string name="full_name">Full name</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

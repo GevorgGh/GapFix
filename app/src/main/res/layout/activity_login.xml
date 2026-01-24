@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:background="@color/gapfix_bg">
 
     <LinearLayout
         android:id="@+id/back"
@@ -38,7 +39,8 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <LinearLayout
+
+        <LinearLayout
         android:layout_width="415dp"
         android:layout_height="359dp"
         android:orientation="vertical"

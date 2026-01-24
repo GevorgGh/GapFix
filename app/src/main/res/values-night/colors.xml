@@ -6,4 +6,6 @@
     <color name="gapfix_text_dark">#FFFFFF</color>
     <color name="gapfix_text_secondary">#B0B0B0</color>
     <color name="white">#FFFFFF</color>
+    <color name="gray">#5F5F5F</color>
+
 </resources>
