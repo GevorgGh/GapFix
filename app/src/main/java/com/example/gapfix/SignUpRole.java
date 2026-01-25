@@ -24,11 +24,10 @@ public class SignUpRole extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_up_role);
 
-        LinearLayout back = findViewById(R.id.back1);
-        back.setOnClickListener(v -> {
-            finish();
-        });
-
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.backFr, new BackFragment())
+                .commit();
         Button cont = findViewById(R.id.button2);
         MaterialCardView card1 = findViewById(R.id.card1);
         MaterialCardView card2 = findViewById(R.id.card2);

@@ -8,39 +8,19 @@
     tools:context=".LoginActivity"
     android:background="@color/gapfix_bg">
 
-    <LinearLayout
-        android:id="@+id/back"
-        android:layout_width="144dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
+
+    <FrameLayout
+        android:id="@+id/backFr"
+        android:layout_width="123dp"
+        android:layout_height="74dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:contentDescription="@string/back_arrow"
-            app:srcCompat="@drawable/baseline_arrow_back_ios_new_24" />
+    </FrameLayout>
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="76dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingHorizontal="5dp"
-            android:paddingVertical="10dp"
-            android:text="@string/back"
-            android:textColor="@color/gapfix_green"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-
-        <LinearLayout
+    <LinearLayout
         android:layout_width="415dp"
         android:layout_height="359dp"
         android:orientation="vertical"

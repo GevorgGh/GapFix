@@ -30,11 +30,10 @@ public class SignUpActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_up);
 
-        LinearLayout back = findViewById(R.id.back);
-        back.setOnClickListener(v -> {
-            finish();
-        });
-
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.backFr, new BackFragment())
+                .commit();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
