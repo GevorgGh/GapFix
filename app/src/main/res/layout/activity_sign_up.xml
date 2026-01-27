@@ -8,17 +8,17 @@
     tools:context=".SignUpActivity"
     android:background="@color/gapfix_bg">
 
+
     <FrameLayout
         android:id="@+id/backFr"
-        android:layout_width="123dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="119dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
-
 
     <LinearLayout
         android:layout_width="wrap_content"

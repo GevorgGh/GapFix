@@ -55,7 +55,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.firebase.analytics)
-    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
     // Add the dependencies for Firebase products
     implementation(libs.google.firebase.analytics)
     implementation(libs.google.firebase.auth)
