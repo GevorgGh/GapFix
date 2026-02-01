@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.cardview)
     implementation(libs.cardview.v7)
     implementation(libs.firebase.database)
+    implementation(libs.fragment)
     implementation(libs.legacy.support.v4)
     implementation(libs.recyclerview)
     testImplementation(libs.junit)

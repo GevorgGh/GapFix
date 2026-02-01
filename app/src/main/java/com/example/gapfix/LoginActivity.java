@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -38,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         EditText email = findViewById(R.id.editTextText);
         EditText pass = findViewById(R.id.editTextTextPassword);
         Button login = findViewById(R.id.button);
+        TextView forgot = findViewById(R.id.textView8);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +48,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, ForgotPass.class));
+            }
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

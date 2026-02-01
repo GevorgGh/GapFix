@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GapFix">
         <activity
+            android:name=".ForgotPass"
+            android:exported="false" />
+        <activity
             android:name=".HomeActivity"
             android:exported="true" />
         <activity
