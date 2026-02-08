@@ -7,6 +7,7 @@
     <color name="gapfix_text_secondary">#5A5F5D</color>
     <color name="white">#FFFFFF</color>
     <color name="gray">#CCCCCC</color>
+    <color name="error">#a6192e</color>
 
 
 </resources>

@@ -24,6 +24,10 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
+    EditText emailField = findViewById(R.id.editEmail);
+    EditText passField = findViewById(R.id.editPassword);
+    EditText nameField = findViewById(R.id.editName);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +43,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         final String selectedRole = getIntent().getStringExtra("ROLE");
 
-        EditText emailField = findViewById(R.id.editEmail);
-        EditText passField = findViewById(R.id.editPassword);
-        EditText nameField = findViewById(R.id.editName);
+
         Button reg = findViewById(R.id.button3);
 
         reg.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +91,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                         }
                     } else {
+                        emailField.setTextColor(getResources().getColor(R.color.error));
                         Toast.makeText(SignUpActivity.this, "Error: " +
                                 task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -98,9 +101,12 @@ public class SignUpActivity extends AppCompatActivity {
     private void saveUserInfo(String userId, String name, String email, String role) {
         User userProfile = new User(name, email, role);
 
-        mDatabase.child("Users").child(role).child(userId).setValue(userProfile)
+        mDatabase.child("Users").child(role).child(userId).setValue(userProfile);
+
+        String cleanUsername = name.replaceAll("\\s+", "").toLowerCase();
+        mDatabase.child("usernames").child(cleanUsername).setValue(email)
                 .addOnFailureListener(e -> {
-                    Toast.makeText(SignUpActivity.this, "Failed to save profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUpActivity.this, "Failed to reserve username", Toast.LENGTH_SHORT).show();
                 });
     }
 }
