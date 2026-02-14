@@ -8,48 +8,47 @@
     tools:context=".NavFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
         android:id="@+id/mm"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/gapfix_bg">
 
-        <LinearLayout
-            android:layout_width="408dp"
-            android:layout_height="63dp"
-            android:orientation="horizontal"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="342dp"
+            android:layout_height="559dp"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="172dp">
 
             <ImageView
                 android:id="@+id/imageView3"
                 android:layout_width="104dp"
-                android:layout_height="53dp"
+                android:layout_height="51dp"
                 android:layout_weight="1"
                 android:src="@drawable/shop" />
 
             <ImageView
                 android:id="@+id/imageView4"
                 android:layout_width="87dp"
-                android:layout_height="53dp"
+                android:layout_height="52dp"
                 android:layout_weight="1"
                 android:src="@drawable/user_act" />
 
             <ImageView
                 android:id="@+id/imageView5"
                 android:layout_width="92dp"
-                android:layout_height="53dp"
+                android:layout_height="51dp"
                 android:layout_weight="1"
                 android:src="@drawable/cal" />
 
             <ImageView
                 android:id="@+id/imageView6"
                 android:layout_width="76dp"
-                android:layout_height="53dp"
+                android:layout_height="51dp"
                 android:layout_weight="1"
                 android:src="@drawable/archive" />
-        </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

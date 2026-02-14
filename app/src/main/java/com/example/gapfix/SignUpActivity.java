@@ -24,9 +24,9 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
-    EditText emailField = findViewById(R.id.editEmail);
-    EditText passField = findViewById(R.id.editPassword);
-    EditText nameField = findViewById(R.id.editName);
+    EditText emailField;
+    EditText passField;
+    EditText nameField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,10 @@ public class SignUpActivity extends AppCompatActivity {
                 .commit();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        emailField = findViewById(R.id.editEmail);
+        passField = findViewById(R.id.editPassword);
+        nameField = findViewById(R.id.editName);
 
         final String selectedRole = getIntent().getStringExtra("ROLE");
 
