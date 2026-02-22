@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -95,7 +96,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                         }
                     } else {
-                        emailField.setTextColor(getResources().getColor(R.color.error));
+                        emailField.setTextColor(ContextCompat.getColor(this, R.color.error));
                         Toast.makeText(SignUpActivity.this, "Error: " +
                                 task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }

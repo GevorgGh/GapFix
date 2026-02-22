@@ -7,70 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="146dp"
-        android:layout_height="29dp"
+
+    <FrameLayout
+        android:id="@+id/navFr"
+        android:layout_width="412dp"
+        android:layout_height="59dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="0.998">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="34dp"
-                android:layout_height="20dp"
-                android:layout_weight="1"
-                android:src="@drawable/shop"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="30dp"
-                android:layout_height="19dp"
-                android:layout_weight="1"
-                android:src="@drawable/archive"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView4"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="28dp"
-                android:layout_height="18dp"
-                android:layout_weight="1"
-                android:src="@drawable/user_act"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView5"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="25dp"
-                android:layout_height="19dp"
-                android:layout_weight="1"
-                android:src="@drawable/cal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView7"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView7"
-                android:layout_width="25dp"
-                android:layout_height="18dp"
-                android:src="@drawable/person"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
