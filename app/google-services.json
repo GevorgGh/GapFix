@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "221531940650",
-    "project_id": "unique-gap-project",
-    "storage_bucket": "unique-gap-project.firebasestorage.app"
+    "project_number": "512993661420",
+    "project_id": "gapfix",
+    "storage_bucket": "gapfix.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:221531940650:android:f5c5c811c3496e4442e053",
+        "mobilesdk_app_id": "1:512993661420:android:3afc5f657c9148556030c9",
         "android_client_info": {
           "package_name": "com.example.gapfix"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCj2dVwqa8IakquZF1xhn1bXb5r1aD4atA"
+          "current_key": "AIzaSyBxq9aqvkQ04w-nUpxiwguh_4OQ4MtVb6I"
         }
       ],
       "services": {

@@ -9,14 +9,14 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="412dp"
-        android:layout_height="56dp"
+        android:layout_height="63dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:strokeWidth="2dp"
-        app:layout_constraintVertical_bias="0.976">
+        app:layout_constraintVertical_bias="0.976"
+        app:strokeWidth="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -24,8 +24,8 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="64dp"
-                android:layout_height="44dp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:src="@drawable/shop"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -37,8 +37,8 @@
 
             <ImageView
                 android:id="@+id/imageView4"
-                android:layout_width="64dp"
-                android:layout_height="44dp"
+                android:layout_width="61dp"
+                android:layout_height="49dp"
                 android:layout_marginEnd="16dp"
                 android:layout_weight="1"
                 android:src="@drawable/user_act"
@@ -49,8 +49,8 @@
 
             <ImageView
                 android:id="@+id/imageView6"
-                android:layout_width="64dp"
-                android:layout_height="44dp"
+                android:layout_width="63dp"
+                android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_weight="1"
                 android:src="@drawable/archive"
@@ -61,8 +61,8 @@
 
             <ImageView
                 android:id="@+id/imageView5"
-                android:layout_width="64dp"
-                android:layout_height="44dp"
+                android:layout_width="61dp"
+                android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_weight="1"
                 android:src="@drawable/cal"
@@ -73,8 +73,8 @@
 
             <ImageView
                 android:id="@+id/imageView7"
-                android:layout_width="64dp"
-                android:layout_height="44dp"
+                android:layout_width="62dp"
+                android:layout_height="47dp"
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/person"
                 app:layout_constraintBottom_toBottomOf="parent"
