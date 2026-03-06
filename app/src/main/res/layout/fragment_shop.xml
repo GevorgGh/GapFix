@@ -30,9 +30,8 @@
 
             <EditText
                 android:id="@+id/editTextText2"
-                android:layout_width="306dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="15dp"
                 android:ems="10"
                 android:inputType="text"
                 android:text="Name" />
