@@ -37,10 +37,13 @@
             android:layout_width="match_parent"
             android:layout_height="61dp"
             android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_input_field"
             android:autofillHints=""
+            android:drawableStart="@drawable/input_envelope"
             android:ems="10"
             android:hint="@string/prompt_email"
-            android:inputType="text" />
+            android:inputType="text"
+            android:padding="16dp"/>
 
         <Button
             android:id="@+id/button"
@@ -57,15 +60,17 @@
 
     <TextView
         android:id="@+id/textView9"
-        android:layout_width="355dp"
-        android:layout_height="45dp"
+        android:layout_width="324dp"
+        android:layout_height="127dp"
         android:text="@string/forgot_pass_text"
-        android:textColor="@color/gapfix_text_dark"
-        android:textSize="16sp"
+        android:textAlignment="center"
+        android:textColor="@color/gapfix_green"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.285"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.745" />
+        app:layout_constraintVertical_bias="0.574" />
 </androidx.constraintlayout.widget.ConstraintLayout>

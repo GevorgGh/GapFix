@@ -39,6 +39,16 @@ public class ForgotPass extends AppCompatActivity {
         EditText email = findViewById(R.id.editTextText);
         Button btn = findViewById(R.id.button);
 
+        View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                v.setSelected(hasFocus);
+            }
+        };
+
+        email.setOnFocusChangeListener(focusListener);
+
+
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -47,6 +47,7 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_marginStart="24dp"
+        android:padding="8dp"
         android:layout_marginTop="80dp"
         android:background="@drawable/rounded_input_field"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,12 +70,15 @@
 
         <ImageView
             android:id="@+id/imageView9"
-            android:layout_width="68dp"
-            android:layout_height="62dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="52dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView4"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/shop_clicked" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -85,6 +89,7 @@
         android:layout_height="72dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="28dp"
+        android:padding="8dp"
         android:background="@drawable/rounded_input_field"
         android:clickable="true"
         android:focusable="true"
@@ -93,26 +98,30 @@
 
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="124dp"
-            android:layout_height="45dp"
+            android:layout_width="160dp"
+            android:layout_height="41dp"
             android:text="@string/student"
             android:textColor="@color/gapfix_green"
             android:textSize="34sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.603"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.592" />
+            app:layout_constraintVertical_bias="0.533" />
 
         <ImageView
             android:id="@+id/imageView11"
-            android:layout_width="61dp"
-            android:layout_height="62dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="56dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView6"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/student" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

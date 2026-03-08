@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
+    implementation("com.google.android.material:material:1.13.0")
     implementation(libs.constraintlayout)
     implementation(libs.annotation)
     implementation(libs.lifecycle.livedata.ktx)
