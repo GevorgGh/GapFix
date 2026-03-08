@@ -27,4 +27,5 @@
     <string name="forgot_pass">Forgot your password?</string>
     <string name="send_email">Send email</string>
     <string name="forgot_pass_text">Forgot your password? Write you email and you will get the link for recovering password</string>
+    <string name="date_of_birth">Date of Birth</string>
 </resources>

@@ -21,52 +21,93 @@
     </FrameLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="268dp"
+        android:layout_width="411dp"
+        android:layout_height="825dp"
         android:backgroundTint="@color/gapfix_text_dark"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.498">
+        app:layout_constraintVertical_bias="1.0">
 
         <EditText
             android:id="@+id/editName"
-            android:layout_width="240dp"
-            android:layout_height="48dp"
+            android:layout_width="376dp"
+            android:layout_height="52dp"
+            android:background="@drawable/rounded_input_field"
+            android:drawableStart="@drawable/input_person"
             android:ems="10"
             android:hint="@string/full_name"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:paddingStart="15dp"
+            android:paddingLeft="16dp"
+            android:paddingEnd="16dp" />
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="12dp" />
+            android:layout_height="48dp" />
 
+
+        <EditText
+            android:id="@+id/editTextDate"
+            android:layout_width="376dp"
+            android:layout_height="52dp"
+            android:ems="10"
+            android:inputType="date"
+            android:paddingLeft="16dp"
+            android:paddingEnd="16dp"
+            android:hint="@string/date_of_birth"
+            android:background="@drawable/rounded_input_field"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
 
         <EditText
             android:id="@+id/editEmail"
-            android:layout_width="240dp"
-            android:layout_height="48dp"
-            android:backgroundTint="@color/gapfix_text_dark"
+            android:layout_width="376dp"
+            android:layout_height="52dp"
+            android:background="@drawable/rounded_input_field"
+            android:drawableStart="@drawable/input_envelope"
             android:ems="10"
             android:hint="@string/prompt_email"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:paddingStart="15dp"
+            android:paddingLeft="16dp"
+            android:paddingEnd="16dp" />
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="12dp" />
+            android:layout_height="48dp" />
 
         <EditText
             android:id="@+id/editPassword"
-            android:layout_width="240dp"
-            android:layout_height="48dp"
-            android:backgroundTint="@color/gapfix_text_dark"
+            android:layout_width="376dp"
+            android:layout_height="52dp"
+            android:background="@drawable/rounded_input_field"
             android:ems="10"
             android:hint="@string/prompt_password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <EditText
+            android:id="@+id/editPassword2"
+            android:layout_width="376dp"
+            android:layout_height="52dp"
+            android:background="@drawable/rounded_input_field"
+            android:ems="10"
+            android:hint="Repeat password"
+            android:inputType="textPassword"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
 
         <Space
             android:layout_width="match_parent"
@@ -74,7 +115,7 @@
 
         <Button
             android:id="@+id/button3"
-            android:layout_width="240dp"
+            android:layout_width="269dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/gapfix_green"
             android:text="@string/reg" />

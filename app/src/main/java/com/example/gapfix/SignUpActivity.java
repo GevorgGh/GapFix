@@ -46,6 +46,18 @@ public class SignUpActivity extends AppCompatActivity {
         passField = findViewById(R.id.editPassword);
         nameField = findViewById(R.id.editName);
 
+        View.OnClickListener selectionListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emailField.setSelected(false);
+                passField.setSelected(false);
+                nameField.setSelected(false);
+
+                v.setSelected(true);
+            }
+        };
+
+
         final String selectedRole = getIntent().getStringExtra("ROLE");
 
 

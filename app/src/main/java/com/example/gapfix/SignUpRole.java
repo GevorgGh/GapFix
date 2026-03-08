@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,34 +30,7 @@ public class SignUpRole extends AppCompatActivity {
                 .replace(R.id.backFr, new BackFragment())
                 .commit();
         Button cont = findViewById(R.id.button2);
-        MaterialCardView card1 = findViewById(R.id.card1);
-        MaterialCardView card2 = findViewById(R.id.card2);
-        int activeColor = ContextCompat.getColor(this, R.color.gapfix_green);
-        int inactiveColor = ContextCompat.getColor(this, R.color.gray);
         cont.setVisibility(View.INVISIBLE);
-
-
-
-        card1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                card1.setStrokeColor(activeColor);
-                card2.setStrokeColor(inactiveColor);
-                cont.setVisibility(View.VISIBLE);
-                prof = "tutor";
-            }
-        });
-
-        card2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                card2.setStrokeColor(activeColor);
-                card1.setStrokeColor(inactiveColor);
-                cont.setVisibility(View.VISIBLE);
-                prof = "student";
-            }
-        });
-
         cont.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,6 +40,27 @@ public class SignUpRole extends AppCompatActivity {
             }
         });
 
+        ConstraintLayout cardTutor = findViewById(R.id.tutorCard);
+        ConstraintLayout cardStudent = findViewById(R.id.studentCard);
+
+        View.OnClickListener selectionListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardTutor.setSelected(false);
+                cardStudent.setSelected(false);
+
+                v.setSelected(true);
+                cont.setVisibility(View.VISIBLE);
+                if (v.getId() == R.id.tutorCard) {
+                    prof = "Tutor";
+                } else if (v.getId() == R.id.studentCard){
+                    prof = "Student";
+                }
+            }
+        };
+
+        cardTutor.setOnClickListener(selectionListener);
+        cardStudent.setOnClickListener(selectionListener);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

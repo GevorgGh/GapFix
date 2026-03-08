@@ -37,8 +37,9 @@
             android:layout_height="61dp"
             android:layout_marginTop="10dp"
             android:autofillHints=""
-            android:hint="@string/em_us"
             android:ems="10"
+            android:fontFamily="@font/noto_sans"
+            android:hint="@string/em_us"
             android:inputType="text" />
 
         <EditText
@@ -64,9 +65,10 @@
 
         <TextView
             android:id="@+id/textView8"
-            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/noto_sans"
             android:text="@string/forgot_pass" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
