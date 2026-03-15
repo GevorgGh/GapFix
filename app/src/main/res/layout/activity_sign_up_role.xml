@@ -44,12 +44,12 @@
         android:id="@+id/tutorCard"
         android:layout_width="360dp"
         android:layout_height="72dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_marginStart="24dp"
-        android:padding="8dp"
         android:layout_marginTop="80dp"
         android:background="@drawable/rounded_input_field"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3">
 
@@ -87,12 +87,12 @@
         android:id="@+id/studentCard"
         android:layout_width="360dp"
         android:layout_height="72dp"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="28dp"
-        android:padding="8dp"
         android:background="@drawable/rounded_input_field"
         android:clickable="true"
         android:focusable="true"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tutorCard">
 

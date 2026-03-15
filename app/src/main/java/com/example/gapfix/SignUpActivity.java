@@ -116,17 +116,14 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void showDatePicker() {
-        // Create the dialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 SignUpActivity.this,
                 R.style.MyDatePickerTheme,
                 (view, year, month, dayOfMonth) -> {
-                    // Update calendar object
                     calendar.set(Calendar.YEAR, year);
                     calendar.set(Calendar.MONTH, month);
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                    // Force the text into the field immediately
                     String selectedDate = simpleDateFormat.format(calendar.getTime());
                     dateField.setText(selectedDate);
 
@@ -145,7 +142,6 @@ public class SignUpActivity extends AppCompatActivity {
         Calendar today = Calendar.getInstance();
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
 
-        // Adjust age if birthday hasn't happened yet this year
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }

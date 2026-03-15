@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,6 +13,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GapFix">
+        <activity
+            android:name=".AddCertificatesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TutorPreferences"
+            android:exported="false" />
+        <activity
+            android:name=".StudentPreferences"
+            android:exported="false" />
+        <activity
+            android:name=".RoleSelectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SurveyActivity"
+            android:exported="false" />
         <activity
             android:name=".ForgotPass"
             android:exported="false" />

@@ -31,6 +31,133 @@
     <string name="fill_in_your_data">Fill in your data</string>
     <string name="repeat_password">Repeat password</string>
     <string name="sign_in">Sign In</string>
-    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_google" translatable="false">Continue with Google</string>
     <string name="google">Google</string>
+    <string name="answer_the_questions_to_complete_your_information">Answer the questions to complete your information.</string>
+    <string name="choose_r_and_dob">Choose your role and date of birth</string>
+    <string name="cont">Continue</string>
+    <string name="select_subjects_that_you_can_teach">Select subjects that you can teach</string>
+
+    <string-array name="learning_subjects">
+        <item>Mathematics (General)</item>
+        <item>Algebra (I &amp; II)</item>
+        <item>Geometry</item>
+        <item>Calculus</item>
+        <item>Statistics</item>
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Organic Chemistry</item>
+        <item>Biology</item>
+        <item>Microbiology</item>
+        <item>Environmental Science</item>
+        <item>Astronomy</item>
+
+        <item>Introduction to Programming</item>
+        <item>Java Development</item>
+        <item>Python Programming</item>
+        <item>C++ / C#</item>
+        <item>Web Development (HTML/CSS/JS)</item>
+        <item>Android App Development</item>
+        <item>iOS App Development</item>
+        <item>Data Structures &amp; Algorithms</item>
+        <item>Database Management (SQL)</item>
+        <item>Artificial Intelligence</item>
+        <item>Cybersecurity</item>
+
+        <item>Armenian Literature</item>
+        <item>Armenian Language</item>
+        <item>Russian</item>
+        <item>English Literature</item>
+        <item>Creative Writing</item>
+        <item>Spanish</item>
+        <item>French</item>
+        <item>German</item>
+        <item>Mandarin Chinese</item>
+        <item>World History</item>
+        <item>Geography</item>
+        <item>Philosophy</item>
+        <item>Psychology</item>
+        <item>Sociology</item>
+        <item>Political Science</item>
+
+        <item>Microeconomics</item>
+        <item>Macroeconomics</item>
+        <item>Accounting</item>
+        <item>Business Management</item>
+        <item>Marketing</item>
+        <item>Finance</item>
+        <item>Entrepreneurship</item>
+
+        <item>Graphic Design</item>
+        <item>Digital Photography</item>
+        <item>Music Theory</item>
+        <item>Art History</item>
+        <item>Public Speaking</item>
+        <item>SAT / ACT Prep</item>
+        <item>GRE / GMAT Prep</item>
+        <item>IELTS / TOEFL Prep</item>
+        <item>Study Skills &amp; Organization</item>
+    </string-array>
+
+    <string-array name="teaching_subjects">
+        <item>Mathematics (K-12)</item>
+        <item>Algebra (I &amp; II) Specialist</item>
+        <item>Geometry &amp; Trigonometry</item>
+        <item>AP Calculus AB/BC</item>
+        <item>Probability &amp; Statistics</item>
+
+        <item>Physics (Mechanics &amp; Electromagnetism)</item>
+        <item>General Chemistry</item>
+        <item>Organic Chemistry Specialist</item>
+        <item>Biological Sciences</item>
+        <item>Microbiology &amp; Genetics</item>
+        <item>Environmental Science</item>
+        <item>Observational Astronomy</item>
+
+        <item>Computer Science Fundamentals</item>
+        <item>Java Development (Backend)</item>
+        <item>Python for Data Science</item>
+        <item>C++ / C# Systems Programming</item>
+        <item>Full-Stack Web Development</item>
+        <item>Mobile Dev (Android/Kotlin)</item>
+        <item>Mobile Dev (iOS/Swift)</item>
+        <item>Advanced Data Structures &amp; Algorithms</item>
+        <item>Relational Databases (SQL)</item>
+        <item>Artificial Intelligence &amp; ML</item>
+        <item>Network Security &amp; Cybersecurity</item>
+
+        <item>Armenian Language &amp; Literature</item>
+        <item>Russian (All Levels)</item>
+        <item>English Language Arts</item>
+        <item>Creative Writing &amp; Composition</item>
+        <item>Spanish Language</item>
+        <item>French Language</item>
+        <item>German Language</item>
+        <item>Mandarin Chinese</item>
+        <item>World &amp; Regional History</item>
+        <item>Human Geography</item>
+        <item>Philosophy &amp; Ethics</item>
+        <item>Behavioral Psychology</item>
+        <item>Sociology</item>
+        <item>Political Science &amp; Civics</item>
+
+        <item>Microeconomics Theory</item>
+        <item>Macroeconomics Theory</item>
+        <item>Principles of Accounting</item>
+        <item>Business Administration</item>
+        <item>Digital Marketing &amp; Strategy</item>
+        <item>Corporate Finance</item>
+        <item>Entrepreneurship &amp; Innovation</item>
+
+        <item>Graphic Design &amp; Visual Arts</item>
+        <item>Digital Photography &amp; Editing</item>
+        <item>Music Theory &amp; Composition</item>
+        <item>Art History &amp; Criticism</item>
+        <item>Public Speaking &amp; Debate</item>
+
+        <item>SAT / ACT Standardized Testing</item>
+        <item>GRE / GMAT Graduate Prep</item>
+        <item>IELTS / TOEFL English Proficiency</item>
+        <item>Executive Functioning &amp; Study Skills</item>
+    </string-array>
 </resources>

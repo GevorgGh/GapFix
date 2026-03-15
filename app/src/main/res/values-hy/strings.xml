@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">GapFix</string>
+    <string name="title_activity_login">Մուտքի էջ</string>
+    <string name="prompt_email">Էլ. փոստ</string>
+    <string name="prompt_password">Գաղտնաբառ</string>
+    <string name="action_sign_in">Մուտք գործել կամ գրանցվել</string>
+    <string name="action_sign_in_short">Մուտք</string>
+    <string name="welcome">"Բարի գալուստ:"</string>
+    <string name="reg">Գրանցվել</string>
+    <string name="invalid_username">Անվավեր օգտանուն</string>
+    <string name="login_failed">"Մուտքը ձախողվեց"</string>
+    <string name="back">Հետ</string>
+    <string name="back_arrow">Հետ դարձի սլաք</string>
+    <string name="create_account">Ստեղծել հաշիվ</string>
+    <string name="log_in">Մուտք գործել</string>
+    <string name="em_us">Էլ. փոստ կամ Օգտանուն</string>
+    <string name="sign_up">Գրանցվել</string>
+    <string name="choose_your_role">Ընտրեք ձեր դերը</string>
+    <string name="tutor">Դասախոս</string>
+    <string name="a_person_who_helps_to_learn">Անձ, ով օգնում է սովորել</string>
+    <string name="student">Ուսանող</string>
+    <string name="a_person_who_is_dedicated_to_learn">Անձ, ով նվիրված է սովորելուն</string>
+    <string name="full_name">Անուն Ազգանուն</string>
+    <string name="hello_blank_fragment">Բարև դատարկ ֆրագմենտ</string>
+    <string name="forgot_pass">Մոռացե՞լ եք գաղտնաբառը:</string>
+    <string name="send_email">Ուղարկել էլ. նամակ</string>
+    <string name="forgot_pass_text">Մոռացե՞լ եք գաղտնաբառը: Գրեք ձեր էլ. փոստը և դուք կստանաք հղում գաղտնաբառը վերականգնելու համար:</string>
+    <string name="date_of_birth">Ծննդյան ամսաթիվ</string>
+    <string name="fill_in_your_data">Լրացրեք ձեր տվյալները</string>
+    <string name="repeat_password">Կրկնել գաղտնաբառը</string>
+    <string name="sign_in">Մուտք գործել</string>
+    <string name="google">Google</string>
+    <string name="answer_the_questions_to_complete_your_information">Պատասխանեք հարցերին՝ ձեր տվյալները լրացնելու համար:</string>
+    <string name="choose_r_and_dob">Ընտրեք ձեր դերը և ծննդյան ամսաթիվը</string>
+    <string name="cont">Շարունակել</string>
+
+    <string-array name="learning_subjects">
+        <item>Մաթեմատիկա (Ընդհանուր)</item>
+        <item>Հանրահաշիվ (I և II)</item>
+        <item>Երկրաչափություն</item>
+        <item>Մաթեմատիկական անալիզ</item>
+        <item>Վիճակագրություն</item>
+        <item>Ֆիզիկա</item>
+        <item>Քիմիա</item>
+        <item>Օրգանական քիմիա</item>
+        <item>Կենսաբանություն</item>
+        <item>Միկրոկենսաբանություն</item>
+        <item>Բնապահպանություն</item>
+        <item>Աստղագիտություն</item>
+
+        <item>Ծրագրավորման ներածություն</item>
+        <item>Java ծրագրավորում</item>
+        <item>Python ծրագրավորում</item>
+        <item>C++ / C#</item>
+        <item>Web ծրագրավորում (HTML/CSS/JS)</item>
+        <item>Android հավելվածների մշակում</item>
+        <item>iOS հավելվածների մշակում</item>
+        <item>Տվյալների կառուցվածքներ և ալգորիթմներ</item>
+        <item>Տվյալների բազաների կառավարում (SQL)</item>
+        <item>Արհեստական բանականություն</item>
+        <item>Կիբերանվտանգություն</item>
+
+        <item>Հայ գրականություն</item>
+        <item>Հայոց լեզու</item>
+        <item>Ռուսերեն</item>
+        <item>Անգլիական գրականություն</item>
+        <item>Ստեղծագործական գրություն</item>
+        <item>Իսպաներեն</item>
+        <item>Ֆրանսերեն</item>
+        <item>Գերմաներեն</item>
+        <item>Չինարեն</item>
+        <item>Համաշխարհային պատմություն</item>
+        <item>Աշխարհագրություն</item>
+        <item>Փիլիսոփայություն</item>
+        <item>Հոգեբանություն</item>
+        <item>Սոցիոլոգիա</item>
+        <item>Քաղաքագիտություն</item>
+
+        <item>Միկրոտնտեսագիտություն</item>
+        <item>Մակրոտնտեսագիտություն</item>
+        <item>Հաշվապահություն</item>
+        <item>Բիզնեսի կառավարում</item>
+        <item>Մարքեթինգ</item>
+        <item>Ֆինանսներ</item>
+        <item>Ձեռնարկատիրություն</item>
+
+        <item>Գրաֆիկական դիզայն</item>
+        <item>Թվային լուսանկարչություն</item>
+        <item>Երաժշտության տեսություն</item>
+        <item>Արվեստի պատմություն</item>
+        <item>Հռետորական արվեստ</item>
+        <item>SAT / ACT նախապատրաստում</item>
+        <item>GRE / GMAT նախապատրաստում</item>
+        <item>IELTS / TOEFL նախապատրաստում</item>
+        <item>Ուսումնական հմտություններ</item>
+    </string-array>
+</resources>

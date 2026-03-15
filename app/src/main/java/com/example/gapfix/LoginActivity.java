@@ -29,6 +29,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -112,14 +115,43 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(LoginActivity.this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                        finish();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Google Authentication Failed.", Toast.LENGTH_SHORT).show();
+
+                        if (isNew) {
+                            Intent intent = new Intent(LoginActivity.this, RoleSelectionActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            checkDatabaseForProfile(user.getUid());
+                        }
                     }
                 });
+    }
+
+    private void checkDatabaseForProfile(String uid) {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        rootRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean hasStudentProfile = task.getResult().child("Student").hasChild(uid);
+                boolean hasTutorProfile = task.getResult().child("Tutor").hasChild(uid);
+
+                if (hasStudentProfile || hasTutorProfile) {
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    finish();
+                } else {
+                    goToFinishProfile();
+                }
+            }
+        });
+    }
+
+    private void goToFinishProfile() {
+        Intent intent = new Intent(LoginActivity.this, SignUpRole.class);
+        intent.putExtra("IS_GOOGLE_NEW_USER", true);
+        startActivity(intent);
+        finish();
     }
 
     private void loginUser(String email, String password) {
