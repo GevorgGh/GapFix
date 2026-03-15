@@ -1,6 +1,7 @@
 package com.example.gapfix;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -106,6 +107,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             signUpUser(email, pass, name, selectedRole, dateStr);
+
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -159,7 +161,11 @@ public class SignUpActivity extends AppCompatActivity {
                                 if (verifyTask.isSuccessful()) {
                                     Toast.makeText(this, "Registration successful! Check email.", Toast.LENGTH_LONG).show();
                                     mAuth.signOut();
-                                    finish();
+                                    if (role.equals("Student")){
+                                        startActivity(new Intent(SignUpActivity.this, StudentPreferences.class));
+                                    } else{
+                                        startActivity(new Intent(SignUpActivity.this, TutorPreferences.class));
+                                    }
                                 }
                             });
                         }

@@ -15,13 +15,15 @@
         android:theme="@style/Theme.GapFix">
         <activity
             android:name=".AddCertificatesActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity
             android:name=".TutorPreferences"
             android:exported="false" />
         <activity
             android:name=".StudentPreferences"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".RoleSelectionActivity"
             android:exported="false" />

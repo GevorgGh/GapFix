@@ -8,6 +8,7 @@
     <color name="white">#FFFFFF</color>
     <color name="gray">#CCCCCC</color>
     <color name="error">#a6192e</color>
+    <color name="text">#9D9D9D</color>
 
 
 </resources>

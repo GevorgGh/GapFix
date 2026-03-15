@@ -37,6 +37,7 @@
     <string name="choose_r_and_dob">Choose your role and date of birth</string>
     <string name="cont">Continue</string>
     <string name="select_subjects_that_you_can_teach">Select subjects that you can teach</string>
+    <string name="upload_certificate_and_profile_picture">Upload Certificate and Profile Picture</string>
 
     <string-array name="learning_subjects">
         <item>Mathematics (General)</item>

@@ -6,22 +6,31 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.widget.NestedScrollView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class StudentPreferences extends AppCompatActivity {
 
     private ChipGroup chipGroupSelected;
     private ListView listSuggestions;
+    private NestedScrollView chipScroll;
     private List<String> selectedSubjects = new ArrayList<>();
-    private String[] allSubjects;
+    private List<String> allSubjectsList = new ArrayList<>();
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +39,15 @@ public class StudentPreferences extends AppCompatActivity {
 
         chipGroupSelected = findViewById(R.id.chipGroupSelected);
         listSuggestions = findViewById(R.id.listSuggestions);
+        chipScroll = findViewById(R.id.chipScroll);
         SearchView searchView = findViewById(R.id.searchView);
 
-        allSubjects = getResources().getStringArray(R.array.learning_subjects);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, allSubjects);
+        // Initialize adapter with empty list
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allSubjectsList);
         listSuggestions.setAdapter(adapter);
 
-        listSuggestions.setVisibility(View.VISIBLE);
+        // Load 500+ subjects from Firebase
+        loadSubjectsFromFirebase();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -55,14 +64,32 @@ public class StudentPreferences extends AppCompatActivity {
         });
 
         listSuggestions.setOnItemClickListener((parent, view, position, id) -> {
-            String subject = (String) parent.getItemAtPosition(position);
+            String subject = adapter.getItem(position);
             addChip(subject);
-
-            searchView.setQuery("", false);
-            searchView.clearFocus();
         });
 
         findViewById(R.id.btnSave).setOnClickListener(v -> saveToFirebase());
+    }
+
+    private void loadSubjectsFromFirebase() {
+        DatabaseReference subjectsRef = FirebaseDatabase.getInstance().getReference("Subjects");
+        subjectsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                allSubjectsList.clear();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    String s = data.getValue(String.class);
+                    if (s != null) allSubjectsList.add(s);
+                }
+                Collections.sort(allSubjectsList);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(StudentPreferences.this, "Error loading data", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void addChip(String text) {
@@ -73,7 +100,9 @@ public class StudentPreferences extends AppCompatActivity {
 
         Chip chip = new Chip(this);
         chip.setText(text);
+        chip.setTextSize(12);
         chip.setCloseIconVisible(true);
+        chip.setTextColor(getResources().getColor(R.color.gapfix_text_dark));
 
         chip.setOnCloseIconClickListener(v -> {
             chipGroupSelected.removeView(chip);
@@ -82,6 +111,8 @@ public class StudentPreferences extends AppCompatActivity {
 
         chipGroupSelected.addView(chip);
         selectedSubjects.add(text);
+
+        chipScroll.post(() -> chipScroll.fullScroll(View.FOCUS_DOWN));
     }
 
     private void saveToFirebase() {
@@ -99,6 +130,7 @@ public class StudentPreferences extends AppCompatActivity {
                 .child("preferences")
                 .setValue(selectedSubjects)
                 .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(this, HomeActivity.class));
                     finish();
                 });
