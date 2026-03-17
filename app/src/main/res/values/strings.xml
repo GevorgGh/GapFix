@@ -38,6 +38,7 @@
     <string name="cont">Continue</string>
     <string name="select_subjects_that_you_can_teach">Select subjects that you can teach</string>
     <string name="upload_certificate_and_profile_picture">Upload Certificate and Profile Picture</string>
+    <string name="select_subjects_that_you_would_want_to_learn">Select subjects that you would want to learn</string>
 
     <string-array name="learning_subjects">
         <item>Mathematics (General)</item>

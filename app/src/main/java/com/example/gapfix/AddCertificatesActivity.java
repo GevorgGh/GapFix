@@ -39,13 +39,11 @@ public class AddCertificatesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_certificates);
 
-        // 1. Initialize Cloudinary (Safe to call multiple times with this check)
         try {
             Map<String, String> config = new HashMap<>();
             config.put("cloud_name", CLOUD_NAME);
             MediaManager.init(this, config);
-        } catch (IllegalStateException e) {
-            // MediaManager already initialized
+        } catch (IllegalStateException ignored) {
         }
 
         tvFileName = findViewById(R.id.tvFileName);
@@ -53,7 +51,6 @@ public class AddCertificatesActivity extends AppCompatActivity {
         btnUpload = findViewById(R.id.btnUpload);
         Button btnSelectFile = findViewById(R.id.btnSelectFile);
 
-        // 2. File Picker Setup
         ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -66,7 +63,7 @@ public class AddCertificatesActivity extends AppCompatActivity {
 
         btnSelectFile.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*"); // Allows all file types
+            intent.setType("*/*");
             filePickerLauncher.launch(intent);
         });
 

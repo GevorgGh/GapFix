@@ -160,7 +160,6 @@ public class SignUpActivity extends AppCompatActivity {
                             firebaseUser.sendEmailVerification().addOnCompleteListener(verifyTask -> {
                                 if (verifyTask.isSuccessful()) {
                                     Toast.makeText(this, "Registration successful! Check email.", Toast.LENGTH_LONG).show();
-                                    mAuth.signOut();
                                     if (role.equals("Student")){
                                         startActivity(new Intent(SignUpActivity.this, StudentPreferences.class));
                                     } else{

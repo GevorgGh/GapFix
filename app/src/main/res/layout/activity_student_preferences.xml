@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
-        android:text="Select subjects that you would want to learn"
+        android:text="@string/select_subjects_that_you_would_want_to_learn"
         android:textAlignment="center"
         android:textColor="@color/gapfix_green"
         android:textSize="24sp"

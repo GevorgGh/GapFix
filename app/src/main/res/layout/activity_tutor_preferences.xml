@@ -56,8 +56,10 @@
         android:divider="@color/gapfix_bg"
         android:dividerHeight="1dp"
         android:elevation="1dp"
+        android:scrollbars="vertical"
+        android:scrollbarStyle="outsideOverlay"
+        android:fastScrollEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchView" />
@@ -69,14 +71,19 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Selected Subjects:"
+        android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/listSuggestions" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/chipScroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="16dp"
+        android:scrollbars="vertical"
+        android:scrollbarStyle="insideOverlay"
+        android:fadeScrollbars="false"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

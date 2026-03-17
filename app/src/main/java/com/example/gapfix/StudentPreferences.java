@@ -42,11 +42,9 @@ public class StudentPreferences extends AppCompatActivity {
         chipScroll = findViewById(R.id.chipScroll);
         SearchView searchView = findViewById(R.id.searchView);
 
-        // Initialize adapter with empty list
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allSubjectsList);
         listSuggestions.setAdapter(adapter);
 
-        // Load 500+ subjects from Firebase
         loadSubjectsFromFirebase();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

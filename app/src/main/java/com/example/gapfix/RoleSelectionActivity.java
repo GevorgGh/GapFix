@@ -3,7 +3,6 @@ package com.example.gapfix;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -29,7 +28,7 @@ public class RoleSelectionActivity extends AppCompatActivity {
     private ConstraintLayout tutorCard, studentCard;
     private EditText dobField;
     private Button continueBtn;
-    private String selectedRole = ""; // Stores "Tutor" or "Student"
+    private String selectedRole = "";
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -40,24 +39,30 @@ public class RoleSelectionActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_role_selection);
 
-        // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // Initialize Views
         tutorCard = findViewById(R.id.tutorCard);
         studentCard = findViewById(R.id.studentCard);
         dobField = findViewById(R.id.editTextDate2);
         continueBtn = findViewById(R.id.button2);
 
-        // Role Selection Logic
+        // --- Role Selection Logic ---
         tutorCard.setOnClickListener(v -> selectRole("Tutor"));
         studentCard.setOnClickListener(v -> selectRole("Student"));
 
-        // Date Picker Logic
+        // --- Date Picker Logic (The Fix) ---
+        // 1. Handle the click
         dobField.setOnClickListener(v -> showDatePicker());
 
-        // Continue Button Logic
+        // 2. Handle focus (just in case the system forces focus)
+        dobField.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                showDatePicker();
+                v.clearFocus();
+            }
+        });
+
         continueBtn.setOnClickListener(v -> saveUserRoleAndProceed());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -70,13 +75,18 @@ public class RoleSelectionActivity extends AppCompatActivity {
     private void selectRole(String role) {
         selectedRole = role;
 
-        // Update UI visuals
+        // This toggles the 'selected' state which works with your @drawable/rounded_input_field
+        // if you have a <selector> inside that drawable.
+        tutorCard.setSelected(role.equals("Tutor"));
+        studentCard.setSelected(role.equals("Student"));
+
+        // Optional: Visual confirmation
         if (role.equals("Tutor")) {
-            tutorCard.setSelected(true);
-            studentCard.setSelected(false);
+            tutorCard.setAlpha(1.0f);
+            studentCard.setAlpha(0.5f);
         } else {
-            tutorCard.setSelected(false);
-            studentCard.setSelected(true);
+            studentCard.setAlpha(1.0f);
+            tutorCard.setAlpha(0.5f);
         }
     }
 
@@ -87,10 +97,14 @@ public class RoleSelectionActivity extends AppCompatActivity {
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, year1, monthOfYear, dayOfMonth) -> {
-                    String date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year1;
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Formats date to DD/MM/YYYY with leading zeros
+                    String date = String.format("%02d/%02d/%d", selectedDay, (selectedMonth + 1), selectedYear);
                     dobField.setText(date);
                 }, year, month, day);
+
+        // Prevent picking future dates
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
 
@@ -109,25 +123,25 @@ public class RoleSelectionActivity extends AppCompatActivity {
         }
 
         if (user != null) {
+            continueBtn.setEnabled(false); // Prevent double clicks
             String uid = user.getUid();
 
-            // Create a user profile map
             Map<String, Object> userUpdates = new HashMap<>();
             userUpdates.put("role", selectedRole);
             userUpdates.put("dob", dob);
             userUpdates.put("email", user.getEmail());
             userUpdates.put("name", user.getDisplayName());
 
-            // Save to: Users -> [Role] -> [UID]
             mDatabase.child("Users").child(selectedRole).child(uid).setValue(userUpdates)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            if (selectedRole.equals("Student"))
-                                startActivity(new Intent(RoleSelectionActivity.this, StudentPreferences.class));
-                            else
-                                startActivity(new Intent(RoleSelectionActivity.this, TutorPreferences.class));
+                            Class<?> targetClass = selectedRole.equals("Student") ?
+                                    StudentPreferences.class : TutorPreferences.class;
+                            startActivity(new Intent(RoleSelectionActivity.this, targetClass));
+                            finish(); // Close this activity
                         } else {
-                            Toast.makeText(RoleSelectionActivity.this, "Database Error: " +
+                            continueBtn.setEnabled(true);
+                            Toast.makeText(RoleSelectionActivity.this, "Error: " +
                                     task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
