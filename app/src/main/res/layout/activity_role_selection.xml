@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_tint"
+    android:background="@color/gapfix_bg"
     tools:context=".RoleSelectionActivity">
 
     <TextView
@@ -131,10 +131,10 @@
         android:layout_height="60dp"
         android:layout_marginBottom="50dp"
         android:backgroundTint="@color/gapfix_green"
+        android:elevation="10dp"
         android:text="Continue"
         android:textColor="@android:color/white"
         android:textSize="20sp"
-        android:elevation="10dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

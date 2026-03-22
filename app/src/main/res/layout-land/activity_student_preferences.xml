@@ -17,16 +17,16 @@
         android:text="Select subjects that you would want to learn"
         android:textAlignment="center"
         android:textColor="@color/gapfix_green"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.SearchView
+    <SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@color/bg_tint"
         android:elevation="2dp"
@@ -63,12 +63,12 @@
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/chipScroll"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="1245dp"
+        android:layout_height="330dp"
         android:layout_margin="16dp"
-        android:scrollbars="vertical"
-        android:scrollbarStyle="insideOverlay"
         android:fadeScrollbars="false"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

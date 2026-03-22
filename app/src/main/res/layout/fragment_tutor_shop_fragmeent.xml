@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gapfix_bg">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewTutors"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.142"
+        tools:layout_editor_absoluteX="-6dp" />
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="5dp"
+        tools:layout_editor_absoluteY="16dp">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_marginTop="420dp"
+            android:background="@drawable/rounded_input_field"
+            app:iconifiedByDefault="false"
+            app:queryHint="Search tutors by name..." />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/gapfix_bg"
+            android:src="@drawable/filter_list" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -123,7 +123,7 @@ public class AddCertificatesActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     uploadProgressBar.setVisibility(View.GONE);
                     Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, HomeActivity.class));
+                    startActivity(new Intent(this, HomeStudentActivity.class));
                     finish();
                 })
                 .addOnFailureListener(e -> {

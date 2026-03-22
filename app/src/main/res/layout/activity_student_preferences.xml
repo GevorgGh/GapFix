@@ -8,17 +8,29 @@
     android:background="@color/gapfix_bg"
     tools:context=".StudentPreferences">
 
+    <FrameLayout
+        android:id="@+id/backFr"
+        android:layout_width="119dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
     <TextView
         android:id="@+id/textView11"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:text="@string/select_subjects_that_you_would_want_to_learn"
+        android:layout_marginTop="80dp"
+        android:text="Select subjects you want to learn"
         android:textAlignment="center"
         android:textColor="@color/gapfix_green"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,23 +42,21 @@
         android:background="@color/bg_tint"
         android:elevation="2dp"
         app:iconifiedByDefault="false"
+        app:queryHint="Search subjects..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView11"
-        app:queryHint="Search subjects..." />
+        app:layout_constraintTop_toBottomOf="@id/textView11" />
 
     <ListView
         android:id="@+id/listSuggestions"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="381dp"
+        android:layout_height="283dp"
         android:layout_marginHorizontal="16dp"
         android:background="@color/bg_tint"
         android:divider="@color/gapfix_bg"
         android:dividerHeight="1dp"
         android:elevation="1dp"
-        android:scrollbars="vertical"
-        android:scrollbarStyle="outsideOverlay"
-        android:fastScrollEnabled="true"
+        android:nestedScrollingEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.3"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,28 +64,33 @@
 
     <TextView
         android:id="@+id/labelSelected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Selected Subjects:"
-        android:textColor="@color/white"
+        android:textColor="@color/gapfix_text_dark"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/listSuggestions" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/chipScroll"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="381dp"
+        android:layout_height="329dp"
         android:layout_margin="16dp"
-        android:scrollbars="vertical"
-        android:scrollbarStyle="insideOverlay"
+        android:clipToPadding="false"
         android:fadeScrollbars="false"
+        android:padding="4dp"
+        android:scrollbarSize="4dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/labelSelected">
+        app:layout_constraintTop_toBottomOf="@id/labelSelected"
+        app:layout_constraintVertical_bias="1.0">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroupSelected"
@@ -92,7 +107,9 @@
         android:layout_margin="16dp"
         android:backgroundTint="@color/gapfix_green"
         android:text="Finish Profile"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

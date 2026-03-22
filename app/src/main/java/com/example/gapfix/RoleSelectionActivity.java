@@ -19,8 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class RoleSelectionActivity extends AppCompatActivity {
@@ -51,11 +53,8 @@ public class RoleSelectionActivity extends AppCompatActivity {
         tutorCard.setOnClickListener(v -> selectRole("Tutor"));
         studentCard.setOnClickListener(v -> selectRole("Student"));
 
-        // --- Date Picker Logic (The Fix) ---
-        // 1. Handle the click
         dobField.setOnClickListener(v -> showDatePicker());
 
-        // 2. Handle focus (just in case the system forces focus)
         dobField.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 showDatePicker();
@@ -75,12 +74,9 @@ public class RoleSelectionActivity extends AppCompatActivity {
     private void selectRole(String role) {
         selectedRole = role;
 
-        // This toggles the 'selected' state which works with your @drawable/rounded_input_field
-        // if you have a <selector> inside that drawable.
         tutorCard.setSelected(role.equals("Tutor"));
         studentCard.setSelected(role.equals("Student"));
 
-        // Optional: Visual confirmation
         if (role.equals("Tutor")) {
             tutorCard.setAlpha(1.0f);
             studentCard.setAlpha(0.5f);
@@ -92,19 +88,22 @@ public class RoleSelectionActivity extends AppCompatActivity {
 
     private void showDatePicker() {
         final Calendar c = Calendar.getInstance();
+
+        Calendar maxDateCalendar = Calendar.getInstance();
+        maxDateCalendar.add(Calendar.YEAR, -12);
+
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.MyDatePickerTheme,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Formats date to DD/MM/YYYY with leading zeros
-                    String date = String.format("%02d/%02d/%d", selectedDay, (selectedMonth + 1), selectedYear);
+                    String date = String.format(Locale.getDefault(), "%02d/%02d/%d", selectedDay, (selectedMonth + 1), selectedYear);
                     dobField.setText(date);
                 }, year, month, day);
 
-        // Prevent picking future dates
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+        datePickerDialog.getDatePicker().setMaxDate(maxDateCalendar.getTimeInMillis());
+
         datePickerDialog.show();
     }
 

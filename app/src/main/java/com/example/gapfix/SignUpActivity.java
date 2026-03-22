@@ -37,8 +37,10 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.backFr, new BackFragment()).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.backFr, new BackFragment())
+                .commit();
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -49,12 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
         nameField = findViewById(R.id.editName);
         dateField = findViewById(R.id.editTextDate);
 
-        View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                v.setSelected(hasFocus);
-            }
-        };
+        View.OnFocusChangeListener focusListener = View::setSelected;
 
         emailField.setOnFocusChangeListener(focusListener);
         passField.setOnFocusChangeListener(focusListener);
@@ -76,6 +73,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
         final String selectedRole = getIntent().getStringExtra("ROLE");
+
         Button reg = findViewById(R.id.button3);
 
         reg.setOnClickListener(view -> {
@@ -118,25 +116,23 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void showDatePicker() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                SignUpActivity.this,
-                R.style.MyDatePickerTheme,
-                (view, year, month, dayOfMonth) -> {
-                    calendar.set(Calendar.YEAR, year);
-                    calendar.set(Calendar.MONTH, month);
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        final Calendar c = Calendar.getInstance();
 
-                    String selectedDate = simpleDateFormat.format(calendar.getTime());
-                    dateField.setText(selectedDate);
+        Calendar maxDateCalendar = Calendar.getInstance();
+        maxDateCalendar.add(Calendar.YEAR, -12);
 
-                    dateField.clearFocus();
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
 
-        datePickerDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Done", datePickerDialog);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.MyDatePickerTheme,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    String date = String.format(Locale.getDefault(), "%02d/%02d/%d", selectedDay, (selectedMonth + 1), selectedYear);
+                    dateField.setText(date);
+                }, year, month, day);
+
+        datePickerDialog.getDatePicker().setMaxDate(maxDateCalendar.getTimeInMillis());
+
         datePickerDialog.show();
     }
 
@@ -159,12 +155,17 @@ public class SignUpActivity extends AppCompatActivity {
                             saveUserInfo(firebaseUser.getUid(), name, email, role, dob);
                             firebaseUser.sendEmailVerification().addOnCompleteListener(verifyTask -> {
                                 if (verifyTask.isSuccessful()) {
-                                    Toast.makeText(this, "Registration successful! Check email.", Toast.LENGTH_LONG).show();
+                                    Intent intent;
+                                    Toast.makeText(this, "Registration successful! Check email. " + role, Toast.LENGTH_LONG).show();
                                     if (role.equals("Student")){
-                                        startActivity(new Intent(SignUpActivity.this, StudentPreferences.class));
+                                        Toast.makeText(this, role, Toast.LENGTH_LONG).show();
+                                        intent = new Intent(SignUpActivity.this, StudentPreferences.class);
                                     } else{
-                                        startActivity(new Intent(SignUpActivity.this, TutorPreferences.class));
+                                        Toast.makeText(this, role, Toast.LENGTH_LONG).show();
+                                        intent = new Intent(SignUpActivity.this, TutorPreferences.class);
                                     }
+                                    startActivity(intent);
+                                    finish();
                                 }
                             });
                         }

@@ -3,6 +3,7 @@ package com.example.gapfix;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,10 +29,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -115,44 +115,45 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
                         FirebaseUser user = mAuth.getCurrentUser();
-
-                        if (isNew) {
-                            Intent intent = new Intent(LoginActivity.this, RoleSelectionActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            checkDatabaseForProfile(user.getUid());
-                        }
+                        checkDatabaseForProfile(user.getUid());
+                    } else {
+                        Toast.makeText(this, "Auth Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void checkDatabaseForProfile(String uid) {
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Users");
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
-        rootRef.get().addOnCompleteListener(task -> {
+        db.child("Users").child("Student").child(uid).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                boolean hasStudentProfile = task.getResult().child("Student").hasChild(uid);
-                boolean hasTutorProfile = task.getResult().child("Tutor").hasChild(uid);
-
-                if (hasStudentProfile || hasTutorProfile) {
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                if (task.getResult().exists()) {
+                    startActivity(new Intent(LoginActivity.this, HomeStudentActivity.class));
                     finish();
                 } else {
-                    goToFinishProfile();
+                    db.child("Users").child("Tutor").child(uid).get().addOnCompleteListener(tutorTask -> {
+                        if (tutorTask.isSuccessful() && tutorTask.getResult().exists()) {
+                            startActivity(new Intent(LoginActivity.this, HomeTutorActivity.class));
+                            finish();
+                        } else {
+                            startActivity(new Intent(LoginActivity.this, RoleSelectionActivity.class));
+                            finish();
+                        }
+                    });
                 }
+            } else {
+                Log.e("FirebaseError", "Error: " + task.getException().getMessage());
             }
         });
     }
 
-    private void goToFinishProfile() {
-        Intent intent = new Intent(LoginActivity.this, SignUpRole.class);
-        intent.putExtra("IS_GOOGLE_NEW_USER", true);
+    private void goToRoleSelection() {
+        Intent intent = new Intent(LoginActivity.this, RoleSelectionActivity.class);
         startActivity(intent);
         finish();
     }
+
 
     private void loginUser(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
@@ -162,10 +163,12 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                        finish();
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            checkDatabaseForProfile(user.getUid());
+                        }
                     } else {
-                        Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Login Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

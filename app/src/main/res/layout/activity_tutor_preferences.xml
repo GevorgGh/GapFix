@@ -34,7 +34,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <androidx.appcompat.widget.SearchView
+    <SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -56,11 +56,12 @@
         android:divider="@color/gapfix_bg"
         android:dividerHeight="1dp"
         android:elevation="1dp"
-        android:scrollbars="vertical"
-        android:scrollbarStyle="outsideOverlay"
         android:fastScrollEnabled="true"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchView" />
 
@@ -68,8 +69,8 @@
         android:id="@+id/labelSelected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
         android:text="Selected Subjects:"
         android:textColor="@color/white"
         android:textStyle="bold"
@@ -78,12 +79,12 @@
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/chipScroll"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="384dp"
+        android:layout_height="431dp"
         android:layout_margin="16dp"
-        android:scrollbars="vertical"
-        android:scrollbarStyle="insideOverlay"
         android:fadeScrollbars="false"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
