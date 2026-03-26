@@ -49,7 +49,6 @@ public class RoleSelectionActivity extends AppCompatActivity {
         dobField = findViewById(R.id.editTextDate2);
         continueBtn = findViewById(R.id.button2);
 
-        // --- Role Selection Logic ---
         tutorCard.setOnClickListener(v -> selectRole("Tutor"));
         studentCard.setOnClickListener(v -> selectRole("Student"));
 
@@ -122,7 +121,7 @@ public class RoleSelectionActivity extends AppCompatActivity {
         }
 
         if (user != null) {
-            continueBtn.setEnabled(false); // Prevent double clicks
+            continueBtn.setEnabled(false);
             String uid = user.getUid();
 
             Map<String, Object> userUpdates = new HashMap<>();
@@ -136,8 +135,9 @@ public class RoleSelectionActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Class<?> targetClass = selectedRole.equals("Student") ?
                                     StudentPreferences.class : TutorPreferences.class;
+                            Toast.makeText(RoleSelectionActivity.this, targetClass.getSimpleName() + ' ' + selectedRole, Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(RoleSelectionActivity.this, targetClass));
-                            finish(); // Close this activity
+                            finish();
                         } else {
                             continueBtn.setEnabled(true);
                             Toast.makeText(RoleSelectionActivity.this, "Error: " +

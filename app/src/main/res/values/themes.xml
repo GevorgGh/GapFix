@@ -4,13 +4,13 @@
     </style>
 
     <style name="MyDatePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/gapfix_green</item>
+        <item name="colorOnPrimary">@color/gapfix_text_dark</item>
         <item name="colorAccent">@color/gapfix_green</item>
-
-        <item name="android:windowBackground">@color/bg_tint</item>
-
-        <item name="android:colorAccent">@color/gapfix_green</item>
-
+        <item name="android:textColorPrimary">@color/gapfix_text_dark</item>
+        <item name="android:textColorSecondary">@color/gapfix_text_dark</item>
         <item name="colorControlActivated">@color/gapfix_green</item>
+        <item name="android:windowBackground">@color/gapfix_bg</item>
     </style>
 
     <style name="Theme.GapFix" parent="Base.Theme.GapFix" />

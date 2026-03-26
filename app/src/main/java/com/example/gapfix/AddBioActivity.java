@@ -1,7 +1,6 @@
 package com.example.gapfix;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,26 +8,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class HomeStudentActivity extends AppCompatActivity {
+public class AddBioActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_home_student);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.navFr, new NavFragment())
-                .commit();
-
-
-
-        View mainLayout = findViewById(R.id.main);
-        ViewCompat.setOnApplyWindowInsetsListener(mainLayout, (v, insets) -> {
+        setContentView(R.layout.activity_add_bio);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-
-            v.setPadding(0, systemBars.top, 0, systemBars.bottom);
-
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }

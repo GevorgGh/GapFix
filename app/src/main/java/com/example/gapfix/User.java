@@ -4,9 +4,8 @@ public class User {
     public String name;
     public String email;
     public String role;
-    public String dob; // Date of Birth
+    public String dob;
 
-    // Default constructor required for Firebase calls to DataSnapshot.getValue(User.class)
     public User() {
     }
 
@@ -16,7 +15,7 @@ public class User {
         this.role = role;
     }
 
-    // Constructor including DOB if you want to create it all at once
+
     public User(String name, String email, String role, String dob) {
         this.name = name;
         this.email = email;
@@ -24,7 +23,6 @@ public class User {
         this.dob = dob;
     }
 
-    // Getter and Setter for DOB
     public String getDob() {
         return dob;
     }

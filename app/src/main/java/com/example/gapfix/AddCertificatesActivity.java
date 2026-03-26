@@ -1,16 +1,20 @@
 package com.example.gapfix;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,12 +30,12 @@ import java.util.Map;
 
 public class AddCertificatesActivity extends AppCompatActivity {
 
-    private Uri fileUri;
-    private TextView tvFileName;
+    private Uri certUri, profileUri;
+    private TextView tvFileName, tvProfileName;
+    private ImageView profileImageView;
     private ProgressBar uploadProgressBar;
     private Button btnUpload;
-
-    private static final String CLOUD_NAME = "dbugqpl3m";
+    private int uploadCount = 0;
     private static final String UPLOAD_PRESET = "ml_default";
 
     @Override
@@ -39,97 +43,143 @@ public class AddCertificatesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_certificates);
 
-        try {
-            Map<String, String> config = new HashMap<>();
-            config.put("cloud_name", CLOUD_NAME);
-            MediaManager.init(this, config);
-        } catch (IllegalStateException ignored) {
-        }
+        initCloudinary();
 
         tvFileName = findViewById(R.id.tvFileName);
+        tvProfileName = findViewById(R.id.tvProfileName);
+        profileImageView = findViewById(R.id.profileImageView);
         uploadProgressBar = findViewById(R.id.uploadProgressBar);
         btnUpload = findViewById(R.id.btnUpload);
-        Button btnSelectFile = findViewById(R.id.btnSelectFile);
+        Button btnSelectCert = findViewById(R.id.btnSelectFile);
+        Button btnSelectProfile = findViewById(R.id.btnSelectProfile);
 
-        ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(
+        ActivityResultLauncher<Intent> certPicker = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        fileUri = result.getData().getData();
-                        tvFileName.setText("Selected: " + fileUri.getLastPathSegment());
+                        certUri = result.getData().getData();
+                        tvFileName.setText("Cert Selected: " + (certUri != null ? certUri.getLastPathSegment() : ""));
                     }
                 }
         );
 
-        btnSelectFile.setOnClickListener(v -> {
+        btnSelectCert.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("*/*");
-            filePickerLauncher.launch(intent);
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "application/pdf"});
+            certPicker.launch(intent);
         });
 
+        btnSelectProfile.setOnClickListener(v -> showImageSourceDialog());
+
         btnUpload.setOnClickListener(v -> {
-            if (fileUri != null) {
-                startCloudinaryUpload();
+            if (certUri != null && profileUri != null) {
+                uploadProgressBar.setVisibility(View.VISIBLE);
+                btnUpload.setEnabled(false);
+                startUpload(certUri, "certificates");
+                startUpload(profileUri, "profilePicture");
             } else {
-                Toast.makeText(this, "Please select a file first", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please select both files", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void startCloudinaryUpload() {
-        uploadProgressBar.setVisibility(View.VISIBLE);
-        btnUpload.setEnabled(false);
+    private void showImageSourceDialog() {
+        String[] options = {"Camera", "Gallery"};
+        new AlertDialog.Builder(this)
+                .setTitle("Select Image Source")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) takePicture.launch(null);
+                    else pickMedia.launch(new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
+                }).show();
+    }
 
-        MediaManager.get().upload(fileUri)
+    private final ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    profileUri = uri;
+                    profileImageView.setImageURI(uri);
+                    tvProfileName.setText("Profile Pic Selected");
+                }
+            });
+
+    private final ActivityResultLauncher<Void> takePicture =
+            registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
+                if (bitmap != null) {
+                    profileImageView.setImageBitmap(bitmap);
+                    tvProfileName.setText("Photo Taken");
+                }
+            });
+
+    private void startUpload(Uri uri, String dbKey) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String folderPath = "Users/" + user.getUid();
+
+        MediaManager.get().upload(uri)
                 .unsigned(UPLOAD_PRESET)
+                .option("folder", folderPath)
                 .callback(new UploadCallback() {
                     @Override
-                    public void onStart(String requestId) {}
-
-                    @Override
-                    public void onProgress(String requestId, long bytes, long totalBytes) {}
-
-                    @Override
                     public void onSuccess(String requestId, Map resultData) {
-                        String secureUrl = (String) resultData.get("secure_url");
-                        saveUrlToFirebase(secureUrl);
+                        saveUrlToFirebase((String) resultData.get("secure_url"), dbKey);
                     }
 
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
-                        uploadProgressBar.setVisibility(View.GONE);
-                        btnUpload.setEnabled(true);
-                        Toast.makeText(AddCertificatesActivity.this,
-                                "Upload Failed: " + error.getDescription(), Toast.LENGTH_LONG).show();
+                        runOnUiThread(() -> {
+                            btnUpload.setEnabled(true);
+                            uploadProgressBar.setVisibility(View.GONE);
+                            Log.e("Cloudinary", "Upload Error: " + error.getDescription());
+                            Toast.makeText(AddCertificatesActivity.this, "Upload Error", Toast.LENGTH_SHORT).show();
+                        });
                     }
 
-                    @Override
-                    public void onReschedule(String requestId, ErrorInfo error) {}
-                })
-                .dispatch();
+                    @Override public void onStart(String requestId) {}
+                    @Override public void onProgress(String requestId, long bytes, long totalBytes) {}
+                    @Override public void onReschedule(String requestId, ErrorInfo error) {}
+                }).dispatch();
     }
 
-    private void saveUrlToFirebase(String url) {
+    private void saveUrlToFirebase(String url, String key) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
 
-        // Using "Tutor" to match your Firebase Rules logic
         FirebaseDatabase.getInstance().getReference("Users")
                 .child("Tutor")
                 .child(user.getUid())
-                .child("certificates")
-                .push()
+                .child(key)
                 .setValue(url)
-                .addOnSuccessListener(aVoid -> {
-                    uploadProgressBar.setVisibility(View.GONE);
-                    Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, HomeStudentActivity.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    uploadProgressBar.setVisibility(View.GONE);
-                    btnUpload.setEnabled(true);
-                    Toast.makeText(this, "DB Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        uploadCount++;
+
+                        if (uploadCount == 2) {
+                            uploadProgressBar.setVisibility(View.GONE);
+                            Toast.makeText(this, "All files uploaded successfully!", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(AddCertificatesActivity.this, HomeStudentActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else {
+                        btnUpload.setEnabled(true);
+                        uploadProgressBar.setVisibility(View.GONE);
+                        Toast.makeText(this, "Firebase Error: " + key, Toast.LENGTH_SHORT).show();
+                    }
                 });
+    }
+
+    private void initCloudinary() {
+        try {
+            Map<String, String> config = new HashMap<>();
+            config.put("cloud_name", "dbugqpl3m");
+            MediaManager.init(this, config);
+        } catch (Exception ignored) {}
     }
 }

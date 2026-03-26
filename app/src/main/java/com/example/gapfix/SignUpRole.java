@@ -50,11 +50,14 @@ public class SignUpRole extends AppCompatActivity {
                 cardStudent.setSelected(false);
 
                 v.setSelected(true);
+                v.setAlpha(1F);
                 cont.setVisibility(View.VISIBLE);
                 if (v.getId() == R.id.tutorCard) {
                     prof = "Tutor";
+                    cardStudent.setAlpha(0.5F);
                 } else if (v.getId() == R.id.studentCard){
                     prof = "Student";
+                    cardTutor.setAlpha(0.5F);
                 }
             }
         };

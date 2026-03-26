@@ -5,10 +5,11 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gapfix_bg"
+    android:padding="8dp"
     tools:context=".SignUpRole"
     tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="0dp"
-    android:background="@color/gapfix_bg">
+    tools:layout_editor_absoluteY="0dp">
 
 
     <FrameLayout
@@ -25,8 +26,8 @@
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="328dp"
-        android:layout_height="125dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/roboto"
         android:text="@string/choose_your_role"
         android:textAlignment="center"
@@ -35,10 +36,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.554"
+        app:layout_constraintHorizontal_bias="0.518"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.125" />
+        app:layout_constraintVertical_bias="0.19" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tutorCard"
@@ -63,10 +64,8 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.442"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.592" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView9"
@@ -98,18 +97,16 @@
 
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="160dp"
-            android:layout_height="41dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/student"
             android:textColor="@color/gapfix_green"
             android:textSize="34sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.603"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.533" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView11"
@@ -128,19 +125,17 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="220dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="311dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="68dp"
         android:backgroundTint="@color/gapfix_green"
         android:text="Continue"
         android:textColor="@color/logo_background"
         android:textIsSelectable="false"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.303" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

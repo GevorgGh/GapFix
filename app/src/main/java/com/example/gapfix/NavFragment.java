@@ -43,6 +43,9 @@ public class NavFragment extends Fragment {
 
         if (clickedId == R.id.imageView3) {
             imgShop.setImageResource(R.drawable.shop_clicked);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new TutorShopFragment())
+                    .commit();
         } else if (clickedId == R.id.imageView6) {
             imgArchive.setImageResource(R.drawable.archive_clicked);
         } else if (clickedId == R.id.imageView4) {

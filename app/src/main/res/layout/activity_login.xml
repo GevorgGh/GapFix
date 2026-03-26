@@ -70,40 +70,6 @@
             app:cornerRadius="28dp" />
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/google_button"
-            android:layout_width="match_parent"
-            android:background="@drawable/rounded_input_field"
-            android:layout_height="64dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp">
-
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="52dp"
-                android:layout_height="47dp"
-                android:layout_marginStart="16dp"
-                android:contentDescription="@string/google"
-                android:src="@drawable/ic_google_logo"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.529" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/continue_with_google"
-                android:textColor="@color/gapfix_text_secondary"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView10"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <TextView
             android:id="@+id/textView8"
             android:layout_width="match_parent"

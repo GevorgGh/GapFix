@@ -5,8 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignUpActivity"
-    android:background="@color/gapfix_bg">
+    android:background="@color/gapfix_bg"
+    android:padding="8dp"
+    tools:context=".SignUpActivity">
 
 
     <FrameLayout
@@ -20,129 +21,142 @@
 
     </FrameLayout>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="825dp"
-        android:backgroundTint="@color/gapfix_text_dark"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintVertical_bias="0.0">
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="318dp"
-            android:layout_height="146dp"
-            android:text="@string/fill_in_your_data"
-            android:textAlignment="center"
-            android:textColor="@color/gapfix_green"
-            android:textSize="48sp"
-            android:textStyle="bold" />
 
-        <Space
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp" />
-
-        <EditText
-            android:id="@+id/editName"
-            android:layout_width="376dp"
-            android:layout_height="52dp"
-            android:background="@drawable/rounded_input_field"
-            android:drawableStart="@drawable/input_person"
-            android:ems="10"
-            android:hint="@string/full_name"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingLeft="16dp"
-            android:paddingEnd="16dp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
-
-
-        <EditText
-            android:id="@+id/editTextDate"
-            android:layout_width="376dp"
-            android:layout_height="52dp"
-            android:background="@drawable/rounded_input_field"
-            android:drawableStart="@drawable/calendar"
-            android:ems="10"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:hint="@string/date_of_birth"
-            android:inputType="date"
-            android:paddingStart="15dp"
-            android:paddingLeft="16dp"
-            android:paddingEnd="16dp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
-
-        <EditText
-            android:id="@+id/editEmail"
-            android:layout_width="376dp"
-            android:layout_height="52dp"
-            android:background="@drawable/rounded_input_field"
-            android:drawableStart="@drawable/input_envelope"
-            android:ems="10"
-            android:hint="@string/prompt_email"
-            android:inputType="textEmailAddress"
-            android:paddingStart="15dp"
-            android:paddingLeft="16dp"
-            android:paddingEnd="16dp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
-
-        <EditText
-            android:id="@+id/editPassword"
-            android:layout_width="376dp"
-            android:layout_height="52dp"
-            android:background="@drawable/rounded_input_field"
-            android:drawableStart="@drawable/input_lock"
-            android:ems="10"
-            android:hint="@string/prompt_password"
-            android:inputType="textPassword"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
-
-        <EditText
-            android:id="@+id/editPassword2"
-            android:layout_width="376dp"
-            android:layout_height="52dp"
-            android:background="@drawable/rounded_input_field"
-            android:drawableStart="@drawable/input_lock_fill"
-            android:ems="10"
-            android:hint="@string/repeat_password"
-            android:inputType="textPassword"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="12dp" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="269dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/gapfix_green"
-            android:text="@string/reg"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:backgroundTint="@color/gapfix_text_dark"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0">
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/editName"
+                android:layout_width="376dp"
+                android:layout_height="52dp"
+                android:background="@drawable/rounded_input_field"
+                android:drawableStart="@drawable/input_person"
+                android:ems="10"
+                android:hint="@string/full_name"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+
+            <EditText
+                android:id="@+id/editTextDate"
+                android:layout_width="376dp"
+                android:layout_height="52dp"
+                android:background="@drawable/rounded_input_field"
+                android:drawableStart="@drawable/calendar"
+                android:ems="10"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="@string/date_of_birth"
+                android:inputType="date"
+                android:paddingStart="15dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="376dp"
+                android:layout_height="52dp"
+                android:background="@drawable/rounded_input_field"
+                android:drawableStart="@drawable/input_envelope"
+                android:ems="10"
+                android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress"
+                android:paddingStart="15dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <EditText
+                android:id="@+id/editPassword"
+                android:layout_width="376dp"
+                android:layout_height="52dp"
+                android:background="@drawable/rounded_input_field"
+                android:drawableStart="@drawable/input_lock"
+                android:ems="10"
+                android:hint="@string/prompt_password"
+                android:inputType="textPassword"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <EditText
+                android:id="@+id/editPassword2"
+                android:layout_width="376dp"
+                android:layout_height="52dp"
+                android:background="@drawable/rounded_input_field"
+                android:drawableStart="@drawable/input_lock_fill"
+                android:ems="10"
+                android:hint="@string/repeat_password"
+                android:inputType="textPassword"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="12dp" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="269dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/gapfix_green"
+                android:text="@string/reg"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fill_in_your_data"
+        android:textAlignment="center"
+        android:textColor="@color/gapfix_green"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backFr" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

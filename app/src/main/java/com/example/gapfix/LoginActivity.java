@@ -36,8 +36,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
-    private ActivityResultLauncher<Intent> googleSignInLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,24 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        googleSignInLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                        handleGoogleSignInResult(task);
-                    }
-                }
-        );
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -74,12 +54,6 @@ public class LoginActivity extends AppCompatActivity {
         EditText passField = findViewById(R.id.editTextTextPassword);
         Button login = findViewById(R.id.button);
         TextView forgot = findViewById(R.id.textView8);
-        ConstraintLayout googleBtn = findViewById(R.id.google_button);
-
-        googleBtn.setOnClickListener(v -> {
-            v.setSelected(true);
-            signIn();
-        });
 
         View.OnFocusChangeListener focusListener = (v, hasFocus) -> v.setSelected(hasFocus);
         emailField.setOnFocusChangeListener(focusListener);
@@ -95,33 +69,7 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
     }
-
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        googleSignInLauncher.launch(signInIntent);
-    }
-
-    private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            firebaseAuthWithGoogle(account.getIdToken());
-        } catch (ApiException e) {
-            Toast.makeText(this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        checkDatabaseForProfile(user.getUid());
-                    } else {
-                        Toast.makeText(this, "Auth Failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
+    
 
     private void checkDatabaseForProfile(String uid) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
@@ -146,12 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e("FirebaseError", "Error: " + task.getException().getMessage());
             }
         });
-    }
-
-    private void goToRoleSelection() {
-        Intent intent = new Intent(LoginActivity.this, RoleSelectionActivity.class);
-        startActivity(intent);
-        finish();
     }
 
 

@@ -60,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
         dateField.setOnFocusChangeListener(focusListener);
 
         calendar = Calendar.getInstance();
-        simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
         dateField.setFocusableInTouchMode(true);
 
