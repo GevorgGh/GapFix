@@ -1,7 +1,7 @@
 package com.example.gapfix;
 
 import android.os.Bundle;
-import android.widget.EditText;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,16 +26,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class BookFreeLessonActivity extends AppCompatActivity {
 
-    String selectedSubject;
+    private String selectedSubject;
+    private long selectedDateMs = -1;
+    private int selectedHour = -1;
+    private int selectedMinute = -1;
 
-    FirebaseAuth mAuth;
-    FirebaseDatabase mDatabase;
-
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,70 +49,45 @@ public class BookFreeLessonActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         Tutor tutor = (Tutor) getIntent().getSerializableExtra("tutor");
+        if (tutor == null) {
+            finish();
+            return;
+        }
 
         String tutorId = tutor.getId();
-
         String studentId = mAuth.getCurrentUser().getUid();
 
         TextView tutorName = findViewById(R.id.tutor_name);
         tutorName.setText(tutor.getName());
 
         ImageView tutorImage = findViewById(R.id.tutor_image);
-
         if (tutor.getImageResourceLink() != null) {
-            Glide.with(this)
-                    .load(tutor.getImageResourceLink())
-                    .into(tutorImage);
-        } else{
+            Glide.with(this).load(tutor.getImageResourceLink()).into(tutorImage);
+        } else {
             tutorImage.setImageResource(R.drawable.person_circle);
         }
 
         ChipGroup tutorSubjects = findViewById(R.id.tutor_subjects_chips);
-
         tutorSubjects.removeAllViews();
         for (String subject : tutor.getSubjects()) {
             Chip chip = new Chip(this);
-            chip.setClickable(true);
-            chip.setFocusable(true);
-            chip.setCheckable(true);
             chip.setText(subject);
+            chip.setCheckable(true);
             tutorSubjects.addView(chip);
         }
 
         tutorSubjects.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (!checkedIds.isEmpty()) {
-                int chipId = checkedIds.get(0);
-                Chip selectedChip = findViewById(chipId);
-                if (selectedChip != null) {
-                    selectedSubject = selectedChip.getText().toString();
-                }
+                Chip selectedChip = findViewById(checkedIds.get(0));
+                selectedSubject = selectedChip.getText().toString();
             } else {
                 selectedSubject = null;
             }
         });
+
         MaterialButton btnSelectDate = findViewById(R.id.btnSelectDate);
         MaterialButton btnSelectTime = findViewById(R.id.btnSelectTime);
         MaterialButton btnBook = findViewById(R.id.btnConfirmBooking);
-
-        MaterialTimePicker timePicker;
-        timePicker = new MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY))
-                .setMinute(Calendar.getInstance().get(Calendar.MINUTE))
-                .setTitleText("Select Lesson Time")
-                .build();
-
-        btnSelectTime.setOnClickListener(v -> {
-            timePicker.show(getSupportFragmentManager(), "TIME_PICKER");
-        });
-
-
-        timePicker.addOnPositiveButtonClickListener(v -> {
-            int hour = timePicker.getHour();
-            int minute = timePicker.getMinute();
-            String formattedTime = String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
-            btnSelectTime.setText(formattedTime);
-        });
 
         CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointForward.now());
@@ -119,24 +96,41 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                 .setTitleText("Select Lesson Date")
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .setCalendarConstraints(constraintsBuilder.build())
-                .setTheme(com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialCalendar)
                 .build();
 
-        btnSelectDate.setOnClickListener(v -> {
-            datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
-        });
-
+        btnSelectDate.setOnClickListener(v -> datePicker.show(getSupportFragmentManager(), "DATE_PICKER"));
 
         datePicker.addOnPositiveButtonClickListener(selection -> {
-            String dateString = datePicker.getHeaderText();
-            btnSelectDate.setText(dateString);
+            selectedDateMs = selection;
+            btnSelectDate.setText(datePicker.getHeaderText());
+        });
+
+        btnSelectTime.setOnClickListener(v -> {
+            MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY))
+                    .setMinute(Calendar.getInstance().get(Calendar.MINUTE))
+                    .setTitleText("Select Lesson Time")
+                    .build();
+
+            timePicker.addOnPositiveButtonClickListener(tp -> {
+                selectedHour = timePicker.getHour();
+                selectedMinute = timePicker.getMinute();
+                String formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
+                btnSelectTime.setText(formattedTime);
+            });
+            timePicker.show(getSupportFragmentManager(), "TIME_PICKER");
         });
 
         btnBook.setOnClickListener(v -> {
-            if (selectedSubject != null) {
-                bookLesson(selectedSubject, btnSelectDate.getText().toString(), btnSelectTime.getText().toString(), tutorId, studentId);
-            } else {
+            if (selectedSubject == null) {
                 Toast.makeText(this, "Please select a subject", Toast.LENGTH_SHORT).show();
+            } else if (selectedDateMs == -1 || selectedHour == -1) {
+                Toast.makeText(this, "Please select date and time", Toast.LENGTH_SHORT).show();
+            } else if (!isDateTimeValid(selectedDateMs, selectedHour, selectedMinute)) {
+                Toast.makeText(this, "Bookings must be at least 30 minutes from now", Toast.LENGTH_LONG).show();
+            } else {
+                bookLesson(selectedSubject, btnSelectDate.getText().toString(), btnSelectTime.getText().toString(), tutorId, studentId);
             }
         });
 
@@ -147,25 +141,33 @@ public class BookFreeLessonActivity extends AppCompatActivity {
         });
     }
 
-    public void bookLesson(String subject, String date, String time, String tutorId, String studentId) {
-        // 1. Reference the "Bookings" node and get a unique key
+    private boolean isDateTimeValid(long dateMs, int hour, int minute) {
+        Calendar selectedCal = Calendar.getInstance();
+        selectedCal.setTimeInMillis(dateMs);
+        selectedCal.set(Calendar.HOUR_OF_DAY, hour);
+        selectedCal.set(Calendar.MINUTE, minute);
+        selectedCal.set(Calendar.SECOND, 0);
+        selectedCal.set(Calendar.MILLISECOND, 0);
+
+        Calendar minAllowed = Calendar.getInstance();
+        minAllowed.add(Calendar.MINUTE, 30);
+
+        return selectedCal.after(minAllowed);
+    }
+
+    public void bookLesson(String subject, String date, String time, String tId, String sId) {
         DatabaseReference bookingsRef = mDatabase.getReference("Bookings").push();
         String bId = bookingsRef.getKey();
 
-        // 2. Create the booking object
-        Booking booking = new Booking(bId, studentId, tutorId, date, time, subject);
+        Booking booking = new Booking(bId, sId, tId, date, time, subject);
 
-        // 3. Save to Firebase using the ID we just generated
         bookingsRef.setValue(booking)
                 .addOnSuccessListener(aVoid -> {
-                    fetchTutorTokenAndNotify(tutorId, subject);
-
+                    fetchTutorTokenAndNotify(tId, subject);
                     Toast.makeText(this, "Booking successful", Toast.LENGTH_SHORT).show();
                     finish();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Booking failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(this, "Booking failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void fetchTutorTokenAndNotify(String tutorId, String subject) {
@@ -175,17 +177,15 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                         String token = snapshot.getValue(String.class);
                         DatabaseReference notifRef = mDatabase.getReference("Notifications").child(tutorId).push();
 
-                        java.util.HashMap<String, String> notifData = new java.util.HashMap<>();
-                        notifData.put("title", "New Lesson Request!");
-                        notifData.put("message", "A student booked a lesson for: " + subject);
-                        notifData.put("timestamp", String.valueOf(System.currentTimeMillis()));
-                        notifData.put("fcmToken", token);
+                        HashMap<String, String> data = new HashMap<>();
+                        data.put("title", "New Lesson Request!");
+                        data.put("message", "A student booked a lesson for: " + subject);
+                        data.put("timestamp", String.valueOf(System.currentTimeMillis()));
+                        data.put("fcmToken", token);
 
-                        notifRef.setValue(notifData);
+                        notifRef.setValue(data);
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to fetch token: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Log.e("GapFix", "Token fetch failed", e));
     }
 }

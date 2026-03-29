@@ -3,6 +3,7 @@ package com.example.gapfix;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,10 +38,10 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.backFr, new BackFragment())
-                .commit();
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.backFr, new BackFragment())
+//                .commit();
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -153,20 +154,18 @@ public class SignUpActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
                         if (firebaseUser != null) {
 
-                            // --- START FCM TOKEN FETCH ---
                             com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
                                     .addOnCompleteListener(tokenTask -> {
                                         String token = tokenTask.isSuccessful() ? tokenTask.getResult() : "";
 
-                                        // Save user info INCLUDING the token
                                         saveUserInfo(firebaseUser.getUid(), name, email, role, dob, token);
                                     });
-                            // --- END FCM TOKEN FETCH ---
 
                             firebaseUser.sendEmailVerification().addOnCompleteListener(verifyTask -> {
                                 if (verifyTask.isSuccessful()) {
                                     Intent intent;
                                     if ("Student".equals(role)){
+                                        Log.d("SignUp", role);
                                         intent = new Intent(SignUpActivity.this, StudentPreferences.class);
                                     } else {
                                         intent = new Intent(SignUpActivity.this, TutorPreferences.class);

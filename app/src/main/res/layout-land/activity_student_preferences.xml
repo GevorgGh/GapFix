@@ -8,6 +8,18 @@
     android:background="@color/gapfix_bg"
     tools:context=".StudentPreferences">
 
+    <FrameLayout
+        android:id="@+id/backFr"
+        android:layout_width="119dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
+
     <TextView
         android:id="@+id/textView11"
         android:layout_width="0dp"
@@ -23,7 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

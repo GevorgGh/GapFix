@@ -58,8 +58,9 @@ public class TutorFirebaseMessagingService extends FirebaseMessagingService {
     private void sendTokenToDatabase(String token) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            // Store it under the user's specific UID
+            // Add the "Tutor" child here to match your booking logic
             FirebaseDatabase.getInstance().getReference("Users")
+                    .child("Tutor") // Add this line!
                     .child(user.getUid())
                     .child("fcmToken")
                     .setValue(token);

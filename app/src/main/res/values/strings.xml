@@ -57,4 +57,5 @@
     <string name="take_photo_or_pick_gallery">Take Photo or Pick Gallery</string>
     <string name="upload_everything">Upload Everything</string>
     <string name="star">⭐</string>
+    <string name="no_upcoming_classes">No upcoming classes</string>
 </resources>

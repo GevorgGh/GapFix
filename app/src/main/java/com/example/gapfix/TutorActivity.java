@@ -44,13 +44,20 @@ public class TutorActivity extends AppCompatActivity {
         reviews = findViewById(R.id.reviews);
         reviewList = new ArrayList<>();
         adapter = new ReviewAdapter(reviewList);
-        reviews.setAdapter(adapter);
-        reviews.setLayoutManager(new LinearLayoutManager(this));
+        if (reviews != null) {
+            reviews.setLayoutManager(new LinearLayoutManager(this));
+            reviews.setAdapter(adapter);
+            reviews.setLayoutManager(new LinearLayoutManager(this));
+
+        } else {
+            Log.e("Error", "RecyclerView not found in layout!");
+        }
 
         Tutor tutor = (Tutor) getIntent().getSerializableExtra("tutor");
 
         TextView tutorName = findViewById(R.id.tutor_name);
         TextView tutorBio = findViewById(R.id.tutor_bio);
+        TextView tutorPrice = findViewById(R.id.tutorPrice);
         ChipGroup tutorSubjects = findViewById(R.id.tutor_subjects_chips);
         RecyclerView reviews = findViewById(R.id.reviews);
         ImageView profileImage = findViewById(R.id.tutor_image);
@@ -60,6 +67,7 @@ public class TutorActivity extends AppCompatActivity {
         tutorName.setText(tutor.getName());
         tutorBio.setText(tutor.getBio());
         tutorSubjects.removeAllViews();
+        tutorPrice.setText("From $" + tutor.getMinPrice() + " to $" + tutor.getMaxPrice());
         for (String subject : tutor.getSubjects()) {
             Chip chip = new Chip(this);
             chip.setText(subject);

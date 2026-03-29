@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ import java.util.Locale;
 public class StudentCalendarFragment extends Fragment {
 
     private RecyclerView rvDates, rvBookings;
+    private TextView tvNoClasses; // New reference
     private DateAdapter dateAdapter;
     private BookingAdapter bookingAdapter;
     private List<DateModel> dateList;
@@ -40,18 +42,17 @@ public class StudentCalendarFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_student_calendar, container, false);
 
         currentStudentId = FirebaseAuth.getInstance().getUid();
 
         rvDates = view.findViewById(R.id.rv_dates);
         rvBookings = view.findViewById(R.id.rv_bookings);
+        tvNoClasses = view.findViewById(R.id.tv_no_classes); // Initialize here
 
         setupDatePicker();
 
         bookingList = new ArrayList<>();
-        // Use requireContext() instead of 'this'
         bookingAdapter = new BookingAdapter(requireContext(), bookingList);
         rvBookings.setLayoutManager(new LinearLayoutManager(getContext()));
         rvBookings.setAdapter(bookingAdapter);
@@ -79,12 +80,8 @@ public class StudentCalendarFragment extends Fragment {
     }
 
     private void loadBookingsForDate(Date date) {
-        // UPDATED: Matches "Mar 30, 2026"
-        // "MMM" gives 3-letter month, "d" is day, "yyyy" is year
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy", Locale.US);
         String selectedDateStr = sdf.format(date);
-
-        Log.d("GapFix", "Searching Firebase for date: " + selectedDateStr);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Bookings");
         Query query = ref.orderByChild("studentId").equalTo(currentStudentId);
@@ -95,12 +92,20 @@ public class StudentCalendarFragment extends Fragment {
                 bookingList.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Booking booking = data.getValue(Booking.class);
-
-                    // Now these strings will match!
                     if (booking != null && selectedDateStr.equals(booking.getLessonDate())) {
                         bookingList.add(booking);
                     }
                 }
+
+                // Toggle visibility based on list size
+                if (bookingList.isEmpty()) {
+                    tvNoClasses.setVisibility(View.VISIBLE);
+                    rvBookings.setVisibility(View.GONE);
+                } else {
+                    tvNoClasses.setVisibility(View.GONE);
+                    rvBookings.setVisibility(View.VISIBLE);
+                }
+
                 bookingAdapter.notifyDataSetChanged();
             }
 
@@ -111,4 +116,5 @@ public class StudentCalendarFragment extends Fragment {
                 }
             }
         });
-    }}
+    }
+}

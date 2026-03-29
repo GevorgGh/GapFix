@@ -1,9 +1,7 @@
 package com.example.gapfix;
 
-import com.google.firebase.firestore.DocumentId;
 
 public class Review {
-    @DocumentId
     private String reviewId;
     private String comment;
     private int rating;
