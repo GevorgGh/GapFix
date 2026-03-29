@@ -5,15 +5,29 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     tools:context=".AddBioActivity">
+
+    <Button
+        android:id="@+id/addBio"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/gapfix_green"
+        android:text="Add Bio"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/backFr"
         android:layout_width="119dp"
         android:layout_height="54dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -23,27 +37,31 @@
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Add Your Bio"
+        android:layout_marginTop="20dp"
+        android:text="@string/add_your_bio"
         android:textColor="@color/gapfix_green"
         android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backFr" />
 
     <EditText
-        android:id="@+id/addBio"
-        android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:id="@+id/bioField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_input_field"
         android:ems="10"
-        android:inputType="text"
+        android:gravity="start|top"
+        android:hint="@string/write_about_you"
+        android:inputType="textMultiLine"
+        android:minHeight="100dp"
         android:padding="8dp"
-        android:text="Write about you."
         android:textAlignment="textStart"
+        android:textColor="@color/gapfix_text_secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />

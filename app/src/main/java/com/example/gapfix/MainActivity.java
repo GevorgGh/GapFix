@@ -22,7 +22,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.internal.zbd;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -41,9 +40,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 //        if (currentUser != null) {
-//            Intent intent = new Intent(MainActivity.this, HomeStudentActivity.class);
-//            startActivity(intent);
-//            finish();
+//            checkDatabaseForProfile(currentUser.getUid());
 //        }
 //    }
 

@@ -3,6 +3,7 @@ package com.example.gapfix;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -52,7 +53,12 @@ public class RoleSelectionActivity extends AppCompatActivity {
         tutorCard.setOnClickListener(v -> selectRole("Tutor"));
         studentCard.setOnClickListener(v -> selectRole("Student"));
 
-        dobField.setOnClickListener(v -> showDatePicker());
+        dobField.setFocusable(false);
+        dobField.setClickable(true);
+        dobField.setOnClickListener(v -> {
+            Log.d("GapFix_Debug", "DOB Field Clicked"); // Check your Logcat for this!
+            showDatePicker();
+        });
 
         dobField.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
@@ -86,26 +92,26 @@ public class RoleSelectionActivity extends AppCompatActivity {
     }
 
     private void showDatePicker() {
-        final Calendar c = Calendar.getInstance();
-
+        // 1. Get the date 12 years ago
         Calendar maxDateCalendar = Calendar.getInstance();
         maxDateCalendar.add(Calendar.YEAR, -12);
 
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
+        // 2. Use these values as the STARTING point for the picker
+        int year = maxDateCalendar.get(Calendar.YEAR);
+        int month = maxDateCalendar.get(Calendar.MONTH);
+        int day = maxDateCalendar.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.MyDatePickerTheme,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Use a standard format (Matches what we use in the Booking logic later)
                     String date = String.format(Locale.getDefault(), "%02d/%02d/%d", selectedDay, (selectedMonth + 1), selectedYear);
                     dobField.setText(date);
                 }, year, month, day);
 
+        // 3. Set the constraint
         datePickerDialog.getDatePicker().setMaxDate(maxDateCalendar.getTimeInMillis());
-
         datePickerDialog.show();
     }
-
     private void saveUserRoleAndProceed() {
         String dob = dobField.getText().toString().trim();
         FirebaseUser user = mAuth.getCurrentUser();

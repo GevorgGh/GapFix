@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:focusable="true"
+    android:clickable="true"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
     app:strokeWidth="1dp"
@@ -21,7 +23,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.SmallComponent"
+            app:shapeAppearanceOverlay="@style/ProfileImageShape"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,7 +43,7 @@
             android:id="@+id/tutor_bio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,6 +81,33 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tutor_bio" />
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Price:"
+            android:textAlignment="textEnd"
+            android:textColor="@color/gapfix_green"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tutor_subjects_chips" />
+
+        <TextView
+            android:id="@+id/priceRange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="TextView"
+            android:textAlignment="textEnd"
+            android:textColor="@color/gapfix_green"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

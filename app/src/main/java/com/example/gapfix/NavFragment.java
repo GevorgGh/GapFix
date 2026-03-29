@@ -37,7 +37,7 @@ public class NavFragment extends Fragment {
     public void updateMenu(int clickedId) {
         imgShop.setImageResource(R.drawable.shop);
         imgArchive.setImageResource(R.drawable.archive);
-        imgUser.setImageResource(R.drawable.user_act);
+        imgUser.setImageResource(R.drawable.chat_unfilled);
         imgCal.setImageResource(R.drawable.cal);
         imgPerson.setImageResource(R.drawable.person);
 
@@ -49,9 +49,12 @@ public class NavFragment extends Fragment {
         } else if (clickedId == R.id.imageView6) {
             imgArchive.setImageResource(R.drawable.archive_clicked);
         } else if (clickedId == R.id.imageView4) {
-            imgUser.setImageResource(R.drawable.user_act_clicked);
+            imgUser.setImageResource(R.drawable.chat_filled);
         } else if (clickedId == R.id.imageView5) {
             imgCal.setImageResource(R.drawable.cal_clicked);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new StudentCalendarFragment())
+                    .commit();
         } else if (clickedId == R.id.imageView7) {
             imgPerson.setImageResource(R.drawable.person_clicked);
         }

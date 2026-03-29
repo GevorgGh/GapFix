@@ -5,9 +5,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.appcompat.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,12 +29,29 @@ public class TutorShopFragment extends Fragment {
     private ArrayList<Tutor> filteredTutors;
     private TutorAdapter adapter;
 
+    private ArrayList<Tutor> allMatchedTutors = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tutor_shop, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewTutors);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        SearchView searchView = view.findViewById(R.id.searchView);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterByName(newText);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterByName(query);
+                return true;
+            }
+        });
 
 
 
@@ -81,41 +101,60 @@ public class TutorShopFragment extends Fragment {
         mDatabase.child("Users").child("Tutor").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                filteredTutors.clear();
                 ArrayList<Tutor> matches = new ArrayList<>();
 
                 for (DataSnapshot tutorSnapshot : snapshot.getChildren()) {
-                    String tutorName = String.valueOf(tutorSnapshot.child("name").getValue());
+                    try {
+                        String tutorName = tutorSnapshot.child("name").getValue() != null ?
+                                tutorSnapshot.child("name").getValue().toString() : "Unknown";
 
-                    ArrayList<String> tutorSubjects = new ArrayList<>();
-                    DataSnapshot prefsSnapshot = tutorSnapshot.child("preferences");
-                    if (prefsSnapshot.exists()) {
-                        for (DataSnapshot sub : prefsSnapshot.getChildren()) {
-                            tutorSubjects.add(String.valueOf(sub.getValue()));
+                        String tutorBio = tutorSnapshot.child("bio").getValue() != null ?
+                                tutorSnapshot.child("bio").getValue().toString() : "";
+
+                        String tutorImage = tutorSnapshot.child("profilePicture").getValue() != null ?
+                                tutorSnapshot.child("profilePicture").getValue().toString() : null;
+
+                        int minPrice = 0;
+                        int maxPrice = 0;
+
+                        Object minObj = tutorSnapshot.child("minPrice").getValue();
+                        Object maxObj = tutorSnapshot.child("maxPrice").getValue();
+
+                        if (minObj != null) {
+                            minPrice = (int) Double.parseDouble(minObj.toString());
                         }
-                    }
+                        if (maxObj != null) {
+                            maxPrice = (int) Double.parseDouble(maxObj.toString());
+                        }
 
-                    // 3. Perform the match against the student's preferences
-                    if (hasMatch(tutorSubjects, preferences)) {
-                        Tutor tutor = new Tutor();
+                        ArrayList<String> tutorSubjects = new ArrayList<>();
+                        DataSnapshot prefsSnapshot = tutorSnapshot.child("preferences");
+                        if (prefsSnapshot.exists()) {
+                            for (DataSnapshot sub : prefsSnapshot.getChildren()) {
+                                if (sub.getValue() != null) {
+                                    tutorSubjects.add(sub.getValue().toString());
+                                }
+                            }
+                        }
 
-                        tutor.setName(tutorName);
-                        tutor.setSubjects(tutorSubjects);
-
-                        android.util.Log.d("TUTOR_DEBUG", "tutorName variable = " + tutorName);
-                        tutor.setName(tutorName);
-                        android.util.Log.d("TUTOR_DEBUG", "tutor.getName() after set = " + tutor.getName());
-                        matches.add(tutor);
-
-
+                        if (hasMatch(tutorSubjects, preferences)) {
+                            Tutor tutor = new Tutor(tutorName, tutorBio, tutorImage, tutorSubjects, minPrice, maxPrice, tutorSnapshot.getKey());
+                            matches.add(tutor);
+                        }
+                    } catch (Exception e) {
+                        Log.e("TUTOR_DEBUG", "Error parsing tutor: " + e.getMessage());
                     }
                 }
+
+                allMatchedTutors.clear();
+                allMatchedTutors.addAll(matches);
+                filteredTutors.clear();
                 filteredTutors.addAll(matches);
                 adapter.notifyDataSetChanged();
 
                 if (matches.isEmpty()) {
-                    Toast.makeText(getContext(), "Matches: 0", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "Success: Found " + matches.size(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "No matches found.", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -130,5 +169,20 @@ public class TutorShopFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    private void filterByName(String query) {
+        filteredTutors.clear();
+        if (query == null || query.trim().isEmpty()) {
+            filteredTutors.addAll(allMatchedTutors);
+        } else {
+            String lower = query.toLowerCase().trim();
+            for (Tutor t : allMatchedTutors) {
+                if (t.getName().toLowerCase().contains(lower)) {
+                    filteredTutors.add(t);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 }

@@ -13,5 +13,21 @@
         <item name="android:windowBackground">@color/gapfix_bg</item>
     </style>
 
+    <style name="SliderLabelStyle" parent="Widget.MaterialComponents.Tooltip">
+        <item name="backgroundTint">@color/gapfix_green</item>
+        <item name="android:textAppearance">@style/LabelTextAppearance</item>
+    </style>
+
+    <style name="LabelTextAppearance" parent="TextAppearance.MaterialComponents.Tooltip">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ProfileImageShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="Theme.GapFix" parent="Base.Theme.GapFix" />
 </resources>

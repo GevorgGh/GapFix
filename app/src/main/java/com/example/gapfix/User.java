@@ -5,6 +5,8 @@ public class User {
     public String email;
     public String role;
     public String dob;
+    public String fcmToken;
+
 
     public User() {
     }
@@ -39,4 +41,7 @@ public class User {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public void setFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
+    public String getFcmToken() { return fcmToken; }
 }

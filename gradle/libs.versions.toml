@@ -22,6 +22,8 @@ firebaseDatabase = "22.0.1"
 legacySupportV4 = "1.0.0"
 recyclerview = "1.4.0"
 firebaseStorage = "22.0.1"
+foundation = "1.10.6"
+firebaseFirestore = "26.1.2"
 
 [libraries]
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
@@ -48,6 +50,8 @@ firebase-database = { group = "com.google.firebase", name = "firebase-database",
 legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
+foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

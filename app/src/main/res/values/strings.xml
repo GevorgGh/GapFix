@@ -42,4 +42,19 @@
     <string name="filter">Filter</string>
     <string name="selected_subjects">Selected Subjects:</string>
     <string name="select_subjects_you_want_to_learn">Select subjects you want to learn</string>
+    <string name="write_about_you">Write about you. (min 30 characters)</string>
+    <string name="add_your_bio">Add Your Bio</string>
+    <string name="online">Online</string>
+    <string name="in_person_offline">In-person (Offline)</string>
+    <string name="both">Both</string>
+    <string name="price_20_80">Price: $20 - $80</string>
+    <string name="verify_your_profile">Verify Your Profile</string>
+    <string name="_1_add_certificate_pdf_image">1. Add Certificate (PDF/Image)</string>
+    <string name="no_file_selected">No file selected</string>
+    <string name="choose_file">Choose File</string>
+    <string name="_2_add_profile_picture">2. Add Profile Picture</string>
+    <string name="no_image_selected">No image selected</string>
+    <string name="take_photo_or_pick_gallery">Take Photo or Pick Gallery</string>
+    <string name="upload_everything">Upload Everything</string>
+    <string name="star">⭐</string>
 </resources>

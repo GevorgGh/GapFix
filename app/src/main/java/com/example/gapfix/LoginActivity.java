@@ -69,33 +69,47 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
     }
-    
+
 
     private void checkDatabaseForProfile(String uid) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
-        db.child("Users").child("Student").child(uid).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (task.getResult().exists()) {
-                    startActivity(new Intent(LoginActivity.this, HomeStudentActivity.class));
-                    finish();
-                } else {
-                    db.child("Users").child("Tutor").child(uid).get().addOnCompleteListener(tutorTask -> {
-                        if (tutorTask.isSuccessful() && tutorTask.getResult().exists()) {
-                            startActivity(new Intent(LoginActivity.this, HomeTutorActivity.class));
+        // 1. Fetch the fresh token from the device
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(tokenTask -> {
+                    String freshToken = tokenTask.isSuccessful() ? tokenTask.getResult() : null;
+
+                    // 2. Proceed with checking the role
+                    db.child("Users").child("Student").child(uid).get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult().exists()) {
+
+                            // Update token for Student
+                            if (freshToken != null) {
+                                db.child("Users").child("Student").child(uid).child("fcmToken").setValue(freshToken);
+                            }
+
+                            startActivity(new Intent(LoginActivity.this, HomeStudentActivity.class));
                             finish();
                         } else {
-                            startActivity(new Intent(LoginActivity.this, RoleSelectionActivity.class));
-                            finish();
+                            db.child("Users").child("Tutor").child(uid).get().addOnCompleteListener(tutorTask -> {
+                                if (tutorTask.isSuccessful() && tutorTask.getResult().exists()) {
+
+                                    // Update token for Tutor
+                                    if (freshToken != null) {
+                                        db.child("Users").child("Tutor").child(uid).child("fcmToken").setValue(freshToken);
+                                    }
+
+                                    startActivity(new Intent(LoginActivity.this, HomeTutorActivity.class));
+                                    finish();
+                                } else {
+                                    startActivity(new Intent(LoginActivity.this, RoleSelectionActivity.class));
+                                    finish();
+                                }
+                            });
                         }
                     });
-                }
-            } else {
-                Log.e("FirebaseError", "Error: " + task.getException().getMessage());
-            }
-        });
+                });
     }
-
 
     private void loginUser(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {

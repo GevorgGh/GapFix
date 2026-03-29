@@ -19,6 +19,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GapFix">
+
+        <service
+            android:name=".TutorFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".BookFreeLessonActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TutorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddPriceTutorActivity"
+            android:exported="false" />
         <activity
             android:name=".AddBioActivity"
             android:exported="false" />
@@ -53,9 +71,11 @@
             android:exported="false" />
         <activity
             android:name=".SignUpActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

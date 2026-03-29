@@ -49,7 +49,7 @@ public class AddCertificatesActivity extends AppCompatActivity {
         tvProfileName = findViewById(R.id.tvProfileName);
         profileImageView = findViewById(R.id.profileImageView);
         uploadProgressBar = findViewById(R.id.uploadProgressBar);
-        btnUpload = findViewById(R.id.btnUpload);
+        btnUpload = findViewById(R.id.btnBookLesson);
         Button btnSelectCert = findViewById(R.id.btnSelectFile);
         Button btnSelectProfile = findViewById(R.id.btnSelectProfile);
 
@@ -163,7 +163,7 @@ public class AddCertificatesActivity extends AppCompatActivity {
                             uploadProgressBar.setVisibility(View.GONE);
                             Toast.makeText(this, "All files uploaded successfully!", Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(AddCertificatesActivity.this, HomeStudentActivity.class);
+                            Intent intent = new Intent(AddCertificatesActivity.this, AddBioActivity.class);
                             startActivity(intent);
                             finish();
                         }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="initial_price_values">
+        <item>20.</item>  <item>80.0</item>  </array>
+</resources>

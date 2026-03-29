@@ -12,7 +12,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Verify Your Profile"
+        android:text="@string/verify_your_profile"
         android:textAlignment="center"
         android:textColor="@color/gapfix_green"
         android:textSize="24sp"
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="1. Add Certificate (PDF/Image)"
+        android:text="@string/_1_add_certificate_pdf_image"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
@@ -48,14 +48,14 @@
                 android:id="@+id/tvFileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No file selected" />
+                android:text="@string/no_file_selected" />
 
             <Button
                 android:id="@+id/btnSelectFile"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose File" />
+                android:text="@string/choose_file" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -64,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="2. Add Profile Picture"
+        android:text="@string/_2_add_profile_picture"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardCert" />
@@ -96,14 +96,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="No image selected" />
+                android:text="@string/no_image_selected" />
 
             <Button
                 android:id="@+id/btnSelectProfile"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Take Photo or Pick Gallery" />
+                android:text="@string/take_photo_or_pick_gallery" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -113,14 +113,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/btnUpload" />
+        app:layout_constraintBottom_toTopOf="@id/btnBookLesson" />
 
     <Button
-        android:id="@+id/btnUpload"
+        android:id="@+id/btnBookLesson"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:backgroundTint="@color/gapfix_green"
-        android:text="Upload Everything"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:text="@string/upload_everything"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

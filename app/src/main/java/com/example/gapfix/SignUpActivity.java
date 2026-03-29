@@ -152,16 +152,23 @@ public class SignUpActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
                         if (firebaseUser != null) {
-                            saveUserInfo(firebaseUser.getUid(), name, email, role, dob);
+
+                            // --- START FCM TOKEN FETCH ---
+                            com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                                    .addOnCompleteListener(tokenTask -> {
+                                        String token = tokenTask.isSuccessful() ? tokenTask.getResult() : "";
+
+                                        // Save user info INCLUDING the token
+                                        saveUserInfo(firebaseUser.getUid(), name, email, role, dob, token);
+                                    });
+                            // --- END FCM TOKEN FETCH ---
+
                             firebaseUser.sendEmailVerification().addOnCompleteListener(verifyTask -> {
                                 if (verifyTask.isSuccessful()) {
                                     Intent intent;
-                                    Toast.makeText(this, "Registration successful! Check email. " + role, Toast.LENGTH_LONG).show();
-                                    if (role.equals("Student")){
-                                        Toast.makeText(this, role, Toast.LENGTH_LONG).show();
+                                    if ("Student".equals(role)){
                                         intent = new Intent(SignUpActivity.this, StudentPreferences.class);
-                                    } else{
-                                        Toast.makeText(this, role, Toast.LENGTH_LONG).show();
+                                    } else {
                                         intent = new Intent(SignUpActivity.this, TutorPreferences.class);
                                     }
                                     startActivity(intent);
@@ -174,10 +181,10 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    private void saveUserInfo(String userId, String name, String email, String role, String dob) {
+    private void saveUserInfo(String userId, String name, String email, String role, String dob, String fcmToken) {
         User userProfile = new User(name, email, role);
         userProfile.setDob(dob);
+        userProfile.setFcmToken(fcmToken);
 
         mDatabase.child("Users").child(role).child(userId).setValue(userProfile);
 
