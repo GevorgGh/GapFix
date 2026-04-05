@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +24,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +31,8 @@ import java.util.List;
 public class TutorActivity extends AppCompatActivity {
 
     private ReviewAdapter adapter;
-    private RecyclerView reviews;
+    private RecyclerView reviewsRv;
     private List<Review> reviewList;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,81 +40,68 @@ public class TutorActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tutor);
 
-        reviews = findViewById(R.id.reviews);
-        reviewList = new ArrayList<>();
-        adapter = new ReviewAdapter(reviewList);
-        if (reviews != null) {
-            reviews.setLayoutManager(new LinearLayoutManager(this));
-            reviews.setAdapter(adapter);
-            reviews.setLayoutManager(new LinearLayoutManager(this));
-
-        } else {
-            Log.e("Error", "RecyclerView not found in layout!");
-        }
-
+        // 1. Get the Tutor object from Intent
         Tutor tutor = (Tutor) getIntent().getSerializableExtra("tutor");
 
+        // 2. Initialize Views
         TextView tutorName = findViewById(R.id.tutor_name);
         TextView tutorBio = findViewById(R.id.tutor_bio);
-        TextView tutorPrice = findViewById(R.id.tutorPrice);
-        ChipGroup tutorSubjects = findViewById(R.id.tutor_subjects_chips);
-        RecyclerView reviews = findViewById(R.id.reviews);
+        TextView tutorPriceLabel = findViewById(R.id.tutorPrice); // We'll use this as a header or hide it
+        ChipGroup tutorSubjectsChips = findViewById(R.id.tutor_subjects_chips);
+        reviewsRv = findViewById(R.id.reviews);
         ImageView profileImage = findViewById(R.id.tutor_image);
         Button btnBookLesson = findViewById(R.id.btnBookLesson);
 
-
-        tutorName.setText(tutor.getName());
-        tutorBio.setText(tutor.getBio());
-        tutorSubjects.removeAllViews();
-        tutorPrice.setText("From $" + tutor.getMinPrice() + " to $" + tutor.getMaxPrice());
-        for (String subject : tutor.getSubjects()) {
-            Chip chip = new Chip(this);
-            chip.setText(subject);
-            chip.setClickable(false);
-            chip.setFocusable(false);
-            chip.setCheckable(false);
-            tutorSubjects.addView(chip);
+        // 3. Setup RecyclerView for Reviews
+        reviewList = new ArrayList<>();
+        adapter = new ReviewAdapter(reviewList);
+        if (reviewsRv != null) {
+            reviewsRv.setLayoutManager(new LinearLayoutManager(this));
+            reviewsRv.setAdapter(adapter);
         }
 
-        if (tutor.getImageResourceLink() != null) {
+        if (tutor != null) {
+            // 4. Set Basic Info
+            tutorName.setText(tutor.getName());
+            tutorBio.setText(tutor.getBio());
+
+            // 5. Update Price Display (Showing all rates in chips now)
+            tutorPriceLabel.setText("Available Subjects & Rates:");
+
+            tutorSubjectsChips.removeAllViews();
+            if (tutor.getPreferences() != null) {
+                for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
+                    Chip chip = new Chip(this);
+                    // Format: "Math - USD 50"
+                    String info = String.format("%s - %s %d", pref.name, pref.currency, pref.price);
+                    chip.setText(info);
+
+                    // Styling to match your green theme
+                    chip.setChipStrokeColorResource(R.color.gapfix_green);
+                    chip.setChipStrokeWidth(2f);
+                    chip.setChipBackgroundColorResource(android.R.color.white);
+
+                    chip.setClickable(false);
+                    tutorSubjectsChips.addView(chip);
+                }
+            }
+
+            // 6. Load Profile Image
             Glide.with(this)
-                    .load(tutor.getImageResourceLink())
+                    .load(tutor.getImageResourceLink() != null ? tutor.getImageResourceLink() : R.drawable.person_circle)
+                    .placeholder(R.drawable.person_circle)
+                    .circleCrop()
                     .into(profileImage);
-        } else {
-            profileImage.setImageResource(R.drawable.person_circle);
+
+            // 7. Fetch Reviews for this Tutor
+            fetchReviews(tutor.getName()); // Use Tutor ID if available, using Name as fallback based on your code
         }
-
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Reviews");
-
-        mDatabase.orderByChild("tutorId").equalTo(tutor.getId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        reviewList.clear();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Review review = snapshot.getValue(Review.class);
-
-                            assert review != null;
-                            fetchStudentName(review);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("RTDB_Error", databaseError.getMessage());
-                    }
-                });
-
 
         btnBookLesson.setOnClickListener(v -> {
             Intent intent = new Intent(TutorActivity.this, BookFreeLessonActivity.class);
             intent.putExtra("tutor", tutor);
             startActivity(intent);
         });
-
-
-
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -124,14 +110,40 @@ public class TutorActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchStudentName(Review review) {
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+    private void fetchReviews(String tutorName) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Reviews");
 
-        usersRef.child(review.getStudentId()).get().addOnSuccessListener(dataSnapshot -> {
+        // Logic note: It's better to use tutorId here if your Tutor class has an 'id' field
+        mDatabase.orderByChild("tutorName").equalTo(tutorName)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        reviewList.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Review review = snapshot.getValue(Review.class);
+                            if (review != null) {
+                                fetchStudentName(review);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.e("RTDB_Error", databaseError.getMessage());
+                    }
+                });
+    }
+
+    private void fetchStudentName(Review review) {
+        // Based on your Firebase structure: Users -> Student -> studentId
+        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child("Student")
+                .child(review.getStudentId());
+
+        studentRef.get().addOnSuccessListener(dataSnapshot -> {
             if (dataSnapshot.exists()) {
                 String name = dataSnapshot.child("name").getValue(String.class);
                 review.setStudentName(name);
-
             } else {
                 review.setStudentName("Unknown Student");
             }

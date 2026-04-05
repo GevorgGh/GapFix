@@ -5,29 +5,60 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gapfix_bg"
     android:padding="16dp"
     tools:context=".AddCertificatesActivity">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/labelBio"
+        tools:layout_editor_absoluteX="16dp">
+
+        <EditText
+            android:id="@+id/bioField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gapfix_bg"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/write_about_you"
+            android:inputType="textMultiLine"
+            android:minHeight="100dp"
+            android:padding="8dp"
+            android:textAlignment="textStart"
+            android:textColor="@color/gapfix_text_secondary"
+            tools:layout_editor_absoluteX="16dp" />
+    </com.google.android.material.card.MaterialCardView>
+
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/verify_your_profile"
         android:textAlignment="center"
         android:textColor="@color/gapfix_green"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/labelCert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="@string/_1_add_certificate_pdf_image"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardCert"
@@ -40,6 +71,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/gapfix_bg"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="16dp">
@@ -55,8 +87,8 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gapfix_green"
-                android:text="@string/choose_file" />
+                android:text="@string/choose_file"
+                android:textColor="@color/gapfix_green" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -68,7 +100,17 @@
         android:text="@string/_2_add_profile_picture"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardCert" />
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <TextView
+        android:id="@+id/labelBio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="2. Add Bio"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardProfile" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardProfile"
@@ -81,6 +123,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/gapfix_bg"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="16dp">
@@ -104,8 +147,8 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gapfix_green"
-                android:text="@string/take_photo_or_pick_gallery" />
+                android:text="@string/take_photo_or_pick_gallery"
+                android:textColor="@color/gapfix_green" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -122,7 +165,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:backgroundTint="@color/gapfix_green"
-        android:text="@string/upload_everything"
+        android:text="Verify Profile"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="16dp" />
 

@@ -9,134 +9,126 @@
     tools:context=".TutorActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+        android:id="@+id/leftSection"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6">
-
-        <TextView
-            android:id="@+id/tutorPrice"
-            android:layout_width="220dp"
-            android:layout_height="26dp"
-            android:layout_marginTop="4dp"
-            android:text="8"
-            android:textColor="@color/gapfix_green"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.302"
-            app:layout_constraintStart_toEndOf="@+id/tutor_image"
-            app:layout_constraintTop_toBottomOf="@+id/tutor_name" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintWidth_percent="0.58">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/tutor_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ProfileImageShape" />
+            app:shapeAppearanceOverlay="@style/ProfileImageShape"
+            tools:src="@drawable/person_circle" />
 
         <TextView
             android:id="@+id/tutor_name"
-            android:layout_width="220dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="24dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.302"
             app:layout_constraintStart_toEndOf="@+id/tutor_image"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/tutor_image"
+            tools:text="Gevorg" />
+
+        <TextView
+            android:id="@+id/tutorPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/gapfix_green"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tutor_name"
+            app:layout_constraintTop_toBottomOf="@+id/tutor_name"
+            tools:text="Available Subjects &amp; Rates" />
 
         <TextView
             android:id="@+id/textView19"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:text="Bio:"
-            android:textSize="24sp"
-            app:layout_constraintTop_toBottomOf="@+id/tutor_image"
-            tools:layout_editor_absoluteX="0dp" />
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@+id/tutor_image" />
 
         <TextView
             android:id="@+id/tutor_bio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+            app:layout_constraintTop_toBottomOf="@+id/textView19"
+            tools:text="Tutor biography goes here..." />
 
         <TextView
             android:id="@+id/textView16"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:text="Subjects:"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textStyle="bold"
+            android:textSize="20sp"
             app:layout_constraintTop_toBottomOf="@+id/tutor_bio" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/tutor_subjects_chips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
         <Button
             android:id="@+id/btnBookLesson"
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/gapfix_green"
             android:text="Book a free lesson"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rightSection"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/constraintLayout2"
+        app:layout_constraintStart_toEndOf="@+id/leftSection"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.38">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/textView30"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="16dp"
             android:text="Reviews:"
-            android:textSize="28sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textStyle="bold"
+            android:textSize="24sp"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reviews"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView30"
-            tools:layout_editor_absoluteX="0dp" />
+            app:layout_constraintTop_toBottomOf="@+id/textView30" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

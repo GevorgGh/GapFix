@@ -19,6 +19,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GapFix">
+        <activity
+            android:name=".TutorDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TutorSubjectActivity"
+            android:exported="false" />
 
         <service
             android:name=".TutorFirebaseMessagingService"

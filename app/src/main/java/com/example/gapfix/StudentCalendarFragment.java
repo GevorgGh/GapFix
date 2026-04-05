@@ -32,7 +32,7 @@ import java.util.Locale;
 public class StudentCalendarFragment extends Fragment {
 
     private RecyclerView rvDates, rvBookings;
-    private TextView tvNoClasses; // New reference
+    private TextView tvNoClasses;
     private DateAdapter dateAdapter;
     private BookingAdapter bookingAdapter;
     private List<DateModel> dateList;
@@ -97,7 +97,6 @@ public class StudentCalendarFragment extends Fragment {
                     }
                 }
 
-                // Toggle visibility based on list size
                 if (bookingList.isEmpty()) {
                     tvNoClasses.setVisibility(View.VISIBLE);
                     rvBookings.setVisibility(View.GONE);

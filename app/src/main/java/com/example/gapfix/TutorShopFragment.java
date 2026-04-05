@@ -26,10 +26,9 @@ public class TutorShopFragment extends Fragment {
 
     private DatabaseReference mDatabase;
     private String currentUserId;
-    private ArrayList<Tutor> filteredTutors;
-    private TutorAdapter adapter;
-
+    private ArrayList<Tutor> filteredTutors = new ArrayList<>();
     private ArrayList<Tutor> allMatchedTutors = new ArrayList<>();
+    private TutorAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,7 +38,6 @@ public class TutorShopFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         SearchView searchView = view.findViewById(R.id.searchView);
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -53,122 +51,86 @@ public class TutorShopFragment extends Fragment {
             }
         });
 
-
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        adapter = new TutorAdapter(filteredTutors);
+        recyclerView.setAdapter(adapter);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             loadStudentPreferences();
-        } else {
-            Toast.makeText(getContext(), "User not logged in!", Toast.LENGTH_LONG).show();
         }
-
-        filteredTutors = new ArrayList<>();
-        adapter = new TutorAdapter(filteredTutors);
-        recyclerView.setAdapter(adapter);
 
         return view;
     }
 
     private void loadStudentPreferences() {
+        // Fetching what the Student wants to learn (e.g., "Accounting", "Math")
         mDatabase.child("Users").child("Student").child(currentUserId).child("preferences")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<String> studentPrefs = new ArrayList<>();
+                        ArrayList<String> studentSelectedSubjects = new ArrayList<>();
                         if (snapshot.exists()) {
                             for (DataSnapshot prefSnapshot : snapshot.getChildren()) {
-                                String pref = String.valueOf(prefSnapshot.getValue());
-                                if (pref != null && !pref.equals("null")) {
-                                    studentPrefs.add(pref.trim());
+                                String pref = prefSnapshot.getValue(String.class);
+                                if (pref != null) {
+                                    studentSelectedSubjects.add(pref.trim().toLowerCase());
                                 }
                             }
-                            fetchMatchingTutors(studentPrefs);
-                        } else {
-                            Toast.makeText(getContext(), "Setup preferences first!", Toast.LENGTH_SHORT).show();
+                            fetchMatchingTutors(studentSelectedSubjects);
                         }
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                    public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
 
-    private void fetchMatchingTutors(ArrayList<String> preferences) {
+    private void fetchMatchingTutors(ArrayList<String> studentSubjects) {
         mDatabase.child("Users").child("Tutor").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                filteredTutors.clear();
-                ArrayList<Tutor> matches = new ArrayList<>();
+                allMatchedTutors.clear();
 
                 for (DataSnapshot tutorSnapshot : snapshot.getChildren()) {
-                    try {
-                        String tutorName = tutorSnapshot.child("name").getValue() != null ?
-                                tutorSnapshot.child("name").getValue().toString() : "Unknown";
+                    Tutor tutor = new Tutor();
+                    tutor.setId(tutorSnapshot.getKey());
+                    tutor.setName(tutorSnapshot.child("name").getValue(String.class));
+                    tutor.setBio(tutorSnapshot.child("Bio").getValue(String.class));
+                    tutor.setImageResourceLink(tutorSnapshot.child("imageResourceLink").getValue(String.class));
 
-                        String tutorBio = tutorSnapshot.child("bio").getValue() != null ?
-                                tutorSnapshot.child("bio").getValue().toString() : "";
+                    ArrayList<Tutor.SubjectPreference> tutorPrefs = new ArrayList<>();
+                    DataSnapshot prefsSnapshot = tutorSnapshot.child("preferences");
 
-                        String tutorImage = tutorSnapshot.child("profilePicture").getValue() != null ?
-                                tutorSnapshot.child("profilePicture").getValue().toString() : null;
+                    boolean isMatch = false;
+                    if (prefsSnapshot.exists()) {
+                        for (DataSnapshot subSnapshot : prefsSnapshot.getChildren()) {
+                            Tutor.SubjectPreference pref = subSnapshot.getValue(Tutor.SubjectPreference.class);
+                            if (pref != null) {
+                                tutorPrefs.add(pref);
 
-                        int minPrice = 0;
-                        int maxPrice = 0;
-
-                        Object minObj = tutorSnapshot.child("minPrice").getValue();
-                        Object maxObj = tutorSnapshot.child("maxPrice").getValue();
-
-                        if (minObj != null) {
-                            minPrice = (int) Double.parseDouble(minObj.toString());
-                        }
-                        if (maxObj != null) {
-                            maxPrice = (int) Double.parseDouble(maxObj.toString());
-                        }
-
-                        ArrayList<String> tutorSubjects = new ArrayList<>();
-                        DataSnapshot prefsSnapshot = tutorSnapshot.child("preferences");
-                        if (prefsSnapshot.exists()) {
-                            for (DataSnapshot sub : prefsSnapshot.getChildren()) {
-                                if (sub.getValue() != null) {
-                                    tutorSubjects.add(sub.getValue().toString());
+                                // Check if this specific tutor subject matches student interest
+                                if (studentSubjects.contains(pref.name.trim().toLowerCase())) {
+                                    isMatch = true;
                                 }
                             }
                         }
+                    }
+                    tutor.setPreferences(tutorPrefs);
 
-                        if (hasMatch(tutorSubjects, preferences)) {
-                            Tutor tutor = new Tutor(tutorName, tutorBio, tutorImage, tutorSubjects, minPrice, maxPrice, tutorSnapshot.getKey());
-                            matches.add(tutor);
-                        }
-                    } catch (Exception e) {
-                        Log.e("TUTOR_DEBUG", "Error parsing tutor: " + e.getMessage());
+                    // Only add to list if they teach something the student likes
+                    if (isMatch) {
+                        allMatchedTutors.add(tutor);
                     }
                 }
 
-                allMatchedTutors.clear();
-                allMatchedTutors.addAll(matches);
-                filteredTutors.clear();
-                filteredTutors.addAll(matches);
-                adapter.notifyDataSetChanged();
-
-                if (matches.isEmpty()) {
-                    Toast.makeText(getContext(), "No matches found.", Toast.LENGTH_SHORT).show();
-                }
+                // Initial display
+                filterByName("");
             }
 
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
-    }
-    private boolean hasMatch(ArrayList<String> tutorSubjects, ArrayList<String> studentPrefs) {
-        if (tutorSubjects == null || studentPrefs == null) return false;
-        for (String sPref : studentPrefs) {
-            for (String tSub : tutorSubjects) {
-                if (sPref.equalsIgnoreCase(tSub)) return true;
-            }
-        }
-        return false;
     }
 
     private void filterByName(String query) {
@@ -178,7 +140,7 @@ public class TutorShopFragment extends Fragment {
         } else {
             String lower = query.toLowerCase().trim();
             for (Tutor t : allMatchedTutors) {
-                if (t.getName().toLowerCase().contains(lower)) {
+                if (t.getName() != null && t.getName().toLowerCase().contains(lower)) {
                     filteredTutors.add(t);
                 }
             }

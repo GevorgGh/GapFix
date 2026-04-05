@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ public class AddCertificatesActivity extends AppCompatActivity {
     private TextView tvFileName, tvProfileName;
     private ImageView profileImageView;
     private ProgressBar uploadProgressBar;
+    private EditText bioField;
     private Button btnUpload;
     private int uploadCount = 0;
     private static final String UPLOAD_PRESET = "ml_default";
@@ -50,6 +52,8 @@ public class AddCertificatesActivity extends AppCompatActivity {
         profileImageView = findViewById(R.id.profileImageView);
         uploadProgressBar = findViewById(R.id.uploadProgressBar);
         btnUpload = findViewById(R.id.btnBookLesson);
+        bioField = findViewById(R.id.bioField);
+
         Button btnSelectCert = findViewById(R.id.btnSelectFile);
         Button btnSelectProfile = findViewById(R.id.btnSelectProfile);
 
@@ -161,16 +165,32 @@ public class AddCertificatesActivity extends AppCompatActivity {
 
                         if (uploadCount == 2) {
                             uploadProgressBar.setVisibility(View.GONE);
-                            Toast.makeText(this, "All files uploaded successfully!", Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(AddCertificatesActivity.this, AddBioActivity.class);
-                            startActivity(intent);
-                            finish();
+                            saveBioToFirebase();
                         }
                     } else {
                         btnUpload.setEnabled(true);
                         uploadProgressBar.setVisibility(View.GONE);
                         Toast.makeText(this, "Firebase Error: " + key, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+
+    private void saveBioToFirebase() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child("Tutor")
+                .child(user.getUid())
+                .child("Bio")
+                .setValue(bioField.getText().toString())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        startActivity(new Intent(AddCertificatesActivity.this, HomeTutorActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Firebase Error", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

@@ -157,7 +157,6 @@ public class SignUpActivity extends AppCompatActivity {
                             com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
                                     .addOnCompleteListener(tokenTask -> {
                                         String token = tokenTask.isSuccessful() ? tokenTask.getResult() : "";
-
                                         saveUserInfo(firebaseUser.getUid(), name, email, role, dob, token);
                                     });
 
@@ -168,7 +167,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         Log.d("SignUp", role);
                                         intent = new Intent(SignUpActivity.this, StudentPreferences.class);
                                     } else {
-                                        intent = new Intent(SignUpActivity.this, TutorPreferences.class);
+                                        intent = new Intent(SignUpActivity.this, TutorSubjectActivity.class);
                                     }
                                     startActivity(intent);
                                     finish();

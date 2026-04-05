@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -92,18 +91,15 @@ public class RoleSelectionActivity extends AppCompatActivity {
     }
 
     private void showDatePicker() {
-        // 1. Get the date 12 years ago
         Calendar maxDateCalendar = Calendar.getInstance();
         maxDateCalendar.add(Calendar.YEAR, -12);
 
-        // 2. Use these values as the STARTING point for the picker
         int year = maxDateCalendar.get(Calendar.YEAR);
         int month = maxDateCalendar.get(Calendar.MONTH);
         int day = maxDateCalendar.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.MyDatePickerTheme,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Use a standard format (Matches what we use in the Booking logic later)
                     String date = String.format(Locale.getDefault(), "%02d/%02d/%d", selectedDay, (selectedMonth + 1), selectedYear);
                     dobField.setText(date);
                 }, year, month, day);
@@ -140,7 +136,7 @@ public class RoleSelectionActivity extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Class<?> targetClass = selectedRole.equals("Student") ?
-                                    StudentPreferences.class : TutorPreferences.class;
+                                    StudentPreferences.class : TutorSubjectActivity.class;
                             Toast.makeText(RoleSelectionActivity.this, targetClass.getSimpleName() + ' ' + selectedRole, Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(RoleSelectionActivity.this, targetClass));
                             finish();
