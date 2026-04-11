@@ -49,6 +49,9 @@ public class NavFragment extends Fragment {
             imgArchive.setImageResource(R.drawable.archive_clicked);
         } else if (clickedId == R.id.chat) {
             imgUser.setImageResource(R.drawable.chat_filled);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new ChatListFragment())
+                    .commit();
         } else if (clickedId == R.id.subjects) {
             imgCal.setImageResource(R.drawable.cal_clicked);
             getParentFragmentManager().beginTransaction()
@@ -56,6 +59,9 @@ public class NavFragment extends Fragment {
                     .commit();
         } else if (clickedId == R.id.profile) {
             imgPerson.setImageResource(R.drawable.person_clicked);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new StudentSettingsFragment())
+                    .commit();
         }
     }
 }

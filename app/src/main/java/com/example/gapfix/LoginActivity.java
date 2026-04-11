@@ -1,7 +1,7 @@
 package com.example.gapfix;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,25 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -60,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         passField.setOnFocusChangeListener(focusListener);
 
         login.setOnClickListener(view -> loginUser(emailField.getText().toString(), passField.getText().toString()));
-
         forgot.setOnClickListener(view -> startActivity(new Intent(LoginActivity.this, ForgotPass.class)));
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -68,47 +55,6 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-    }
-
-
-    private void checkDatabaseForProfile(String uid) {
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-
-        // 1. Fetch the fresh token from the device
-        com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(tokenTask -> {
-                    String freshToken = tokenTask.isSuccessful() ? tokenTask.getResult() : null;
-
-                    // 2. Proceed with checking the role
-                    db.child("Users").child("Student").child(uid).get().addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && task.getResult().exists()) {
-
-                            // Update token for Student
-                            if (freshToken != null) {
-                                db.child("Users").child("Student").child(uid).child("fcmToken").setValue(freshToken);
-                            }
-
-                            startActivity(new Intent(LoginActivity.this, HomeStudentActivity.class));
-                            finish();
-                        } else {
-                            db.child("Users").child("Tutor").child(uid).get().addOnCompleteListener(tutorTask -> {
-                                if (tutorTask.isSuccessful() && tutorTask.getResult().exists()) {
-
-                                    // Update token for Tutor
-                                    if (freshToken != null) {
-                                        db.child("Users").child("Tutor").child(uid).child("fcmToken").setValue(freshToken);
-                                    }
-
-                                    startActivity(new Intent(LoginActivity.this, HomeTutorActivity.class));
-                                    finish();
-                                } else {
-                                    startActivity(new Intent(LoginActivity.this, RoleSelectionActivity.class));
-                                    finish();
-                                }
-                            });
-                        }
-                    });
-                });
     }
 
     private void loginUser(String email, String password) {
@@ -121,11 +67,49 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
+                            // Use the new token-based method
+                            GapFixApplication.fetchTokenAndLogin(user.getUid());
                             checkDatabaseForProfile(user.getUid());
                         }
                     } else {
                         Toast.makeText(this, "Login Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
+                });
+    }
+
+    private void checkDatabaseForProfile(String uid) {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        SharedPreferences.Editor editor = getSharedPreferences("UserPrefs", MODE_PRIVATE).edit();
+
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(tokenTask -> {
+                    String freshToken = tokenTask.isSuccessful() ? tokenTask.getResult() : null;
+
+                    db.child("Users").child("Student").child(uid).get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult().exists()) {
+                            if (freshToken != null) {
+                                db.child("Users").child("Student").child(uid).child("fcmToken").setValue(freshToken);
+                            }
+                            editor.putString("user_role", "Student").apply();
+                            startActivity(new Intent(LoginActivity.this, HomeStudentActivity.class));
+                            finishAffinity();
+                        } else {
+                            db.child("Users").child("Tutor").child(uid).get().addOnCompleteListener(tutorTask -> {
+                                if (tutorTask.isSuccessful() && tutorTask.getResult().exists()) {
+                                    if (freshToken != null) {
+                                        db.child("Users").child("Tutor").child(uid).child("fcmToken").setValue(freshToken);
+                                    }
+                                    editor.putString("user_role", "Tutor").apply();
+                                    startActivity(new Intent(LoginActivity.this, HomeTutorActivity.class));
+                                    finishAffinity();
+                                } else {
+                                    editor.putString("user_role", "None").apply();
+                                    startActivity(new Intent(LoginActivity.this, RoleSelectionActivity.class));
+                                    finishAffinity();
+                                }
+                            });
+                        }
+                    });
                 });
     }
 }

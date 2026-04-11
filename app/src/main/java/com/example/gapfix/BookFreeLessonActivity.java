@@ -198,7 +198,7 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                         for (DataSnapshot data : snapshot.getChildren()) {
                             Booking existingBooking = data.getValue(Booking.class);
                             // Check if the tutorId matches in any of the student's previous bookings
-                            if (existingBooking != null && tId.equals(existingBooking.getTutorId())) {
+                            if (existingBooking != null && tId.equals(existingBooking.getTutorId()) && existingBooking.getStatus().equals("done")) {
                                 hasPreviousLesson = true;
                                 break;
                             }

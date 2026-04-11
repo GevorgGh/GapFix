@@ -48,7 +48,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
         // 1. Logic for Auto-Update (Pending -> Cancelled if time passed)
         String currentStatus = booking.getStatus();
-        if ("pending".equalsIgnoreCase(currentStatus) && checkIfTimePassed(booking.getLessonDate(), booking.getLessonTime())) {
+        if (!"done".equalsIgnoreCase(currentStatus) && checkIfTimePassed(booking.getLessonDate(), booking.getLessonTime())) {
             currentStatus = "cancelled";
             autoUpdateStatusInFirebase(booking.getBookingId(), "cancelled");
             Log.d(TAG, "Booking " + booking.getBookingId() + " auto-marked as cancelled.");
@@ -56,7 +56,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
         holder.tvSubject.setText(booking.getSubject());
         holder.tvTime.setText(booking.getLessonTime());
-        holder.tvStatus.setText("• " + currentStatus);
+        holder.tvStatus.setText(String.format("• %s", currentStatus));
 
         // 2. Fetch Tutor Data
         String tutorId = booking.getTutorId();
@@ -84,12 +84,15 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         if ("confirmed".equalsIgnoreCase(currentStatus)) {
             holder.tvStatus.setTextColor(Color.parseColor("#4CAF50"));
             holder.btnAction.setText("JOIN");
+            holder.btnCancel.setVisibility(View.GONE);
         } else if ("pending".equalsIgnoreCase(currentStatus)) {
             holder.tvStatus.setTextColor(Color.parseColor("#FFA000"));
             holder.btnAction.setText("WAITING...");
+            holder.btnCancel.setVisibility(View.VISIBLE);
             holder.btnAction.setEnabled(false);
         } else if ("cancelled".equalsIgnoreCase(currentStatus)) {
             holder.tvStatus.setTextColor(Color.RED);
+            holder.btnCancel.setVisibility(View.GONE);
             holder.btnAction.setVisibility(View.GONE);
         }
     }
@@ -121,7 +124,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
     static class BookingViewHolder extends RecyclerView.ViewHolder {
         TextView tvTutorName, tvSubject, tvTime, tvStatus;
-        MaterialButton btnAction;
+        MaterialButton btnAction, btnCancel;
         ImageView tutorImage;
 
         public BookingViewHolder(@NonNull View itemView) {
@@ -131,6 +134,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             tvSubject = itemView.findViewById(R.id.tv_subject);
             tvTime = itemView.findViewById(R.id.tv_time);
             btnAction = itemView.findViewById(R.id.btn_action);
+            btnCancel = itemView.findViewById(R.id.btn_cancel);
             tutorImage = itemView.findViewById(R.id.tutor_image);
         }
     }

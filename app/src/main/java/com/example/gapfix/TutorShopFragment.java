@@ -97,7 +97,7 @@ public class TutorShopFragment extends Fragment {
                     tutor.setId(tutorSnapshot.getKey());
                     tutor.setName(tutorSnapshot.child("name").getValue(String.class));
                     tutor.setBio(tutorSnapshot.child("Bio").getValue(String.class));
-                    tutor.setImageResourceLink(tutorSnapshot.child("imageResourceLink").getValue(String.class));
+                    tutor.setImageResourceLink(tutorSnapshot.child("profilePicture").getValue(String.class));
 
                     ArrayList<Tutor.SubjectPreference> tutorPrefs = new ArrayList<>();
                     DataSnapshot prefsSnapshot = tutorSnapshot.child("preferences");

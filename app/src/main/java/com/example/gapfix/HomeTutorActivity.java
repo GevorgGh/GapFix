@@ -25,10 +25,18 @@ public class HomeTutorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_home_tutor);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            finish();
+            return;
+        }
+
+        // Always attempt Agora Login using the new token-based method
+        GapFixApplication.fetchTokenAndLogin(user.getUid());
+
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_home_tutor);
 
         DatabaseReference notifRef = FirebaseDatabase.getInstance().getReference("Notifications").child(user.getUid());
 
@@ -42,25 +50,20 @@ public class HomeTutorActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("GapFix", "Database Error: " + error.getMessage());
-                Toast.makeText(HomeTutorActivity.this, "Sync Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-
         });
 
         if (savedInstanceState == null) {

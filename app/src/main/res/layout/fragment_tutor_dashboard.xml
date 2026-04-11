@@ -110,14 +110,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone">
+
                     <ImageView
-                    android:id="@+id/ivStudentPhoto"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/person_circle"
-                    android:scaleType="centerCrop" />
+                        android:id="@+id/ivStudentPhoto"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/person_circle"
+                        android:scaleType="centerCrop" />
 
                     <LinearLayout
+                        android:id="@+id/studentInfoContainer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/ivStudentPhoto"
@@ -136,18 +138,70 @@
                             android:id="@+id/tvLessonSubject"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Mathematics"
+                            android:text="Subject"
                             android:textColor="@color/gapfix_green" />
-                    </LinearLayout>
 
+                        <TextView
+                            android:id="@+id/tvLessonStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Status"
+                            android:textSize="12sp"
+                            android:textStyle="italic"
+                            android:textAllCaps="true"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
                     <TextView
                         android:id="@+id/tvLessonTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:text="14:00"
+                        android:text="00:00"
                         android:textStyle="bold"
                         android:textColor="@color/gapfix_text_dark" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutLessonActions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/studentInfoContainer"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:visibility="gone">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAccept"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:text="Accept"
+                            app:cornerRadius="12dp"
+                            app:backgroundTint="@color/gapfix_green" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnReject"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:text="Reject"
+                            app:cornerRadius="12dp"
+                            app:backgroundTint="@color/error" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLesson"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/studentInfoContainer"
+                        android:layout_marginTop="16dp"
+                        android:text="JOIN"
+                        android:visibility="gone"
+                        app:cornerRadius="12dp"
+                        app:backgroundTint="@color/gapfix_green"/>
+
                 </RelativeLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

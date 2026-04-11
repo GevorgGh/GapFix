@@ -5,9 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.gapfix"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.gapfix"
@@ -41,28 +39,37 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
-    implementation(libs.firebase.storage)
-    implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.annotation)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.firebase.auth)
     implementation(libs.cardview)
-    implementation(libs.cardview.v7)
-    implementation(libs.firebase.database)
     implementation(libs.fragment)
     implementation(libs.legacy.support.v4)
     implementation(libs.recyclerview)
-    implementation("androidx.compose.foundation:foundation:1.7.0")
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.database)
     implementation(libs.firebase.analytics)
-    implementation(libs.google.firebase.analytics)
-    implementation(libs.google.firebase.auth)
+    implementation(libs.firebase.messaging)
+
+    // Google Play Services
+    implementation(libs.play.services.auth)
+    implementation(libs.play.services.nearby)
+
+    // Other Libraries
+    implementation(libs.foundation)
     implementation("com.cloudinary:cloudinary-android:3.1.2")
     implementation("com.github.bumptech.glide:glide:5.0.5")
-    implementation("com.google.android.gms:play-services-auth:21.5.1")
-    implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
-    implementation("com.google.firebase:firebase-messaging:25.0.1")
+    implementation("io.agora.rtc:full-sdk:4.5.0")
+    implementation("io.agora.rtc:chat-sdk:1.3.2")
+    implementation(libs.firebase.functions)
+    implementation("io.agora:agora-token:2.0.0")
+
+    // Testing
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }

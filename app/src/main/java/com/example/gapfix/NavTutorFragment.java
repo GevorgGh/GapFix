@@ -59,12 +59,16 @@ public class NavTutorFragment extends Fragment {
             switchFragment(new TutorDashboardFragment());
         } else if (clickedId == R.id.calendar) {
             calendar.setImageResource(R.drawable.cal_clicked);
+            switchFragment(new TutorCalendarFragment());
         } else if (clickedId == R.id.subjects) {
             subjects.setImageResource(R.drawable.journal_clicked);
+            switchFragment(new TutorSubjectFragment());
         } else if (clickedId == R.id.chat) {
             chat.setImageResource(R.drawable.chat_filled);
+            switchFragment(new ChatListFragment());
         } else if (clickedId == R.id.profile) {
             profile.setImageResource(R.drawable.person_clicked);
+            switchFragment(new TutorSettingsFragment());
         }
     }
 
