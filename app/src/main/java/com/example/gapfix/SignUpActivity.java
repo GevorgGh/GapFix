@@ -17,19 +17,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    private EditText emailField, passField, repeatPassField, dateField, nameField;
-    private Calendar calendar;
-    private SimpleDateFormat simpleDateFormat;
+    private EditText emailField, passField, nameField, dateField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +38,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         emailField = findViewById(R.id.editEmail);
         passField = findViewById(R.id.editPassword);
-        repeatPassField = findViewById(R.id.editPassword2);
         nameField = findViewById(R.id.editName);
         dateField = findViewById(R.id.editTextDate);
-
-        calendar = Calendar.getInstance();
-        simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
         dateField.setOnClickListener(v -> showDatePicker());
 
@@ -78,8 +70,8 @@ public class SignUpActivity extends AppCompatActivity {
     private void showDatePicker() {
         final Calendar c = Calendar.getInstance();
         new DatePickerDialog(this, R.style.MyDatePickerTheme,
-                (view, selectedYear, selectedMonth, selectedDay) -> {
-                    String date = String.format(Locale.getDefault(), "%02d/%02d/%d", selectedDay, (selectedMonth + 1), selectedYear);
+                (view, year, month, day) -> {
+                    String date = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month + 1, year);
                     dateField.setText(date);
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
     }
@@ -96,7 +88,6 @@ public class SignUpActivity extends AppCompatActivity {
                                         saveUserInfo(firebaseUser.getUid(), name, email, role, dob, token);
                                     });
 
-                            // Call the new token-based Agora login
                             GapFixApplication.fetchTokenAndLogin(firebaseUser.getUid());
 
                             firebaseUser.sendEmailVerification().addOnCompleteListener(verifyTask -> {

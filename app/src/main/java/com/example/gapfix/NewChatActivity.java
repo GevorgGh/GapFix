@@ -3,6 +3,7 @@ package com.example.gapfix;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,8 +32,8 @@ public class NewChatActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView tvEmpty;
     private ContactAdapter adapter;
-    private List<User> contactList = new ArrayList<>();
-    private List<String> contactIds = new ArrayList<>();
+    private final List<User> contactList = new ArrayList<>();
+    private final List<String> contactIds = new ArrayList<>();
     private String currentUserId;
     private String userRole;
 
@@ -52,7 +53,12 @@ public class NewChatActivity extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         setupRecyclerView();
-        fetchContactsFromBookings();
+        
+        if (userRole == null) {
+            fetchUserRoleAndContacts();
+        } else {
+            fetchContactsFromBookings();
+        }
     }
 
     private void setupRecyclerView() {
@@ -67,6 +73,26 @@ public class NewChatActivity extends AppCompatActivity {
         rvContacts.setAdapter(adapter);
     }
 
+    private void fetchUserRoleAndContacts() {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
+        db.child("Student").child(currentUserId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                userRole = "Student";
+                fetchContactsFromBookings();
+            } else {
+                db.child("Tutor").child(currentUserId).get().addOnCompleteListener(tutorTask -> {
+                    if (tutorTask.isSuccessful() && tutorTask.getResult().exists()) {
+                        userRole = "Tutor";
+                        fetchContactsFromBookings();
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        tvEmpty.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
+    }
+
     private void fetchContactsFromBookings() {
         if (currentUserId == null || userRole == null) {
             progressBar.setVisibility(View.GONE);
@@ -76,7 +102,6 @@ public class NewChatActivity extends AppCompatActivity {
 
         DatabaseReference bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
         String myIdField = userRole.equals("Student") ? "studentId" : "tutorId";
-        String targetIdField = userRole.equals("Student") ? "tutorId" : "studentId";
         String targetRole = userRole.equals("Student") ? "Tutor" : "Student";
 
         bookingsRef.orderByChild(myIdField).equalTo(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -111,7 +136,8 @@ public class NewChatActivity extends AppCompatActivity {
 
     private void fetchUserDetails(Set<String> targetIds, String targetRole) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users").child(targetRole);
-        final int[] remaining = {targetIds.size()};
+        final int total = targetIds.size();
+        final int[] count = {0};
 
         for (String id : targetIds) {
             usersRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -123,8 +149,8 @@ public class NewChatActivity extends AppCompatActivity {
                         contactIds.add(snapshot.getKey());
                     }
                     
-                    remaining[0]--;
-                    if (remaining[0] == 0) {
+                    count[0]++;
+                    if (count[0] == total) {
                         progressBar.setVisibility(View.GONE);
                         if (contactList.isEmpty()) {
                             tvEmpty.setVisibility(View.VISIBLE);
@@ -136,8 +162,8 @@ public class NewChatActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    remaining[0]--;
-                    if (remaining[0] == 0) {
+                    count[0]++;
+                    if (count[0] == total) {
                         progressBar.setVisibility(View.GONE);
                         adapter.notifyDataSetChanged();
                     }

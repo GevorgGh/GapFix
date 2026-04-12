@@ -13,20 +13,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import io.agora.chat.ChatMessage;
-import io.agora.chat.Conversation;
-import io.agora.chat.TextMessageBody;
-
 public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ViewHolder> {
 
-    private List<Conversation> conversations;
+    private List<FirestoreConversation> conversations;
     private OnConversationClickListener listener;
 
     public interface OnConversationClickListener {
-        void onConversationClick(Conversation conversation);
+        void onConversationClick(FirestoreConversation conversation);
     }
 
-    public ConversationAdapter(List<Conversation> conversations, OnConversationClickListener listener) {
+    public ConversationAdapter(List<FirestoreConversation> conversations, OnConversationClickListener listener) {
         this.conversations = conversations;
         this.listener = listener;
     }
@@ -34,26 +30,34 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_conversation, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_conversation, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Conversation conversation = conversations.get(position);
-        ChatMessage lastMsg = conversation.getLastMessage();
+        FirestoreConversation conversation = conversations.get(position);
 
-        holder.tvName.setText(conversation.conversationId());
+        // Show name if available, otherwise fall back to user ID
+        holder.tvName.setText(
+                conversation.otherUserName != null
+                        ? conversation.otherUserName
+                        : conversation.otherUserId
+        );
 
-        if (lastMsg != null) {
-            if (lastMsg.getBody() instanceof TextMessageBody) {
-                holder.tvLastMessage.setText(((TextMessageBody) lastMsg.getBody()).getMessage());
-            } else {
-                holder.tvLastMessage.setText("[Media]");
-            }
-            holder.tvTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(lastMsg.getMsgTime())));
+        // Show last message
+        if (conversation.lastMessage != null && !conversation.lastMessage.isEmpty()) {
+            holder.tvLastMessage.setText(conversation.lastMessage);
         } else {
-            holder.tvLastMessage.setText("No messages");
+            holder.tvLastMessage.setText("No messages yet");
+        }
+
+        // Show timestamp
+        if (conversation.lastMessageTime != null) {
+            holder.tvTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault())
+                    .format(conversation.lastMessageTime.toDate()));
+        } else {
             holder.tvTime.setText("");
         }
 

@@ -8,63 +8,56 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import io.agora.chat.ChatMessage;
-import io.agora.chat.TextMessageBody;
 
 public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
 
-    private List<ChatMessage> messages;
+    private List<FirestoreMessage> messages;
     private String currentUserId;
 
-    public MessageAdapter(List<ChatMessage> messages) {
+    public MessageAdapter(List<FirestoreMessage> messages, String currentUserId) {
         this.messages = messages;
-        this.currentUserId = FirebaseAuth.getInstance().getUid();
+        this.currentUserId = currentUserId;
     }
 
     @Override
     public int getItemViewType(int position) {
-        ChatMessage message = messages.get(position);
-        if (message.getFrom().equals(currentUserId)) {
-            return VIEW_TYPE_SENT;
-        } else {
-            return VIEW_TYPE_RECEIVED;
-        }
+        FirestoreMessage message = messages.get(position);
+        return currentUserId.equals(message.senderId) ? VIEW_TYPE_SENT : VIEW_TYPE_RECEIVED;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_SENT) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_sent, parent, false);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_message_sent, parent, false);
             return new SentMessageViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_received, parent, false);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_message_received, parent, false);
             return new ReceivedMessageViewHolder(view);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ChatMessage message = messages.get(position);
-        String content = "";
-        if (message.getBody() instanceof TextMessageBody) {
-            content = ((TextMessageBody) message.getBody()).getMessage();
-        }
+        FirestoreMessage message = messages.get(position);
+
+        long timeMillis = message.timestamp != null
+                ? message.timestamp.toDate().getTime()
+                : System.currentTimeMillis();
 
         if (holder instanceof SentMessageViewHolder) {
-            ((SentMessageViewHolder) holder).bind(content, message.getMsgTime());
+            ((SentMessageViewHolder) holder).bind(message.text, timeMillis);
         } else {
-            ((ReceivedMessageViewHolder) holder).bind(content, message.getMsgTime());
+            ((ReceivedMessageViewHolder) holder).bind(message.text, timeMillis);
         }
     }
 

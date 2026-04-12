@@ -67,7 +67,7 @@ dependencies {
     implementation("io.agora.rtc:full-sdk:4.5.0")
     implementation("io.agora.rtc:chat-sdk:1.3.2")
     implementation(libs.firebase.functions)
-    implementation("io.agora:agora-token:2.0.0")
+    implementation(libs.firebase.firestore)
 
     // Testing
     androidTestImplementation(libs.ext.junit)
