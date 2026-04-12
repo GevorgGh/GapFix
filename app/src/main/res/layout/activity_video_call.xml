@@ -14,8 +14,36 @@
         android:layout_height="match_parent"
         android:background="@color/gapfix_text_dark" />
 
+    <!-- Status Message (Waiting for Tutor) -->
+    <LinearLayout
+        android:id="@+id/ll_waiting_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:indeterminateTint="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Waiting for Tutor to join..."
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <!-- Local Video View (Small Overlay) -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_local_video"
         android:layout_width="120dp"
         android:layout_height="160dp"
         android:layout_marginTop="16dp"

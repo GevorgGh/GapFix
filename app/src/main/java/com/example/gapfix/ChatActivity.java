@@ -91,7 +91,8 @@ public class ChatActivity extends AppCompatActivity {
         btnSend.setOnClickListener(v -> sendMessage());
         btnCall.setOnClickListener(v -> {
             Intent intent = new Intent(this, VideoCallActivity.class);
-            intent.putExtra("TARGET_USER_ID", otherUserId);
+            // Changed: Use chatId instead of otherUserId so both participants join the same channel
+            intent.putExtra("TARGET_USER_ID", chatId);
             startActivity(intent);
         });
     }

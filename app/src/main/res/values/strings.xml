@@ -60,6 +60,6 @@
     <string name="no_upcoming_classes">No upcoming classes</string>
     <string name="_0_00" translatable="false">$0.00</string>
     <string name="_0" translatable="false">$0.0</string>
-    <string name="tokenAgora" translatable="false">007eJxTYLh6u1M9btnetzwev5wFWF+3To6Z58WhWftNMvKrTN7E9nYFBnPz1LQky7RUk7QUU5PktFRLk9RUg2QLcxMLI9NES3ODNyJXMhsCGRnS64VYGBkgEMTnYShJLS6JT85IzMtLzWFgAABkWiKW</string>
-    <string name="appIdAgora" translatable="false">77efb9fe4fd54cfe94ee0c874825a970</string>
+    <string name="tokenAgora" translatable="false"></string>
+    <string name="appIdAgora" translatable="false">2a52ca8890ac482d95808a709a697573</string>
 </resources>
