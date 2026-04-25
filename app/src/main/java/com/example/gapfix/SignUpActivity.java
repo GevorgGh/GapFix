@@ -91,9 +91,9 @@ public class SignUpActivity extends AppCompatActivity {
                             GapFixApplication.fetchTokenAndLogin(firebaseUser.getUid());
 
                             firebaseUser.sendEmailVerification().addOnCompleteListener(verifyTask -> {
-                                Intent intent = "Student".equals(role) ? 
-                                    new Intent(SignUpActivity.this, StudentPreferences.class) : 
-                                    new Intent(SignUpActivity.this, TutorSubjectActivity.class);
+                                // Redirect to IsVerifiedActivity after registration
+                                Intent intent = new Intent(SignUpActivity.this, IsVerifiedActivity.class);
+                                intent.putExtra("ROLE", role);
                                 startActivity(intent);
                                 finish();
                             });

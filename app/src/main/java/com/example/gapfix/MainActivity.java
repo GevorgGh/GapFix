@@ -27,6 +27,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -46,14 +47,12 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
-            // Safety timeout: If DB doesn't respond in 5 seconds, show UI
             new Handler().postDelayed(() -> {
                 if (!redirected) {
-                    Log.w("MainActivity", "Database check timed out, showing UI");
                     setupUI();
                 }
             }, 5000);
-            
+
             checkDatabaseForProfile(currentUser.getUid());
         } else {
             setupUI();
@@ -83,9 +82,9 @@ public class MainActivity extends AppCompatActivity {
         Button signup = findViewById(R.id.btn_goto_signup);
         ConstraintLayout googleBtn = findViewById(R.id.google_button);
 
-        googleBtn.setOnClickListener(v -> signIn());
-        login.setOnClickListener(v -> startActivity(new Intent(this, LoginActivity.class)));
-        signup.setOnClickListener(v -> startActivity(new Intent(this, SignUpRole.class)));
+        if (googleBtn != null) googleBtn.setOnClickListener(v -> signIn());
+        if (login != null) login.setOnClickListener(v -> startActivity(new Intent(this, LoginActivity.class)));
+        if (signup != null) signup.setOnClickListener(v -> startActivity(new Intent(this, SignUpRole.class)));
 
         View mainView = findViewById(R.id.main);
         if (mainView != null) {
@@ -123,19 +122,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkDatabaseForProfile(String uid) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        
+        // We look for the 'email' field specifically.
+        // A 'ghost' profile created by the token logic will NOT have an email.
         db.child("Users").child("Student").child(uid).get().addOnCompleteListener(task -> {
             if (redirected) return;
-            if (task.isSuccessful() && task.getResult().exists()) {
+            DataSnapshot snapshot = task.getResult();
+            if (task.isSuccessful() && snapshot.exists() && snapshot.hasChild("email")) {
                 redirected = true;
                 startActivity(new Intent(this, HomeStudentActivity.class));
                 finish();
             } else {
                 db.child("Users").child("Tutor").child(uid).get().addOnCompleteListener(tutorTask -> {
                     if (redirected) return;
-                    redirected = true;
-                    if (tutorTask.isSuccessful() && tutorTask.getResult().exists()) {
+                    DataSnapshot tutorSnap = tutorTask.getResult();
+                    if (tutorTask.isSuccessful() && tutorSnap.exists() && tutorSnap.hasChild("email")) {
+                        redirected = true;
                         startActivity(new Intent(this, HomeTutorActivity.class));
                     } else {
+                        redirected = true;
                         startActivity(new Intent(this, RoleSelectionActivity.class));
                     }
                     finish();

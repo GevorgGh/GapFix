@@ -22,15 +22,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class StudentCalendarFragment extends Fragment {
 
+    private static final String TAG = "StudentCalendar";
     private RecyclerView rvDates, rvBookings;
     private TextView tvNoClasses;
     private DateAdapter dateAdapter;
@@ -48,7 +47,7 @@ public class StudentCalendarFragment extends Fragment {
 
         rvDates = view.findViewById(R.id.rv_dates);
         rvBookings = view.findViewById(R.id.rv_bookings);
-        tvNoClasses = view.findViewById(R.id.tv_no_classes); // Initialize here
+        tvNoClasses = view.findViewById(R.id.tv_no_classes);
 
         setupDatePicker();
 
@@ -57,6 +56,7 @@ public class StudentCalendarFragment extends Fragment {
         rvBookings.setLayoutManager(new LinearLayoutManager(getContext()));
         rvBookings.setAdapter(bookingAdapter);
 
+        // Load today's classes by default
         loadBookingsForDate(new Date());
 
         return view;
@@ -66,6 +66,7 @@ public class StudentCalendarFragment extends Fragment {
         dateList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
 
+        // Show the next 14 days
         for (int i = 0; i < 14; i++) {
             dateList.add(new DateModel(calendar.getTime()));
             calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -80,8 +81,22 @@ public class StudentCalendarFragment extends Fragment {
     }
 
     private void loadBookingsForDate(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy", Locale.US);
-        String selectedDateStr = sdf.format(date);
+        if (currentStudentId == null) return;
+
+        // Calculate the range for the entire day in milliseconds (Local Time)
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long startOfDay = cal.getTimeInMillis();
+
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        long endOfDay = cal.getTimeInMillis();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Bookings");
         Query query = ref.orderByChild("studentId").equalTo(currentStudentId);
@@ -89,11 +104,17 @@ public class StudentCalendarFragment extends Fragment {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded()) return;
+
                 bookingList.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Booking booking = data.getValue(Booking.class);
-                    if (booking != null && selectedDateStr.equals(booking.getLessonDate())) {
-                        bookingList.add(booking);
+                    if (booking != null) {
+                        long ts = booking.getTimestamp();
+                        // Check if booking falls within the selected 24-hour window
+                        if (ts >= startOfDay && ts <= endOfDay) {
+                            bookingList.add(booking);
+                        }
                     }
                 }
 
@@ -110,7 +131,7 @@ public class StudentCalendarFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                if(getContext() != null) {
+                if (getContext() != null) {
                     Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }

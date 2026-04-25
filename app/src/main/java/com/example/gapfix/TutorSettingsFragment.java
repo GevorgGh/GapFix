@@ -114,10 +114,13 @@ public class TutorSettingsFragment extends Fragment {
     }
 
     private void logout() {
-        mAuth.signOut();
-        
-        // Clear saved role in SharedPreferences
+        // Stop the background service before logging out
         if (getActivity() != null) {
+            getActivity().stopService(new Intent(getActivity(), CallNotificationService.class));
+
+            mAuth.signOut();
+
+            // Clear saved role in SharedPreferences
             SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
             prefs.edit().clear().apply();
 

@@ -103,21 +103,20 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView30" />
 
         <Button
             android:id="@+id/btnBookLesson"
             android:layout_width="match_parent"
-            android:layout_height="62dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="20dp"
+            android:layout_height="60dp"
             android:backgroundTint="@color/gapfix_green"
             android:text="Book a free lesson"
             android:textAllCaps="false"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reviews"
-            app:layout_constraintVertical_bias="1.0" />
+            tools:layout_editor_absoluteX="16dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

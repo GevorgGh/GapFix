@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
@@ -43,6 +45,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         holder.tvName.setText(contact.getName());
         holder.tvLastMessage.setText(contact.getEmail()); // Show email as secondary info
         holder.tvTime.setVisibility(View.GONE);
+
+        // Load image if available
+        Glide.with(holder.itemView.getContext())
+                .load(contact.getImageResourceLink() != null ? contact.getImageResourceLink() : R.drawable.person_circle)
+                .placeholder(R.drawable.person_circle)
+                .circleCrop()
+                .into(holder.ivAvatar);
 
         holder.itemView.setOnClickListener(v -> listener.onContactClick(contact, userId));
     }

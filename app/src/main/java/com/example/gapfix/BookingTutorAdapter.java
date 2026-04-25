@@ -1,6 +1,8 @@
 package com.example.gapfix;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +21,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapter.BookingViewHolder> {
 
@@ -43,9 +48,13 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
         Booking booking = bookingList.get(position);
 
         holder.tvSubject.setText(booking.getSubject());
-        holder.tvTime.setText(booking.getLessonTime());
+        
+        // --- DISPLAY ONLY LOCAL TIME ---
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String localTime = timeFormat.format(new Date(booking.getTimestamp()));
+        holder.tvTime.setText(localTime);
+        // ---------------------------
 
-        // 1. Handle Status UI
         String status = booking.getStatus();
         holder.tvStatus.setText(status.toUpperCase());
 
@@ -57,23 +66,61 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
             holder.tvStatus.setTextColor(ContextCompat.getColor(context, R.color.gapfix_green));
             holder.layoutActions.setVisibility(View.GONE);
             holder.btnJoin.setVisibility(View.VISIBLE);
+            
+            holder.btnJoin.removeCallbacks(holder.updateRunnable);
+
+            LessonAlarmScheduler.schedule(context,
+                    booking.getBookingId(),
+                    booking.getTimestamp(),
+                    booking.getSubject(),
+                    "tutor");
+
+            holder.updateRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    boolean joinable = LessonTimeHelper.isJoinable(booking);
+
+                    if (joinable) {
+                        holder.btnJoin.setEnabled(true);
+                        holder.btnJoin.setText("JOIN CLASS");
+                        holder.btnJoin.setBackgroundColor(Color.parseColor("#4CAF50"));
+
+                        holder.btnJoin.setOnClickListener(v -> {
+                            Intent intent = new Intent(context, VideoCallActivity.class);
+                            intent.putExtra("BOOKING_ID", booking.getBookingId());
+                            context.startActivity(intent);
+                        });
+                    } else {
+                        long mins = LessonTimeHelper.minutesUntilJoinable(booking);
+                        holder.btnJoin.setEnabled(false);
+                        holder.btnJoin.setBackgroundColor(Color.GRAY);
+                        if (mins > 60) {
+                            holder.btnJoin.setText("in " + (mins/60) + "h " + (mins%60) + "m");
+                        } else if (mins > 0) {
+                            holder.btnJoin.setText("in " + mins + "m");
+                        } else {
+                            if (System.currentTimeMillis() > booking.getTimestamp()) {
+                                holder.btnJoin.setText("EXPIRED");
+                            } else {
+                                holder.btnJoin.setText("WAITING");
+                            }
+                        }
+                        holder.btnJoin.postDelayed(this, 30_000);
+                    }
+                }
+            };
+            holder.btnJoin.post(holder.updateRunnable);
+
         } else {
             holder.tvStatus.setTextColor(ContextCompat.getColor(context, R.color.error));
             holder.layoutActions.setVisibility(View.GONE);
             holder.btnJoin.setVisibility(View.GONE);
         }
 
-        // 2. Fetch Student Name
         fetchStudentName(booking.getStudentId(), holder.tvStudentName);
 
-        // 3. Button Click Listeners
         holder.btnAccept.setOnClickListener(v -> updateBookingStatus(booking.getBookingId(), "confirmed"));
         holder.btnReject.setOnClickListener(v -> updateBookingStatus(booking.getBookingId(), "cancelled"));
-
-        holder.btnJoin.setOnClickListener(v -> {
-            // Logic to start the lesson
-            Toast.makeText(context, "Starting Lesson...", Toast.LENGTH_SHORT).show();
-        });
     }
 
     private void fetchStudentName(String studentId, TextView tvName) {
@@ -109,6 +156,7 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
         TextView tvStudentName, tvSubject, tvTime, tvStatus;
         LinearLayout layoutActions;
         MaterialButton btnAccept, btnReject, btnJoin;
+        Runnable updateRunnable;
 
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);

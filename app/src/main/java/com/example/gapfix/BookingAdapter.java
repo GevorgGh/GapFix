@@ -1,6 +1,7 @@
 package com.example.gapfix;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,19 +47,23 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     public void onBindViewHolder(@NonNull BookingViewHolder holder, int position) {
         Booking booking = bookingList.get(position);
 
-        // 1. Logic for Auto-Update (Pending -> Cancelled if time passed)
         String currentStatus = booking.getStatus();
-        if (!"done".equalsIgnoreCase(currentStatus) && checkIfTimePassed(booking.getLessonDate(), booking.getLessonTime())) {
-            currentStatus = "cancelled";
-            autoUpdateStatusInFirebase(booking.getBookingId(), "cancelled");
-            Log.d(TAG, "Booking " + booking.getBookingId() + " auto-marked as cancelled.");
+        if (!"done".equalsIgnoreCase(currentStatus) && !"cancelled".equalsIgnoreCase(currentStatus)) {
+            if (System.currentTimeMillis() > booking.getTimestamp() + (60 * 60_000L)) {
+                currentStatus = "cancelled";
+                autoUpdateStatusInFirebase(booking.getBookingId(), "cancelled");
+            }
         }
 
+        // --- DISPLAY ONLY LOCAL TIME ---
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String localTime = timeFormat.format(new Date(booking.getTimestamp()));
+        
         holder.tvSubject.setText(booking.getSubject());
-        holder.tvTime.setText(booking.getLessonTime());
+        holder.tvTime.setText(localTime);
         holder.tvStatus.setText(String.format("• %s", currentStatus));
+        // ---------------------------
 
-        // 2. Fetch Tutor Data
         String tutorId = booking.getTutorId();
         if (tutorId != null) {
             DatabaseReference tutorRef = FirebaseDatabase.getInstance().getReference("Users").child("Tutor").child(tutorId);
@@ -77,17 +82,60 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             });
         }
 
-        // 3. UI logic based on Status
         holder.btnAction.setVisibility(View.VISIBLE);
         holder.btnAction.setEnabled(true);
+        holder.btnAction.removeCallbacks(holder.updateRunnable);
 
         if ("confirmed".equalsIgnoreCase(currentStatus)) {
             holder.tvStatus.setTextColor(Color.parseColor("#4CAF50"));
-            holder.btnAction.setText("JOIN");
             holder.btnCancel.setVisibility(View.GONE);
-        } else if ("pending".equalsIgnoreCase(currentStatus)) {
+
+            LessonAlarmScheduler.schedule(context,
+                    booking.getBookingId(),
+                    booking.getTimestamp(),
+                    booking.getSubject(),
+                    "student");
+
+            holder.updateRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    boolean joinable = LessonTimeHelper.isJoinable(booking);
+
+                    if (joinable) {
+                        holder.btnAction.setEnabled(true);
+                        holder.btnAction.setText("JOIN");
+                        holder.btnAction.setBackgroundColor(Color.parseColor("#4CAF50"));
+
+                        holder.btnAction.setOnClickListener(v -> {
+                            Intent intent = new Intent(context, VideoCallActivity.class);
+                            intent.putExtra("BOOKING_ID", booking.getBookingId());
+                            context.startActivity(intent);
+                        });
+                    } else {
+                        long mins = LessonTimeHelper.minutesUntilJoinable(booking);
+                        holder.btnAction.setEnabled(false);
+                        holder.btnAction.setBackgroundColor(Color.GRAY);
+                        if (mins > 60) {
+                            holder.btnAction.setText("in " + (mins/60) + "h " + (mins%60) + "m");
+                        } else if (mins > 0) {
+                            holder.btnAction.setText("in " + mins + "m");
+                        } else {
+                            if (System.currentTimeMillis() > booking.getTimestamp()) {
+                                holder.btnAction.setText("EXPIRED");
+                            } else {
+                                holder.btnAction.setText("WAITING");
+                            }
+                        }
+                        holder.btnAction.postDelayed(this, 30_000);
+                    }
+                }
+            };
+            holder.btnAction.post(holder.updateRunnable);
+
+        } else if ("pending".equalsIgnoreCase(currentStatus) || "free_trial_pending".equalsIgnoreCase(currentStatus)) {
             holder.tvStatus.setTextColor(Color.parseColor("#FFA000"));
             holder.btnAction.setText("WAITING...");
+            holder.btnAction.setBackgroundColor(Color.GRAY);
             holder.btnCancel.setVisibility(View.VISIBLE);
             holder.btnAction.setEnabled(false);
         } else if ("cancelled".equalsIgnoreCase(currentStatus)) {
@@ -97,23 +145,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         }
     }
 
-    // Helper: Check if the session time has already passed
-    private boolean checkIfTimePassed(String dateStr, String timeStr) {
-        try {
-            // Extracts "14:00" from "14:00 - 15:00"
-            String startTime = timeStr.split("-")[0].trim();
-            // Matches your Firebase format: "Mar 30, 2026 14:00"
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy HH:mm", Locale.US);
-            Date lessonDate = sdf.parse(dateStr + " " + startTime);
-
-            return new Date().after(lessonDate); // Returns true if 'now' is after lesson start
-        } catch (Exception e) {
-            Log.e(TAG, "Date Parse Error: " + e.getMessage());
-            return false;
-        }
-    }
-
-    // Helper: Push the status change to Firebase
     private void autoUpdateStatusInFirebase(String bookingId, String newStatus) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId);
         ref.child("status").setValue(newStatus);
@@ -126,6 +157,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         TextView tvTutorName, tvSubject, tvTime, tvStatus;
         MaterialButton btnAction, btnCancel;
         ImageView tutorImage;
+        Runnable updateRunnable;
 
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);

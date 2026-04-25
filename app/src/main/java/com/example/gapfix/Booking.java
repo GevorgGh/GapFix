@@ -8,40 +8,54 @@ public class Booking implements Serializable {
     private String tutorId;
     private String lessonDate;
     private String lessonTime;
+    private long timestamp; // UTC Timestamp in milliseconds
     private String subject;
-    private String status; // pending, confirmed, completed, cancelled
+    private String status; // pending, confirmed, completed, cancelled, free_trial_pending
     private String tutorName;
     private String tutorImage;
+
     public Booking() {}
 
     public Booking(String bookingId, String studentId, String tutorId,
-                   String date, String time, String subject) {
+                   String date, String time, String subject, long timestamp) {
         this.bookingId = bookingId;
         this.studentId = studentId;
         this.tutorId = tutorId;
         this.lessonDate = date;
         this.lessonTime = time;
         this.subject = subject;
+        this.timestamp = timestamp;
         this.status = "pending";
     }
 
+    // Getters and Setters
     public String getBookingId() { return bookingId; }
-    public String getStudentId() { return studentId; }
-    public String getTutorId() { return tutorId; }
-    public String getLessonDate() { return lessonDate; }
-    public String getLessonTime() { return lessonTime; }
-    public String getSubject() { return subject; }
-    public String getStatus() { return status; }
-    public String getTutorName() { return tutorName; }
-    public String getTutorImage() { return tutorImage; }
-
     public void setBookingId(String bookingId) { this.bookingId = bookingId; }
+
+    public String getStudentId() { return studentId; }
     public void setStudentId(String studentId) { this.studentId = studentId; }
+
+    public String getTutorId() { return tutorId; }
     public void setTutorId(String tutorId) { this.tutorId = tutorId; }
+
+    public String getLessonDate() { return lessonDate; }
     public void setLessonDate(String lessonDate) { this.lessonDate = lessonDate; }
+
+    public String getLessonTime() { return lessonTime; }
     public void setLessonTime(String lessonTime) { this.lessonTime = lessonTime; }
+
+    public long getTimestamp() { return timestamp; }
+    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+
+    public String getSubject() { return subject; }
     public void setSubject(String subject) { this.subject = subject; }
+
+    public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getTutorName() { return tutorName; }
     public void setTutorName(String tutorName) { this.tutorName = tutorName; }
+
+    public String getTutorImage() { return tutorImage; }
     public void setTutorImage(String tutorImage) { this.tutorImage = tutorImage; }
 }

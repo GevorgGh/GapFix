@@ -1,5 +1,6 @@
 package com.example.gapfix;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,7 +38,6 @@ public class TutorDashboardFragment extends Fragment {
     private LinearLayout layoutLessonActions;
     private MaterialButton btnAccept, btnReject, btnLesson;
 
-
     public TutorDashboardFragment() {}
 
     @Nullable
@@ -45,14 +45,12 @@ public class TutorDashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tutor_dashboard, container, false);
 
-        // Initialize Firebase
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             datRef = FirebaseDatabase.getInstance().getReference("Users").child("Tutor").child(user.getUid());
             lesRef = FirebaseDatabase.getInstance().getReference("Bookings");
         }
 
-        // Initialize UI Elements
         tvWelcome = view.findViewById(R.id.tvWelcome);
         tvEarnings = view.findViewById(R.id.tvEarnings);
         tvLessonCount = view.findViewById(R.id.tvLessonCount);
@@ -77,12 +75,10 @@ public class TutorDashboardFragment extends Fragment {
 
         loadTutorStats();
 
-        String todayString = getTodayDateString();
-        Log.d("DashboardDebug", "Checking for date: " + todayString);
-
-        Calendar now = Calendar.getInstance();
-        // Allow lessons that started up to 60 minutes ago to still show as "Up Next/Ongoing"
-        int currentMinutes = (now.get(Calendar.HOUR_OF_DAY) * 60) + now.get(Calendar.MINUTE) - 60;
+        long nowTs = System.currentTimeMillis();
+        // Window: Any lesson starting within next 24 hours OR started within last 60 minutes
+        long windowStart = nowTs - (60 * 60_000L);
+        long windowEnd = nowTs + (24 * 60 * 60_000L);
 
         Query tutorQuery = lesRef.orderByChild("tutorId").equalTo(user.getUid());
 
@@ -92,29 +88,27 @@ public class TutorDashboardFragment extends Fragment {
                 if (!isAdded()) return;
 
                 Booking nextBooking = null;
-                int closestMinutes = Integer.MAX_VALUE;
+                long closestDiff = Long.MAX_VALUE;
 
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Booking b = data.getValue(Booking.class);
                     if (b == null) continue;
 
-                    Log.d("DashboardDebug", "Checking booking: " + b.getLessonDate() + " at " + b.getLessonTime());
-
-                    if (todayString.equals(b.getLessonDate())) {
-                        int lessonMinutes = parseTimeToMinutes(b.getLessonTime());
-
-                        if (lessonMinutes >= currentMinutes && lessonMinutes < closestMinutes) {
-                            closestMinutes = lessonMinutes;
+                    long ts = b.getTimestamp();
+                    
+                    // Logic: Find the closest upcoming lesson (or one that just started)
+                    if (ts >= windowStart && ts <= windowEnd) {
+                        long diff = Math.abs(ts - nowTs);
+                        if (diff < closestDiff) {
+                            closestDiff = diff;
                             nextBooking = b;
                         }
                     }
                 }
 
                 if (nextBooking != null) {
-                    Log.d("DashboardDebug", "Found booking: " + nextBooking.getSubject());
                     updateUIWithBooking(nextBooking);
                 } else {
-                    Log.d("DashboardDebug", "No booking found for today.");
                     tvNoLessons.setVisibility(View.VISIBLE);
                     layoutLessonDetails.setVisibility(View.GONE);
                 }
@@ -149,25 +143,16 @@ public class TutorDashboardFragment extends Fragment {
         });
     }
 
-    private int parseTimeToMinutes(String timeString) {
-        try {
-            // Handles both "14:30" and "2:30 PM" if needed, but assuming "HH:mm"
-            String cleanTime = timeString.split(" ")[0]; 
-            String[] parts = cleanTime.split(":");
-            int hours = Integer.parseInt(parts[0]);
-            int minutes = Integer.parseInt(parts[1]);
-            return (hours * 60) + minutes;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
     private void updateUIWithBooking(Booking booking) {
         tvNoLessons.setVisibility(View.GONE);
         layoutLessonDetails.setVisibility(View.VISIBLE);
 
         tvLessonSubject.setText(booking.getSubject());
-        tvLessonTime.setText(booking.getLessonTime());
+        
+        // Display time in LOCAL time zone based on the timestamp
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        tvLessonTime.setText(sdf.format(new Date(booking.getTimestamp())));
+        
         tvLessonStatus.setText(booking.getStatus().toUpperCase());
 
         String status = booking.getStatus();
@@ -183,7 +168,20 @@ public class TutorDashboardFragment extends Fragment {
             tvLessonStatus.setTextColor(getResources().getColor(R.color.gapfix_green));
             layoutLessonActions.setVisibility(View.GONE);
             btnLesson.setVisibility(View.VISIBLE);
-            btnLesson.setText("JOIN");
+            
+            // Check if joinable now
+            if (LessonTimeHelper.isJoinable(booking)) {
+                btnLesson.setEnabled(true);
+                btnLesson.setText("JOIN");
+                btnLesson.setOnClickListener(v -> {
+                    Intent intent = new Intent(getContext(), VideoCallActivity.class);
+                    intent.putExtra("BOOKING_ID", booking.getBookingId());
+                    startActivity(intent);
+                });
+            } else {
+                btnLesson.setEnabled(false);
+                btnLesson.setText("WAITING");
+            }
         } else {
             tvLessonStatus.setTextColor(getResources().getColor(R.color.error));
             layoutLessonActions.setVisibility(View.GONE);
@@ -203,9 +201,5 @@ public class TutorDashboardFragment extends Fragment {
 
     private void updateStatus(String bId, String newStatus) {
         if (bId != null) lesRef.child(bId).child("status").setValue(newStatus);
-    }
-
-    private String getTodayDateString() {
-        return new SimpleDateFormat("MMM d, yyyy", Locale.US).format(new Date());
     }
 }

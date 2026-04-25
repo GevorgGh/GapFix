@@ -13,8 +13,21 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <!-- Required for Bluetooth headsets -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <queries>
+        <package android:name="com.google.android.gms" />
+    </queries>
 
     <application
         android:name=".GapFixApplication"
@@ -28,18 +41,23 @@
         android:theme="@style/Theme.GapFix">
 
         <activity
+            android:name=".IsVerifiedActivity"
+            android:exported="false" />
+        <activity
             android:name=".NewChatActivity"
             android:exported="false" />
-
         <activity
             android:name=".ChatActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Added hardware acceleration for smoother video -->
         <activity
             android:name=".VideoCallActivity"
             android:exported="false"
+            android:hardwareAccelerated="true"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".TutorSubjectActivity"
             android:exported="false" />
@@ -51,6 +69,16 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <!-- Background service that fires call notifications regardless of active screen -->
+        <service
+            android:name=".CallNotificationService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <receiver
+            android:name=".LessonReminderReceiver"
+            android:exported="false" />
 
         <activity
             android:name=".BookFreeLessonActivity"
@@ -106,7 +134,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -17,6 +18,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
+    private static final int VIEW_TYPE_DATE_HEADER = 3;
 
     private List<FirestoreMessage> messages;
     private String currentUserId;
@@ -29,6 +31,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
         FirestoreMessage message = messages.get(position);
+        if (message.senderId.equals("DATE_HEADER")) {
+            return VIEW_TYPE_DATE_HEADER;
+        }
         return currentUserId.equals(message.senderId) ? VIEW_TYPE_SENT : VIEW_TYPE_RECEIVED;
     }
 
@@ -39,10 +44,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent, parent, false);
             return new SentMessageViewHolder(view);
-        } else {
+        } else if (viewType == VIEW_TYPE_RECEIVED) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_received, parent, false);
             return new ReceivedMessageViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_date_header, parent, false);
+            return new DateHeaderViewHolder(view);
         }
     }
 
@@ -50,13 +59,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         FirestoreMessage message = messages.get(position);
 
+        if (holder instanceof DateHeaderViewHolder) {
+            ((DateHeaderViewHolder) holder).bind(message.text);
+            return;
+        }
+
         long timeMillis = message.timestamp != null
                 ? message.timestamp.toDate().getTime()
                 : System.currentTimeMillis();
 
         if (holder instanceof SentMessageViewHolder) {
             ((SentMessageViewHolder) holder).bind(message.text, timeMillis);
-        } else {
+        } else if (holder instanceof ReceivedMessageViewHolder) {
             ((ReceivedMessageViewHolder) holder).bind(message.text, timeMillis);
         }
     }
@@ -93,6 +107,38 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void bind(String message, long time) {
             tvMessage.setText(message);
             tvTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(time)));
+        }
+    }
+
+    static class DateHeaderViewHolder extends RecyclerView.ViewHolder {
+        TextView tvDateHeader;
+
+        DateHeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvDateHeader = itemView.findViewById(R.id.tvDateHeader);
+        }
+
+        void bind(String dateText) {
+            tvDateHeader.setText(dateText);
+        }
+    }
+
+    public static String getFormattedDate(long smsTimeInMilis) {
+        Calendar smsTime = Calendar.getInstance();
+        smsTime.setTimeInMillis(smsTimeInMilis);
+
+        Calendar now = Calendar.getInstance();
+
+        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE) &&
+                now.get(Calendar.MONTH) == smsTime.get(Calendar.MONTH) &&
+                now.get(Calendar.YEAR) == smsTime.get(Calendar.YEAR)) {
+            return "Today";
+        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1 &&
+                now.get(Calendar.MONTH) == smsTime.get(Calendar.MONTH) &&
+                now.get(Calendar.YEAR) == smsTime.get(Calendar.YEAR)) {
+            return "Yesterday";
+        } else {
+            return new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(new Date(smsTimeInMilis));
         }
     }
 }

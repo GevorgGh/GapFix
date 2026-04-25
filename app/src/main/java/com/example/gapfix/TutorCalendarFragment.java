@@ -21,12 +21,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class TutorCalendarFragment extends Fragment {
 
@@ -61,7 +59,7 @@ public class TutorCalendarFragment extends Fragment {
         setupDateList();
 
         // Load today by default
-        loadBookingsFromFirebase(getFormattedDate(new Date()));
+        loadBookingsForDate(new Date());
 
         return view;
     }
@@ -77,18 +75,32 @@ public class TutorCalendarFragment extends Fragment {
 
     private void setupDateList() {
         dateAdapter = new DateAdapter(dateList, dateModel -> {
-            String selectedDate = getFormattedDate(dateModel.getFullDate());
-            loadBookingsFromFirebase(selectedDate);
+            loadBookingsForDate(dateModel.getFullDate());
         });
 
         rvDates.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvDates.setAdapter(dateAdapter);
     }
 
-    private void loadBookingsFromFirebase(String dateFilter) {
+    private void loadBookingsForDate(Date date) {
         if (currentUserId == null) return;
 
-        Log.d(TAG, "Filtering by date: [" + dateFilter + "] for tutor: " + currentUserId);
+        // Calculate the range for the entire day in milliseconds
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long startOfDay = cal.getTimeInMillis();
+
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        long endOfDay = cal.getTimeInMillis();
+
+        Log.d(TAG, "Filtering between: " + startOfDay + " and " + endOfDay);
 
         Query query = bookingsRef.orderByChild("tutorId").equalTo(currentUserId);
         query.addValueEventListener(new ValueEventListener() {
@@ -100,8 +112,9 @@ public class TutorCalendarFragment extends Fragment {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Booking b = ds.getValue(Booking.class);
                     if (b != null) {
-                        Log.d(TAG, "Comparing: Filter[" + dateFilter + "] vs DB[" + b.getLessonDate() + "]");
-                        if (dateFilter.trim().equalsIgnoreCase(b.getLessonDate().trim())) {
+                        long ts = b.getTimestamp();
+                        // Check if booking timestamp falls within the selected day
+                        if (ts >= startOfDay && ts <= endOfDay) {
                             filteredList.add(b);
                         }
                     }
@@ -127,9 +140,5 @@ public class TutorCalendarFragment extends Fragment {
             displayedBookings.addAll(list);
         }
         bookingAdapter.notifyDataSetChanged();
-    }
-
-    private String getFormattedDate(Date date) {
-        return new SimpleDateFormat("MMM d, yyyy", Locale.US).format(date);
     }
 }

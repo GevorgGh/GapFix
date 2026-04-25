@@ -44,4 +44,8 @@ public class User {
 
     public void setFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
     public String getFcmToken() { return fcmToken; }
+
+    public String imageResourceLink;
+    public String getImageResourceLink() { return imageResourceLink; }
+    public void setImageResourceLink(String imageResourceLink) { this.imageResourceLink = imageResourceLink; }
 }

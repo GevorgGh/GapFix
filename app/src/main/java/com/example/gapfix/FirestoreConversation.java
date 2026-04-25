@@ -9,10 +9,9 @@ public class FirestoreConversation {
     public List<String> participants;
     public String lastMessage;
     public Timestamp lastMessageTime;
-    
-    // We handle participantNames manually in the Fragment to avoid deserialization crashes
     public String otherUserId;         
-    public String otherUserName;       
+    public String otherUserName;
+    public String otherUserImage;
 
     public FirestoreConversation() {}
 }

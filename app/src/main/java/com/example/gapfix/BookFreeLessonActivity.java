@@ -34,6 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class BookFreeLessonActivity extends AppCompatActivity {
 
@@ -54,19 +55,15 @@ public class BookFreeLessonActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // 1. Get Tutor from Intent
         Tutor tutor = (Tutor) getIntent().getSerializableExtra("tutor");
         if (tutor == null) {
             finish();
             return;
         }
 
-        // Use tutor.getName() if you don't have a specific ID field yet,
-        // but ideally use tutor.getId()
         String tutorId = tutor.getId();
         String studentId = mAuth.getCurrentUser().getUid();
 
-        // 2. Set UI Elements
         TextView tutorName = findViewById(R.id.tutor_name);
         tutorName.setText(tutor.getName());
 
@@ -77,22 +74,17 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                 .circleCrop()
                 .into(tutorImage);
 
-        // 3. Handle the NEW SubjectPreference structure
         ChipGroup tutorSubjectsGroup = findViewById(R.id.tutor_subjects_chips);
         tutorSubjectsGroup.removeAllViews();
 
         if (tutor.getPreferences() != null) {
             for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
                 Chip chip = new Chip(this);
-                // Show name and price so the student knows the cost
                 String chipLabel = String.format("%s (%s%d)", pref.name, pref.currency, pref.price);
                 chip.setText(chipLabel);
-
                 chip.setCheckable(true);
                 chip.setClickable(true);
-                // Add a unique ID for the listener to find it
                 chip.setId(View.generateViewId());
-
                 tutorSubjectsGroup.addView(chip);
             }
         }
@@ -100,7 +92,6 @@ public class BookFreeLessonActivity extends AppCompatActivity {
         tutorSubjectsGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (!checkedIds.isEmpty()) {
                 Chip selectedChip = findViewById(checkedIds.get(0));
-                // We extract just the subject name (everything before the parenthesis)
                 String fullText = selectedChip.getText().toString();
                 selectedSubject = fullText.split(" \\(")[0];
             } else {
@@ -108,26 +99,27 @@ public class BookFreeLessonActivity extends AppCompatActivity {
             }
         });
 
-        // 4. Setup Date/Time Pickers (Keep your existing logic)
         MaterialButton btnSelectDate = findViewById(R.id.btnSelectDate);
         MaterialButton btnSelectTime = findViewById(R.id.btnSelectTime);
         MaterialButton btnBook = findViewById(R.id.btnConfirmBooking);
 
         setupPickers(btnSelectDate, btnSelectTime);
 
-        // 5. Booking Action
         btnBook.setOnClickListener(v -> {
             if (selectedSubject == null) {
                 Toast.makeText(this, "Please select a subject", Toast.LENGTH_SHORT).show();
             } else if (selectedDateMs == -1 || selectedHour == -1) {
                 Toast.makeText(this, "Please select date and time", Toast.LENGTH_SHORT).show();
-            } else if (!isDateTimeValid(selectedDateMs, selectedHour, selectedMinute)) {
-                Toast.makeText(this, "Bookings must be at least 30 minutes from now", Toast.LENGTH_LONG).show();
             } else {
-                // Pass formatted strings to Firebase
-                String date = btnSelectDate.getText().toString();
-                String time = btnSelectTime.getText().toString();
-                bookLesson(selectedSubject, date, time, tutorId, studentId);
+                long finalTimestamp = calculateTimestamp(selectedDateMs, selectedHour, selectedMinute);
+                
+                if (finalTimestamp < System.currentTimeMillis() + (30 * 60_000L)) {
+                    Toast.makeText(this, "Bookings must be at least 30 minutes from now", Toast.LENGTH_LONG).show();
+                } else {
+                    String dateStr = btnSelectDate.getText().toString();
+                    String timeStr = btnSelectTime.getText().toString();
+                    bookLesson(selectedSubject, dateStr, timeStr, finalTimestamp, tutorId, studentId);
+                }
             }
         });
 
@@ -139,7 +131,6 @@ public class BookFreeLessonActivity extends AppCompatActivity {
     }
 
     private void setupPickers(MaterialButton btnDate, MaterialButton btnTime) {
-        // Date Picker logic
         CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointForward.now());
 
@@ -155,7 +146,6 @@ public class BookFreeLessonActivity extends AppCompatActivity {
             btnDate.setText(datePicker.getHeaderText());
         });
 
-        // Time Picker logic
         btnTime.setOnClickListener(v -> {
             MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
                     .setTimeFormat(TimeFormat.CLOCK_24H)
@@ -173,22 +163,26 @@ public class BookFreeLessonActivity extends AppCompatActivity {
         });
     }
 
-    private boolean isDateTimeValid(long dateMs, int hour, int minute) {
-        Calendar selectedCal = Calendar.getInstance();
-        selectedCal.setTimeInMillis(dateMs);
-        selectedCal.set(Calendar.HOUR_OF_DAY, hour);
-        selectedCal.set(Calendar.MINUTE, minute);
+    private long calculateTimestamp(long dateMs, int hour, int minute) {
+        // 1. Get the year, month, and day from the UTC midnight dateMs (from MaterialDatePicker)
+        Calendar utcCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        utcCal.setTimeInMillis(dateMs);
+        int year = utcCal.get(Calendar.YEAR);
+        int month = utcCal.get(Calendar.MONTH);
+        int day = utcCal.get(Calendar.DAY_OF_MONTH);
 
-        Calendar minAllowed = Calendar.getInstance();
-        minAllowed.add(Calendar.MINUTE, 30);
-        return selectedCal.after(minAllowed);
+        // 2. Create a calendar in the user's LOCAL time zone to interpret the picked hour/minute
+        Calendar localCal = Calendar.getInstance(); 
+        localCal.set(year, month, day, hour, minute, 0);
+        localCal.set(Calendar.MILLISECOND, 0);
+        
+        // 3. Return the absolute time (epoch milliseconds)
+        return localCal.getTimeInMillis();
     }
 
-    public void bookLesson(String subject, String date, String time, String tId, String sId) {
-        // 1. Reference to the Bookings node
+    public void bookLesson(String subject, String date, String time, long timestamp, String tId, String sId) {
         DatabaseReference bookingsRef = mDatabase.getReference("Bookings");
 
-        // 2. Query to check if this student has ever booked THIS tutor before
         bookingsRef.orderByChild("studentId").equalTo(sId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -197,34 +191,29 @@ public class BookFreeLessonActivity extends AppCompatActivity {
 
                         for (DataSnapshot data : snapshot.getChildren()) {
                             Booking existingBooking = data.getValue(Booking.class);
-                            // Check if the tutorId matches in any of the student's previous bookings
-                            if (existingBooking != null && tId.equals(existingBooking.getTutorId()) && existingBooking.getStatus().equals("done")) {
+                            if (existingBooking != null && tId.equals(existingBooking.getTutorId()) && "done".equals(existingBooking.getStatus())) {
                                 hasPreviousLesson = true;
                                 break;
                             }
                         }
 
-                        // 3. Create the new booking
                         DatabaseReference newBookingRef = bookingsRef.push();
                         String bId = newBookingRef.getKey();
 
-                        Booking newBooking = new Booking(bId, sId, tId, date, time, subject);
+                        Booking newBooking = new Booking(bId, sId, tId, date, time, subject, timestamp);
 
                         if (!hasPreviousLesson) {
-                            // First time: Mark as Free Trial or set price to 0
                             newBooking.setStatus("free_trial_pending");
-                            // If your Booking model has a price field: newBooking.setPrice(0.0);
                             Toast.makeText(BookFreeLessonActivity.this, "First lesson! Applying Free Trial.", Toast.LENGTH_SHORT).show();
                         } else {
-                            // Not the first time
                             newBooking.setStatus("pending");
                         }
 
-                        // 4. Save to Firebase
                         newBookingRef.setValue(newBooking)
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(BookFreeLessonActivity.this, "Booking sent!", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(BookFreeLessonActivity.this, HomeStudentActivity.class));
+                                    finish();
                                 })
                                 .addOnFailureListener(e -> Toast.makeText(BookFreeLessonActivity.this, "Failed to book", Toast.LENGTH_SHORT).show());
                     }
@@ -234,4 +223,5 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                         Log.e("Firebase", "Error checking history: " + error.getMessage());
                     }
                 });
-    }}
+    }
+}

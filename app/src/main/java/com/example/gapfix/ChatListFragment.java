@@ -66,7 +66,8 @@ public class ChatListFragment extends Fragment {
     private void startListeningForChats() {
         if (currentUserId == null) return;
 
-        chatListener = FirebaseFirestore.getInstance()
+        // CRUCIAL: Connect to the 'gapfix' database instance
+        FirebaseFirestore.getInstance("gapfix")
                 .collection("chats")
                 .whereArrayContains("participants", currentUserId)
                 .addSnapshotListener((snapshots, e) -> {
@@ -76,7 +77,7 @@ public class ChatListFragment extends Fragment {
                     for (QueryDocumentSnapshot doc : snapshots) {
                         FirestoreConversation conv = doc.toObject(FirestoreConversation.class);
                         
-                        // 1. Identify other user ID
+                        // 1. Identify other user
                         List<String> participants = (List<String>) doc.get("participants");
                         if (participants != null) {
                             for (String id : participants) {
@@ -86,11 +87,18 @@ public class ChatListFragment extends Fragment {
                             }
                         }
                         
-                        // 2. Safely get names from the Map
+                        // 2. Fetch other user's name from metadata Map
                         Object namesObj = doc.get("participantNames");
                         if (namesObj instanceof Map && conv.otherUserId != null) {
                             Map<String, String> namesMap = (Map<String, String>) namesObj;
                             conv.otherUserName = namesMap.get(conv.otherUserId);
+                        }
+
+                        // 3. Fetch other user's image from metadata Map
+                        Object imagesObj = doc.get("participantImages");
+                        if (imagesObj instanceof Map && conv.otherUserId != null) {
+                            Map<String, String> imagesMap = (Map<String, String>) imagesObj;
+                            conv.otherUserImage = imagesMap.get(conv.otherUserId);
                         }
                         
                         conversationList.add(conv);
