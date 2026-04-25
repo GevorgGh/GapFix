@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.firebase.firestore.*;
+
 public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ViewHolder> {
 
     private List<FirestoreConversation> conversations;
