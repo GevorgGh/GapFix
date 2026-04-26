@@ -43,7 +43,7 @@ public class ChatActivity extends AppCompatActivity {
     private MessageAdapter adapter;
     private List<FirestoreMessage> messageList = new ArrayList<>();
     private EditText etMessage;
-    private ImageButton btnSend, btnBack, btnCall;
+    private ImageButton btnSend, btnBack;
     private TextView tvChatName;
 
     private FirebaseFirestore db;
@@ -80,7 +80,6 @@ public class ChatActivity extends AppCompatActivity {
         etMessage = findViewById(R.id.etMessage);
         btnSend = findViewById(R.id.btnSend);
         btnBack = findViewById(R.id.btnBack);
-        btnCall = findViewById(R.id.btnCall);
         tvChatName = findViewById(R.id.tvChatName);
 
         tvChatName.setText(otherUserName != null ? otherUserName : "Chat");
@@ -93,11 +92,6 @@ public class ChatActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> finish());
         btnSend.setOnClickListener(v -> sendMessage());
-        btnCall.setOnClickListener(v -> {
-            Intent intent = new Intent(this, VideoCallActivity.class);
-            intent.putExtra("BOOKING_ID", "test"); // Use appropriate ID
-            startActivity(intent);
-        });
     }
 
     private void fetchDetailsFromRTDB() {
@@ -157,7 +151,6 @@ public class ChatActivity extends AppCompatActivity {
 
     private void addMessageWithDateHeader(FirestoreMessage msg) {
         if (msg.timestamp == null) {
-            // New local message that hasn't received server timestamp yet
             messageList.add(msg);
             adapter.notifyItemInserted(messageList.size() - 1);
             rvMessages.scrollToPosition(messageList.size() - 1);
@@ -181,7 +174,6 @@ public class ChatActivity extends AppCompatActivity {
             FirestoreMessage header = new FirestoreMessage();
             header.senderId = "DATE_HEADER";
             header.text = dateStr;
-            // Use slightly older timestamp than message to keep order
             header.timestamp = new Timestamp(new java.util.Date(msg.timestamp.toDate().getTime() - 1));
             messageList.add(header);
             adapter.notifyItemInserted(messageList.size() - 1);

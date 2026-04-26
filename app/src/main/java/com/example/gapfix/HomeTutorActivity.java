@@ -45,8 +45,7 @@ public class HomeTutorActivity extends AppCompatActivity {
                     if (isGranted) {
                         Log.d("HomeTutor", "Notification permission granted");
                     }
-                }
-        );
+                });
 
         // Ask for permission if on Android 13+
         askNotificationPermission();
@@ -76,8 +75,8 @@ public class HomeTutorActivity extends AppCompatActivity {
 
     private void askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
-                    PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
         }

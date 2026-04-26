@@ -55,14 +55,12 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             }
         }
 
-        // --- DISPLAY ONLY LOCAL TIME ---
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
         String localTime = timeFormat.format(new Date(booking.getTimestamp()));
         
         holder.tvSubject.setText(booking.getSubject());
         holder.tvTime.setText(localTime);
         holder.tvStatus.setText(String.format("• %s", currentStatus));
-        // ---------------------------
 
         String tutorId = booking.getTutorId();
         if (tutorId != null) {
@@ -84,17 +82,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
         holder.btnAction.setVisibility(View.VISIBLE);
         holder.btnAction.setEnabled(true);
-        holder.btnAction.removeCallbacks(holder.updateRunnable);
+        if (holder.updateRunnable != null) holder.btnAction.removeCallbacks(holder.updateRunnable);
 
         if ("confirmed".equalsIgnoreCase(currentStatus)) {
             holder.tvStatus.setTextColor(Color.parseColor("#4CAF50"));
             holder.btnCancel.setVisibility(View.GONE);
-
-            LessonAlarmScheduler.schedule(context,
-                    booking.getBookingId(),
-                    booking.getTimestamp(),
-                    booking.getSubject(),
-                    "student");
 
             holder.updateRunnable = new Runnable() {
                 @Override
@@ -109,6 +101,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                         holder.btnAction.setOnClickListener(v -> {
                             Intent intent = new Intent(context, VideoCallActivity.class);
                             intent.putExtra("BOOKING_ID", booking.getBookingId());
+                            // FIX: When joining from the app, it's NOT an incoming call
+                            intent.putExtra("IS_INCOMING", false);
                             context.startActivity(intent);
                         });
                     } else {

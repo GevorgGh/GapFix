@@ -34,6 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class BookFreeLessonActivity extends AppCompatActivity {
@@ -113,7 +114,7 @@ public class BookFreeLessonActivity extends AppCompatActivity {
             } else {
                 long finalTimestamp = calculateTimestamp(selectedDateMs, selectedHour, selectedMinute);
                 
-                if (finalTimestamp < System.currentTimeMillis() + (30 * 60_000L)) {
+                if (finalTimestamp < System.currentTimeMillis() + (1 * 60_000L)) {
                     Toast.makeText(this, "Bookings must be at least 30 minutes from now", Toast.LENGTH_LONG).show();
                 } else {
                     String dateStr = btnSelectDate.getText().toString();
@@ -164,19 +165,16 @@ public class BookFreeLessonActivity extends AppCompatActivity {
     }
 
     private long calculateTimestamp(long dateMs, int hour, int minute) {
-        // 1. Get the year, month, and day from the UTC midnight dateMs (from MaterialDatePicker)
         Calendar utcCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         utcCal.setTimeInMillis(dateMs);
         int year = utcCal.get(Calendar.YEAR);
         int month = utcCal.get(Calendar.MONTH);
         int day = utcCal.get(Calendar.DAY_OF_MONTH);
 
-        // 2. Create a calendar in the user's LOCAL time zone to interpret the picked hour/minute
         Calendar localCal = Calendar.getInstance(); 
         localCal.set(year, month, day, hour, minute, 0);
         localCal.set(Calendar.MILLISECOND, 0);
         
-        // 3. Return the absolute time (epoch milliseconds)
         return localCal.getTimeInMillis();
     }
 
@@ -204,13 +202,13 @@ public class BookFreeLessonActivity extends AppCompatActivity {
 
                         if (!hasPreviousLesson) {
                             newBooking.setStatus("free_trial_pending");
-                            Toast.makeText(BookFreeLessonActivity.this, "First lesson! Applying Free Trial.", Toast.LENGTH_SHORT).show();
                         } else {
                             newBooking.setStatus("pending");
                         }
 
                         newBookingRef.setValue(newBooking)
                                 .addOnSuccessListener(aVoid -> {
+                                    sendNewBookingNotification(tId, subject); // Send notification to Tutor
                                     Toast.makeText(BookFreeLessonActivity.this, "Booking sent!", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(BookFreeLessonActivity.this, HomeStudentActivity.class));
                                     finish();
@@ -223,5 +221,15 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                         Log.e("Firebase", "Error checking history: " + error.getMessage());
                     }
                 });
+    }
+
+    private void sendNewBookingNotification(String targetTutorId, String subject) {
+        DatabaseReference notifRef = mDatabase.getReference("Notifications").child(targetTutorId).push();
+        Map<String, Object> data = new HashMap<>();
+        data.put("title", "New Lesson Booked! 📅");
+        data.put("message", "A student has booked a new lesson for " + subject + ".");
+        data.put("timestamp", System.currentTimeMillis());
+        data.put("isCall", false); // Distinguish from calling
+        notifRef.setValue(data);
     }
 }

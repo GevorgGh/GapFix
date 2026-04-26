@@ -88,6 +88,8 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
                         holder.btnJoin.setOnClickListener(v -> {
                             Intent intent = new Intent(context, VideoCallActivity.class);
                             intent.putExtra("BOOKING_ID", booking.getBookingId());
+                            // FIX: When joining from the app, it's NOT an incoming call
+                            intent.putExtra("IS_INCOMING", false);
                             context.startActivity(intent);
                         });
                     } else {
@@ -134,8 +136,7 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
                     tvName.setText("Unknown Student");
                 }
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 

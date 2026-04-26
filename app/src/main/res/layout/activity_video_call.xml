@@ -7,39 +7,12 @@
     android:background="@color/gapfix_text_dark"
     tools:context=".VideoCallActivity">
 
-    <!-- Remote Video View (Full Screen when call is active) -->
+    <!-- Remote Video View (Full Screen) -->
     <FrameLayout
         android:id="@+id/remote_video_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/gapfix_text_dark" />
-
-    <!-- Local Video View (Full Screen when Ringing, Small Overlay when Active) -->
-    <FrameLayout
-        android:id="@+id/local_video_view_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/gapfix_text_dark" />
-
-    <!-- Small Overlay Container for Local Video (Hidden initially) -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/local_video_card"
-        android:layout_width="120dp"
-        android:layout_height="160dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <FrameLayout
-            android:id="@+id/local_video_overlay_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/gapfix_text_dark" />
-    </androidx.cardview.widget.CardView>
 
     <!-- Timer Overlay -->
     <com.google.android.material.card.MaterialCardView
@@ -67,32 +40,60 @@
             android:textStyle="bold" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Incoming Call / Ringing Controls Overlay -->
+    <!-- Local Video View (Small Overlay) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/local_video_card"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/local_video_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/gapfix_text_dark" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Calling Overlay (Visible when waiting for answer) -->
     <LinearLayout
-        android:id="@+id/layout_call_ui"
+        android:id="@+id/layout_calling"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#4D000000"
-        android:gravity="center_horizontal|bottom"
+        android:background="#E6000000"
+        android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="48dp"
-        android:elevation="10dp">
+        android:visibility="gone"
+        android:elevation="10dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_caller_image"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/person_circle"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent" />
 
         <TextView
-            android:id="@+id/tv_call_status"
+            android:id="@+id/tv_caller_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:text="Calling..."
+            android:layout_marginTop="16dp"
+            android:text="Incoming Lesson Call..."
             android:textColor="@color/white"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:shadowColor="#000"
-            android:shadowRadius="4"/>
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -100,7 +101,7 @@
                 android:id="@+id/btn_decline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="40dp"
+                android:layout_marginEnd="48dp"
                 android:src="@drawable/baseline_call_end_24"
                 app:backgroundTint="@color/error"
                 app:tint="@color/white" />
@@ -110,16 +111,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/baseline_mic_24"
-                android:visibility="gone"
                 app:backgroundTint="@color/gapfix_green"
                 app:tint="@color/white" />
 
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Active Call Controls (Initially Hidden) -->
+    <!-- Controls Container -->
     <LinearLayout
-        android:id="@+id/layout_active_controls"
+        android:id="@+id/layout_controls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -143,12 +143,22 @@
             app:tint="@color/gapfix_text_dark" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_end_call_active"
+            android:id="@+id/btn_hang_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:src="@drawable/baseline_call_end_24"
             app:backgroundTint="@color/error"
+            app:fabSize="normal"
+            app:tint="@color/white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_finish_lesson"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:src="@drawable/baseline_check_24"
+            app:backgroundTint="@color/gapfix_green"
             app:fabSize="normal"
             app:tint="@color/white" />
 
