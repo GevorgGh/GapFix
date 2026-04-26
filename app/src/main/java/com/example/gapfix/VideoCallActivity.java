@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -60,8 +62,14 @@ public class VideoCallActivity extends AppCompatActivity {
     private boolean isMuted = false;
     private boolean isTimerFinished = false;
     private boolean isRemoteUserJoined = false;
+    private boolean isEnding = false;
     private CountDownTimer classTimer;
+    
     private DatabaseReference callRef;
+    private ValueEventListener callStateListener;
+    
+    private DatabaseReference bookingRef;
+    private ValueEventListener bookingListener;
 
     private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
@@ -112,15 +120,25 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     private void handleIntent(Intent intent) {
+        isEnding = false;
         appId = getString(R.string.appIdAgora);
         bookingId = intent.getStringExtra("BOOKING_ID");
         if (bookingId == null) bookingId = "test_room";
         channelName = bookingId;
 
         initUI();
+        
+        // Cleanup old listeners if any
+        if (callRef != null && callStateListener != null) callRef.removeEventListener(callStateListener);
+        if (bookingRef != null && bookingListener != null) bookingRef.removeEventListener(bookingListener);
+        
         callRef = FirebaseDatabase.getInstance().getReference("Calls").child(bookingId);
+        bookingRef = FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId);
+        
         listenForCallState();
-        fetchTutorIdAndStatus();
+        listenForBookingChanges();
+        
+        fetchTutorId();
 
         if (checkSelfPermission()) {
             startCallingFlow();
@@ -129,9 +147,8 @@ public class VideoCallActivity extends AppCompatActivity {
         }
     }
 
-    private void fetchTutorIdAndStatus() {
-        FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+    private void fetchTutorId() {
+        bookingRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -272,25 +289,47 @@ public class VideoCallActivity extends AppCompatActivity {
 
     private void finishLessonAction() {
         String uid = FirebaseAuth.getInstance().getUid();
-        callRef.child("finishRequests").child(uid).setValue(true);
-        Toast.makeText(this, "Finish request sent. Waiting for partner...", Toast.LENGTH_SHORT).show();
+        if (uid == null) return;
+        
+        Log.d(TAG, "finishLessonAction: Sending request for " + uid);
+        
+        // USE BOOKING_REF instead of CALL_REF for finish requests
+        // This avoids permission issues on the Calls node
+        bookingRef.child("finishRequests").child(uid).setValue(true)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(VideoCallActivity.this, "Finish request sent. Waiting for partner...", Toast.LENGTH_SHORT).show();
+                    btnFinishLesson.setEnabled(false);
+                    btnFinishLesson.setAlpha(0.5f);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "finishLessonAction: Firebase write failed", e);
+                    Toast.makeText(VideoCallActivity.this, "Firebase Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void finalizeCall() {
-        if (isRemoteUserJoined) {
-            updateCallState("ended");
-            updateBookingStatus();
-            checkIfStudentAndOpenReview();
-        } else {
-            updateCallState("cancelled");
-            cancelBooking();
+        if (isEnding) return;
+        isEnding = true;
+        isTimerFinished = true;
+
+        String myUid = FirebaseAuth.getInstance().getUid();
+        
+        // ONLY THE TUTOR updates the official booking status to avoid Student permission issues
+        // If we are the tutor OR if the partner already left (no remote user), we cleanup
+        if (myUid != null && myUid.equals(tutorId)) {
+            updateBookingStatusToFinished();
         }
+
+        updateCallState("ended");
+        checkIfStudentAndOpenReview();
     }
 
-    private void updateBookingStatus() {
+    private void updateBookingStatusToFinished() {
         if (bookingId == null || bookingId.equals("test_room")) return;
-        DatabaseReference bookingRef = FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId);
+        
+        Log.d(TAG, "Tutor updating booking status to finished");
         bookingRef.child("status").setValue("finished");
+        
         bookingRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -311,13 +350,17 @@ public class VideoCallActivity extends AppCompatActivity {
             finish();
             return;
         }
-        FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId)
-                .child("status").setValue("cancelled");
+        bookingRef.child("status").setValue("cancelled");
         finish();
     }
 
     private void checkIfStudentAndOpenReview() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
+        if (currentUserId == null) {
+            finish();
+            return;
+        }
+        
         FirebaseDatabase.getInstance().getReference("Users").child("Student").child(currentUserId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -342,34 +385,60 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     private void listenForCallState() {
-        callRef.addValueEventListener(new ValueEventListener() {
+        callStateListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isEnding) return;
+
                 String state = snapshot.child("state").getValue(String.class);
                 if ("ended".equals(state)) {
-                    isTimerFinished = true;
-                    updateBookingStatus();
-                    checkIfStudentAndOpenReview();
+                    finalizeCall();
+                    return;
                 } else if ("cancelled".equals(state)) {
+                    isEnding = true;
                     cancelBooking();
+                    return;
                 } else if ("offline".equals(state)) {
                     Toast.makeText(VideoCallActivity.this, "Partner left the call", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        };
+        callRef.addValueEventListener(callStateListener);
+    }
+
+    private void listenForBookingChanges() {
+        bookingListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isEnding) return;
+                
+                String status = snapshot.child("status").getValue(String.class);
+                if ("finished".equals(status)) {
+                    Log.d(TAG, "Booking status changed to finished, ending call");
+                    finalizeCall();
+                    return;
                 }
 
                 DataSnapshot finishReqs = snapshot.child("finishRequests");
                 if (finishReqs.getChildrenCount() >= 2) {
-                    isTimerFinished = true;
+                    Log.d(TAG, "Mutual agreement reached on Booking node");
                     finalizeCall();
+                } else if (finishReqs.getChildrenCount() == 1) {
+                    String myUid = FirebaseAuth.getInstance().getUid();
+                    if (myUid != null && !finishReqs.hasChild(myUid)) {
+                        Toast.makeText(VideoCallActivity.this, "Partner wants to finish the lesson", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
-        });
+        };
+        bookingRef.addValueEventListener(bookingListener);
     }
 
     private void startClassTimer() {
         if (classTimer != null) return;
-        FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId)
-                .child("timestamp").addListenerForSingleValueEvent(new ValueEventListener() {
+        bookingRef.child("timestamp").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
@@ -410,24 +479,36 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     private void notifyOtherParty() {
-        String targetUserId = getIntent().getStringExtra("TARGET_USER_ID");
-        if (targetUserId == null) {
-            FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        String sId = snapshot.child("studentId").getValue(String.class);
-                        String tId = snapshot.child("tutorId").getValue(String.class);
-                        String curr = FirebaseAuth.getInstance().getUid();
-                        sendNotification(curr.equals(sId) ? tId : sId);
+        bookingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String sId = snapshot.child("studentId").getValue(String.class);
+                    String tId = snapshot.child("tutorId").getValue(String.class);
+                    Long scheduledStart = snapshot.child("timestamp").getValue(Long.class);
+                    String curr = FirebaseAuth.getInstance().getUid();
+                    
+                    String target = curr.equals(sId) ? tId : sId;
+                    
+                    if (scheduledStart != null) {
+                        long now = System.currentTimeMillis();
+                        if (curr.equals(tId) && now < scheduledStart) {
+                            long delay = scheduledStart - now;
+                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                if (!isFinishing() && !isDestroyed()) {
+                                    sendNotification(target);
+                                }
+                            }, delay);
+                        } else {
+                            sendNotification(target);
+                        }
+                    } else {
+                        sendNotification(target);
                     }
                 }
-                @Override public void onCancelled(@NonNull DatabaseError error) {}
-            });
-        } else {
-            sendNotification(targetUserId);
-        }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
     private void sendNotification(String targetUid) {
@@ -458,6 +539,9 @@ public class VideoCallActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (classTimer != null) classTimer.cancel();
+        if (callRef != null && callStateListener != null) callRef.removeEventListener(callStateListener);
+        if (bookingRef != null && bookingListener != null) bookingRef.removeEventListener(bookingListener);
+        
         if (mRtcEngine != null) {
             mRtcEngine.stopPreview();
             mRtcEngine.leaveChannel();

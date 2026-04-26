@@ -30,6 +30,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- Sessions Button with History Icon -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sessions"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gapfix_green"
+                app:icon="@drawable/assignment_24dp"
+                app:iconTint="@color/gapfix_green"
+                app:layout_constraintBottom_toBottomOf="@+id/header_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/header_title" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_dates"
                 android:layout_width="match_parent"

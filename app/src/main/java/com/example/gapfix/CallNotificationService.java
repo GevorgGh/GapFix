@@ -82,7 +82,10 @@ public class CallNotificationService extends Service {
                 String title = snapshot.child("title").getValue(String.class);
                 String message = snapshot.child("message").getValue(String.class);
                 String bId = snapshot.child("bookingId").getValue(String.class);
-                boolean isCall = snapshot.child("isCall").exists();
+                
+                // FIX: Check the actual value of isCall, not just its existence
+                Boolean isCallValue = snapshot.child("isCall").getValue(Boolean.class);
+                boolean isCall = isCallValue != null && isCallValue;
                 
                 if (isCall) {
                     handleIncomingCall(title, message, bId);

@@ -1,11 +1,13 @@
 package com.example.gapfix;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,14 +60,18 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
         String status = booking.getStatus();
         holder.tvStatus.setText(status.toUpperCase());
 
+        // Reset visibility
+        holder.layoutActions.setVisibility(View.GONE);
+        holder.btnJoin.setVisibility(View.GONE);
+        holder.btnCancelTutor.setVisibility(View.GONE);
+
         if ("pending".equals(status) || "free_trial_pending".equals(status)) {
             holder.tvStatus.setTextColor(ContextCompat.getColor(context, android.R.color.holo_orange_dark));
             holder.layoutActions.setVisibility(View.VISIBLE);
-            holder.btnJoin.setVisibility(View.GONE);
         } else if ("confirmed".equals(status)) {
             holder.tvStatus.setTextColor(ContextCompat.getColor(context, R.color.gapfix_green));
-            holder.layoutActions.setVisibility(View.GONE);
             holder.btnJoin.setVisibility(View.VISIBLE);
+            holder.btnCancelTutor.setVisibility(View.VISIBLE); // Show cancel for confirmed lessons
             
             holder.btnJoin.removeCallbacks(holder.updateRunnable);
 
@@ -78,7 +84,7 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
             holder.updateRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    boolean joinable = LessonTimeHelper.isJoinable(booking);
+                    boolean joinable = LessonTimeHelper.isJoinable(booking, "tutor");
 
                     if (joinable) {
                         holder.btnJoin.setEnabled(true);
@@ -88,12 +94,11 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
                         holder.btnJoin.setOnClickListener(v -> {
                             Intent intent = new Intent(context, VideoCallActivity.class);
                             intent.putExtra("BOOKING_ID", booking.getBookingId());
-                            // FIX: When joining from the app, it's NOT an incoming call
                             intent.putExtra("IS_INCOMING", false);
                             context.startActivity(intent);
                         });
                     } else {
-                        long mins = LessonTimeHelper.minutesUntilJoinable(booking);
+                        long mins = LessonTimeHelper.minutesUntilJoinable(booking, "tutor");
                         holder.btnJoin.setEnabled(false);
                         holder.btnJoin.setBackgroundColor(Color.GRAY);
                         if (mins > 60) {
@@ -113,16 +118,46 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
             };
             holder.btnJoin.post(holder.updateRunnable);
 
-        } else {
+        } else if ("cancelled".equalsIgnoreCase(status)) {
             holder.tvStatus.setTextColor(ContextCompat.getColor(context, R.color.error));
-            holder.layoutActions.setVisibility(View.GONE);
-            holder.btnJoin.setVisibility(View.GONE);
+        } else {
+            holder.tvStatus.setTextColor(ContextCompat.getColor(context, R.color.gapfix_text_secondary));
         }
 
         fetchStudentName(booking.getStudentId(), holder.tvStudentName);
 
         holder.btnAccept.setOnClickListener(v -> updateBookingStatus(booking.getBookingId(), "confirmed"));
-        holder.btnReject.setOnClickListener(v -> updateBookingStatus(booking.getBookingId(), "cancelled"));
+        holder.btnReject.setOnClickListener(v -> showCancelDialog(booking.getBookingId(), "Decline Lesson"));
+        holder.btnCancelTutor.setOnClickListener(v -> showCancelDialog(booking.getBookingId(), "Cancel Lesson"));
+    }
+
+    private void showCancelDialog(String bookingId, String title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage("Please provide a reason:");
+
+        final EditText input = new EditText(context);
+        input.setHint("Enter reason here...");
+        builder.setView(input);
+
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
+            String reason = input.getText().toString().trim();
+            if (reason.isEmpty()) {
+                Toast.makeText(context, "Reason is required", Toast.LENGTH_SHORT).show();
+            } else {
+                performCancellation(bookingId, reason);
+            }
+        });
+        builder.setNegativeButton("Back", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void performCancellation(String bookingId, String reason) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId);
+        ref.child("status").setValue("cancelled");
+        ref.child("cancellationReason").setValue(reason)
+                .addOnSuccessListener(aVoid -> Toast.makeText(context, "Action completed", Toast.LENGTH_SHORT).show());
     }
 
     private void fetchStudentName(String studentId, TextView tvName) {
@@ -156,7 +191,7 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
         TextView tvStudentName, tvSubject, tvTime, tvStatus;
         LinearLayout layoutActions;
-        MaterialButton btnAccept, btnReject, btnJoin;
+        MaterialButton btnAccept, btnReject, btnJoin, btnCancelTutor;
         Runnable updateRunnable;
 
         public BookingViewHolder(@NonNull View itemView) {
@@ -169,6 +204,7 @@ public class BookingTutorAdapter extends RecyclerView.Adapter<BookingTutorAdapte
             btnAccept = itemView.findViewById(R.id.btnAccept);
             btnReject = itemView.findViewById(R.id.btnReject);
             btnJoin = itemView.findViewById(R.id.btnJoin);
+            btnCancelTutor = itemView.findViewById(R.id.btnCancelTutor);
         }
     }
 }

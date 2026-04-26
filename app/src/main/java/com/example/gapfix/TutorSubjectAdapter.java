@@ -27,12 +27,17 @@ public class TutorSubjectAdapter extends RecyclerView.Adapter<TutorSubjectAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Subject sub = list.get(position);
         holder.name.setText(sub.name);
-        holder.price.setText(sub.price + " " + sub.currency);
+        
+        // Updated to include duration in the display string
+        String displayInfo = String.format("%s %.0f / %d mins", sub.currency, sub.price, sub.duration);
+        holder.price.setText(displayInfo);
 
         holder.btnDelete.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
-            list.remove(pos);
-            notifyItemRemoved(pos);
+            if (pos != RecyclerView.NO_POSITION) {
+                list.remove(pos);
+                notifyItemRemoved(pos);
+            }
         });
     }
 

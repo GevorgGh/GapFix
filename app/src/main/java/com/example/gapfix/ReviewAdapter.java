@@ -12,7 +12,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
     private List<Review> reviewList;
 
-    // Constructor to pass the data from TutorActivity
     public ReviewAdapter(List<Review> reviewList) {
         this.reviewList = reviewList;
     }
@@ -27,7 +26,15 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
         Review review = reviewList.get(position);
-        holder.commentText.setText(review.getComment());
+        
+        // Show student name if available
+        String name = review.getStudentName() != null ? review.getStudentName() : "Anonymous";
+        holder.tvStudentName.setText(name);
+        
+        // Show review text (using getReview() from the model)
+        holder.commentText.setText(review.getReview());
+        
+        // Show rating as text (since RatingBar is not in review_card.xml)
         holder.ratingText.setText("Rating: " + review.getRating() + "/5");
     }
 
@@ -39,11 +46,13 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     public static class ReviewViewHolder extends RecyclerView.ViewHolder {
         TextView commentText;
         TextView ratingText;
+        TextView tvStudentName;
 
         public ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
             commentText = itemView.findViewById(R.id.review_text);
             ratingText = itemView.findViewById(R.id.review_rating);
+            tvStudentName = itemView.findViewById(R.id.student_name); // Fixed ID
         }
     }
 }

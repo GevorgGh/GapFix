@@ -34,7 +34,7 @@ import java.util.List;
 public class TutorSubjectActivity extends AppCompatActivity {
 
     private AutoCompleteTextView subjectDropdown, currencyDropdown;
-    private TextInputEditText etPrice;
+    private TextInputEditText etPrice, etDuration;
     private MaterialButton btnAddLocal, btnFinalFirebase;
     private RecyclerView rvSubjects;
     private RadioGroup teachMode;
@@ -51,6 +51,7 @@ public class TutorSubjectActivity extends AppCompatActivity {
         subjectDropdown = findViewById(R.id.subjectDropdown);
         currencyDropdown = findViewById(R.id.currencyDropdown);
         etPrice = findViewById(R.id.etPrice);
+        etDuration = findViewById(R.id.etDuration); // New duration field
         btnAddLocal = findViewById(R.id.btnAddSubjectLocal);
         btnFinalFirebase = findViewById(R.id.btnFinalSaveFirebase);
         rvSubjects = findViewById(R.id.rvSubjects);
@@ -67,18 +68,29 @@ public class TutorSubjectActivity extends AppCompatActivity {
             String sub = subjectDropdown.getText().toString();
             String price = etPrice.getText().toString();
             String curr = currencyDropdown.getText().toString();
+            String duration = etDuration.getText().toString();
 
-            if (!sub.isEmpty() && !price.isEmpty()) {
-                subjectList.add(new Subject(sub, Double.parseDouble(price), curr));
+            if (!sub.isEmpty() && !price.isEmpty() && !duration.isEmpty()) {
+                int durationMins = Integer.parseInt(duration);
+                subjectList.add(new Subject(sub, Double.parseDouble(price), curr, durationMins));
                 adapter.notifyItemInserted(subjectList.size() - 1);
 
                 etPrice.setText("");
+                etDuration.setText("");
                 subjectDropdown.setText(null);
+            } else {
+                Toast.makeText(this, "Please fill in all fields (Subject, Price, Duration)", Toast.LENGTH_SHORT).show();
             }
         });
 
         btnFinalFirebase.setOnClickListener(v -> {
-            String teachModeText = ((RadioButton) findViewById(teachMode.getCheckedRadioButtonId())).getText().toString();
+            int checkedId = teachMode.getCheckedRadioButtonId();
+            if (checkedId == -1) {
+                Toast.makeText(this, "Please select a teaching mode", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            String teachModeText = ((RadioButton) findViewById(checkedId)).getText().toString();
             if (subjectList.isEmpty()) {
                 Toast.makeText(this, "Please add at least one subject", Toast.LENGTH_SHORT).show();
                 return;

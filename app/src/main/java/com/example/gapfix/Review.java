@@ -1,18 +1,23 @@
 package com.example.gapfix;
 
+import java.io.Serializable;
 
-public class Review {
+public class Review implements Serializable {
     private String reviewId;
-    private String comment;
-    private int rating;
+    private String review; // Matches ReviewWritingActivity key
+    private float rating;
     private String studentId;
     private String studentName;
+    private String bookingId;
+    private long timestamp;
 
-    public int getRating() {
+    public Review() {}
+
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
@@ -24,12 +29,12 @@ public class Review {
         this.reviewId = reviewId;
     }
 
-    public String getComment() {
-        return comment;
+    public String getReview() {
+        return review;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setReview(String review) {
+        this.review = review;
     }
 
     public String getStudentId() {
@@ -39,7 +44,27 @@ public class Review {
         this.studentId = studentId;
     }
 
+    public String getStudentName() {
+        return studentName;
+    }
+
     public void setStudentName(String studentName) {
         this.studentName = studentName;
+    }
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

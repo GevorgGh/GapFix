@@ -54,15 +54,16 @@ public class TutorAdapter extends RecyclerView.Adapter<TutorAdapter.TutorViewHol
                 for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
                     Chip chip = new Chip(holder.itemView.getContext());
 
-                    // Logic: Display "Subject Name - CurrencyPrice" (e.g., Accounting - USD120)
-                    String chipLabel = String.format("%s - %s%d", pref.name, pref.currency, pref.price);
+                    // UPDATED: Display "Subject Name - CurrencyPrice / Duration mins"
+                    String chipLabel = String.format("%s - %s%d / %dmins", 
+                        pref.name, pref.currency, pref.price, pref.duration);
 
                     chip.setText(chipLabel);
                     chip.setClickable(false);
                     chip.setFocusable(false);
                     chip.setCheckable(false);
 
-                    // Optional styling to match GapFix theme
+                    // Styling to match GapFix theme
                     chip.setChipStrokeColorResource(R.color.gapfix_green);
                     chip.setChipStrokeWidth(2f);
                     chip.setChipBackgroundColorResource(android.R.color.white);
@@ -96,8 +97,6 @@ public class TutorAdapter extends RecyclerView.Adapter<TutorAdapter.TutorViewHol
             bioText = itemView.findViewById(R.id.tutor_bio);
             chipGroup = itemView.findViewById(R.id.tutor_subjects_chips);
             profileImage = itemView.findViewById(R.id.tutor_image);
-
-            // Note: priceText and priceRange were removed because prices are now in the Chips
         }
     }
 

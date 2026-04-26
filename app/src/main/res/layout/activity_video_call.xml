@@ -7,14 +7,14 @@
     android:background="@color/gapfix_text_dark"
     tools:context=".VideoCallActivity">
 
-    <!-- Remote Video View (Full Screen) -->
     <FrameLayout
         android:id="@+id/remote_video_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/gapfix_text_dark" />
+        android:background="@color/gapfix_text_dark"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
-    <!-- Timer Overlay -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/timer_card"
         android:layout_width="wrap_content"
@@ -40,7 +40,6 @@
             android:textStyle="bold" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Local Video View (Small Overlay) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/local_video_card"
         android:layout_width="120dp"
@@ -60,7 +59,6 @@
             android:background="@color/gapfix_text_dark" />
     </androidx.cardview.widget.CardView>
 
-    <!-- Calling Overlay (Visible when waiting for answer) -->
     <LinearLayout
         android:id="@+id/layout_calling"
         android:layout_width="match_parent"
@@ -110,7 +108,7 @@
                 android:id="@+id/btn_answer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_mic_24"
+                android:src="@drawable/phone_callback_24dp"
                 app:backgroundTint="@color/gapfix_green"
                 app:tint="@color/white" />
 

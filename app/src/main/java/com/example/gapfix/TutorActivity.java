@@ -29,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TutorActivity extends AppCompatActivity {
 
@@ -37,6 +38,9 @@ public class TutorActivity extends AppCompatActivity {
     private List<Review> reviewList;
     private Button btnBookLesson;
     private Tutor tutor;
+    
+    private TextView tvAvgRating, tvReviewCount, tvMemberSince;
+    private ImageView tutorBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +50,19 @@ public class TutorActivity extends AppCompatActivity {
 
         tutor = (Tutor) getIntent().getSerializableExtra("tutor");
 
+        // Bind Views
         TextView tutorName = findViewById(R.id.tutor_name);
         TextView tutorBio = findViewById(R.id.tutor_bio);
         TextView tutorPriceLabel = findViewById(R.id.tutorPrice);
         ChipGroup tutorSubjectsChips = findViewById(R.id.tutor_subjects_chips);
         reviewsRv = findViewById(R.id.reviews);
         ImageView profileImage = findViewById(R.id.tutor_image);
+        tutorBanner = findViewById(R.id.tutor_banner);
         btnBookLesson = findViewById(R.id.btnBookLesson);
+        
+        tvAvgRating = findViewById(R.id.tv_avg_rating);
+        tvReviewCount = findViewById(R.id.tv_review_count);
+        tvMemberSince = findViewById(R.id.tv_member_since);
 
         reviewList = new ArrayList<>();
         adapter = new ReviewAdapter(reviewList);
@@ -64,35 +74,46 @@ public class TutorActivity extends AppCompatActivity {
         if (tutor != null) {
             tutorName.setText(tutor.getName());
             tutorBio.setText(tutor.getBio());
-            tutorPriceLabel.setText("Available Subjects & Rates:");
+            tutorPriceLabel.setText("Available Subjects & Rates");
+
+            // Display "Member since" if available, else generic
+            tvMemberSince.setText("Member since 2024"); // Fallback for now
 
             tutorSubjectsChips.removeAllViews();
             if (tutor.getPreferences() != null) {
                 for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
                     Chip chip = new Chip(this);
-                    String info = String.format("%s - %s %d", pref.name, pref.currency, pref.price);
+                    String info = String.format("%s - %s%d", pref.name, pref.currency, pref.price);
                     chip.setText(info);
-                    chip.setChipStrokeColorResource(R.color.gapfix_green);
-                    chip.setChipStrokeWidth(2f);
+                    chip.setChipStrokeColorResource(R.color.gray);
+                    chip.setChipStrokeWidth(1f);
                     chip.setChipBackgroundColorResource(android.R.color.white);
                     chip.setClickable(false);
                     tutorSubjectsChips.addView(chip);
                 }
             }
 
+            // Load Profile Image
             Glide.with(this)
                     .load(tutor.getImageResourceLink() != null ? tutor.getImageResourceLink() : R.drawable.person_circle)
                     .placeholder(R.drawable.person_circle)
-                    .circleCrop()
+                    .centerCrop()
                     .into(profileImage);
+            
+            // Load a default banner image (library background)
+            // In a real app, this could also be from the tutor profile
+            Glide.with(this)
+                    .load("https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1000&auto=format&fit=crop")
+                    .centerCrop()
+                    .into(tutorBanner);
 
-            fetchReviews(tutor.getName());
+            fetchReviewsByTutorId(tutor.getId());
             checkFreeLessonStatus();
         }
 
         btnBookLesson.setOnClickListener(v -> {
             String currentText = btnBookLesson.getText().toString();
-            if (currentText.equalsIgnoreCase("Book a free Lesson")) {
+            if (currentText.equalsIgnoreCase("Book a free Lesson") || currentText.equalsIgnoreCase("Book Free Lesson")) {
                 Intent intent = new Intent(TutorActivity.this, BookFreeLessonActivity.class);
                 intent.putExtra("tutor", tutor);
                 startActivity(intent);
@@ -110,12 +131,9 @@ public class TutorActivity extends AppCompatActivity {
 
     private void checkFreeLessonStatus() {
         String studentId = FirebaseAuth.getInstance().getUid();
-        String tutorId = tutor.getId(); 
+        String tutorId = (tutor != null) ? tutor.getId() : null; 
 
-        if (studentId == null || tutorId == null) {
-            tutorId = tutor.getName();
-            Log.w("TutorActivity", "Tutor ID missing, using Name as fallback");
-        }
+        if (studentId == null || tutorId == null) return;
 
         FirebaseDatabase.getInstance().getReference("FreeLessonsUsed")
                 .child(studentId).child(tutorId)
@@ -132,42 +150,65 @@ public class TutorActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchReviews(String tutorName) {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Reviews");
-        mDatabase.orderByChild("tutorName").equalTo(tutorName)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        reviewList.clear();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Review review = snapshot.getValue(Review.class);
-                            if (review != null) {
-                                fetchStudentName(review);
-                            }
-                        }
+    private void fetchReviewsByTutorId(String tutorId) {
+        if (tutorId == null) return;
+        
+        DatabaseReference reviewsRef = FirebaseDatabase.getInstance().getReference("Reviews").child(tutorId);
+        reviewsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                reviewList.clear();
+                float totalRating = 0;
+                int count = 0;
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Review review = snapshot.getValue(Review.class);
+                    if (review != null) {
+                        totalRating += review.getRating();
+                        count++;
+                        fetchStudentName(review);
                     }
-                    @Override public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("RTDB_Error", databaseError.getMessage());
-                    }
-                });
+                }
+
+                // Update Summary Stats
+                if (count > 0) {
+                    float avg = totalRating / count;
+                    tvAvgRating.setText(String.format(Locale.US, "%.1f", avg));
+                    tvReviewCount.setText(String.format(Locale.US, "%d %s", count, count == 1 ? "Review" : "Reviews"));
+                } else {
+                    tvAvgRating.setText("0.0");
+                    tvReviewCount.setText("0 Reviews");
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("RTDB_Error", databaseError.getMessage());
+            }
+        });
     }
 
     private void fetchStudentName(Review review) {
+        if (review.getStudentId() == null) return;
+        
         DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("Users")
                 .child("Student")
                 .child(review.getStudentId());
 
-        studentRef.get().addOnSuccessListener(dataSnapshot -> {
-            if (dataSnapshot.exists()) {
-                String name = dataSnapshot.child("name").getValue(String.class);
-                review.setStudentName(name);
-            } else {
-                review.setStudentName("Unknown Student");
+        studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    review.setStudentName(snapshot.child("name").getValue(String.class));
+                } else {
+                    review.setStudentName("Anonymous");
+                }
+                
+                // Add to list and notify only after fetching name to avoid UI flicker/jumps
+                if (!reviewList.contains(review)) {
+                    reviewList.add(review);
+                    adapter.notifyDataSetChanged();
+                }
             }
-            reviewList.add(review);
-            adapter.notifyDataSetChanged();
-        }).addOnFailureListener(e -> {
-            Log.e("RTDB_ERROR", "Could not fetch name: " + e.getMessage());
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 }

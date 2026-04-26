@@ -186,13 +186,27 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         boolean hasPreviousLesson = false;
+                        boolean hasActiveBooking = false;
 
                         for (DataSnapshot data : snapshot.getChildren()) {
                             Booking existingBooking = data.getValue(Booking.class);
-                            if (existingBooking != null && tId.equals(existingBooking.getTutorId()) && "done".equals(existingBooking.getStatus())) {
-                                hasPreviousLesson = true;
-                                break;
+                            if (existingBooking != null && tId.equals(existingBooking.getTutorId())) {
+                                String status = existingBooking.getStatus();
+                                
+                                if ("done".equals(status) || "finished".equals(status)) {
+                                    hasPreviousLesson = true;
+                                }
+                                
+                                // Logic: Cannot book if there's an active booking (pending, confirmed, etc.)
+                                if ("pending".equals(status) || "free_trial_pending".equals(status) || "confirmed".equals(status)) {
+                                    hasActiveBooking = true;
+                                }
                             }
+                        }
+
+                        if (hasActiveBooking) {
+                            Toast.makeText(BookFreeLessonActivity.this, "You already have a pending or active lesson with this tutor.", Toast.LENGTH_LONG).show();
+                            return;
                         }
 
                         DatabaseReference newBookingRef = bookingsRef.push();

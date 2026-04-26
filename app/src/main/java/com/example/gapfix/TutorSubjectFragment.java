@@ -31,8 +31,8 @@ import java.util.List;
 public class TutorSubjectFragment extends Fragment {
 
     private AutoCompleteTextView subjectDropdown, currencyDropdown;
-    private TextInputEditText etPrice;
-    private MaterialButton btnAddSubject, btnSaveAll;
+    private TextInputEditText etPrice, etDuration;
+    private MaterialButton btnAddSubject, btnSaveAll; 
     private RecyclerView rvSubjects;
     private TutorSubjectAdapter adapter;
     private List<Subject> subjectList = new ArrayList<>();
@@ -53,6 +53,7 @@ public class TutorSubjectFragment extends Fragment {
         subjectDropdown = view.findViewById(R.id.subjectDropdown);
         currencyDropdown = view.findViewById(R.id.currencyDropdown);
         etPrice = view.findViewById(R.id.etPrice);
+        etDuration = view.findViewById(R.id.etDuration); // Initialize duration field
         btnAddSubject = view.findViewById(R.id.btnAddSubject);
         btnSaveAll = view.findViewById(R.id.btnSaveAll);
         rvSubjects = view.findViewById(R.id.rvSubjects);
@@ -145,22 +146,25 @@ public class TutorSubjectFragment extends Fragment {
         String sub = subjectDropdown.getText().toString().trim();
         String priceStr = etPrice.getText().toString().trim();
         String curr = currencyDropdown.getText().toString().trim();
+        String durationStr = etDuration.getText().toString().trim();
 
-        if (sub.isEmpty() || priceStr.isEmpty()) {
-            Toast.makeText(getContext(), "Please fill subject and price", Toast.LENGTH_SHORT).show();
+        if (sub.isEmpty() || priceStr.isEmpty() || durationStr.isEmpty()) {
+            Toast.makeText(getContext(), "Please fill all fields (Subject, Price, Duration)", Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
             double price = Double.parseDouble(priceStr);
-            subjectList.add(new Subject(sub, price, curr));
+            int duration = Integer.parseInt(durationStr);
+            subjectList.add(new Subject(sub, price, curr, duration));
             adapter.notifyItemInserted(subjectList.size() - 1);
 
             // Clear inputs
             subjectDropdown.setText("");
             etPrice.setText("");
+            etDuration.setText("");
         } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Invalid price format", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Invalid number format", Toast.LENGTH_SHORT).show();
         }
     }
 

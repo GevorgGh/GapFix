@@ -10,9 +10,11 @@ public class Booking implements Serializable {
     private String lessonTime;
     private long timestamp; // UTC Timestamp in milliseconds
     private String subject;
-    private String status; // pending, confirmed, completed, cancelled, free_trial_pending
+    private String status; // pending, confirmed, completed, cancelled, free_trial_pending, finished
     private String tutorName;
     private String tutorImage;
+    private boolean isFree; // Track if this is a free lesson
+    private String cancellationReason; // New field for reason
 
     public Booking() {}
 
@@ -58,4 +60,10 @@ public class Booking implements Serializable {
 
     public String getTutorImage() { return tutorImage; }
     public void setTutorImage(String tutorImage) { this.tutorImage = tutorImage; }
+
+    public boolean isFree() { return isFree; }
+    public void setFree(boolean free) { isFree = free; }
+
+    public String getCancellationReason() { return cancellationReason; }
+    public void setCancellationReason(String cancellationReason) { this.cancellationReason = cancellationReason; }
 }

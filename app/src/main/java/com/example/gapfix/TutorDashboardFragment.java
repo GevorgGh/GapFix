@@ -170,7 +170,8 @@ public class TutorDashboardFragment extends Fragment {
             btnLesson.setVisibility(View.VISIBLE);
             
             // Check if joinable now
-            if (LessonTimeHelper.isJoinable(booking)) {
+            // FIX: Passing "tutor" role to isJoinable
+            if (LessonTimeHelper.isJoinable(booking, "tutor")) {
                 btnLesson.setEnabled(true);
                 btnLesson.setText("JOIN");
                 btnLesson.setOnClickListener(v -> {

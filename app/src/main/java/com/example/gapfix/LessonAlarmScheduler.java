@@ -24,7 +24,8 @@ public class LessonAlarmScheduler {
                                 String role) {
 
         // The alarm fires at (lessonStartTime − 5 minutes).
-        long fireAt = timestamp - (LessonTimeHelper.JOIN_WINDOW_MINUTES * 60_000L);
+        // FIX: Using TUTOR_JOIN_WINDOW_MINUTES since JOIN_WINDOW_MINUTES was renamed/removed
+        long fireAt = timestamp - (LessonTimeHelper.TUTOR_JOIN_WINDOW_MINUTES * 60_000L);
 
         if (fireAt <= System.currentTimeMillis()) {
             Log.d(TAG, "Alarm time already passed for booking: " + bookingId);

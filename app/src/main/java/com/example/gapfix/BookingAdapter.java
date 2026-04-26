@@ -1,5 +1,6 @@
 package com.example.gapfix;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,8 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,7 +51,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         Booking booking = bookingList.get(position);
 
         String currentStatus = booking.getStatus();
-        if (!"done".equalsIgnoreCase(currentStatus) && !"cancelled".equalsIgnoreCase(currentStatus)) {
+        if (!"done".equalsIgnoreCase(currentStatus) && !"cancelled".equalsIgnoreCase(currentStatus) && !"finished".equalsIgnoreCase(currentStatus)) {
             if (System.currentTimeMillis() > booking.getTimestamp() + (60 * 60_000L)) {
                 currentStatus = "cancelled";
                 autoUpdateStatusInFirebase(booking.getBookingId(), "cancelled");
@@ -70,13 +73,12 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
                         String name = snapshot.child("name").getValue(String.class);
-                        String imageUrl = snapshot.child("profileImage").getValue(String.class);
+                        String imageUrl = snapshot.child("profilePicture").getValue(String.class);
                         holder.tvTutorName.setText(name != null ? name : "Unknown Tutor");
                         Glide.with(context).load(imageUrl).placeholder(R.drawable.person_circle).into(holder.tutorImage);
                     }
                 }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) { Log.e(TAG, error.getMessage()); }
+                @Override public void onCancelled(@NonNull DatabaseError error) { Log.e(TAG, error.getMessage()); }
             });
         }
 
@@ -86,12 +88,14 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
         if ("confirmed".equalsIgnoreCase(currentStatus)) {
             holder.tvStatus.setTextColor(Color.parseColor("#4CAF50"));
-            holder.btnCancel.setVisibility(View.GONE);
+            holder.btnCancel.setVisibility(View.VISIBLE);
+            
+            holder.btnCancel.setOnClickListener(v -> showCancelDialog(booking.getBookingId()));
 
             holder.updateRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    boolean joinable = LessonTimeHelper.isJoinable(booking);
+                    boolean joinable = LessonTimeHelper.isJoinable(booking, "student");
 
                     if (joinable) {
                         holder.btnAction.setEnabled(true);
@@ -101,12 +105,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                         holder.btnAction.setOnClickListener(v -> {
                             Intent intent = new Intent(context, VideoCallActivity.class);
                             intent.putExtra("BOOKING_ID", booking.getBookingId());
-                            // FIX: When joining from the app, it's NOT an incoming call
                             intent.putExtra("IS_INCOMING", false);
                             context.startActivity(intent);
                         });
                     } else {
-                        long mins = LessonTimeHelper.minutesUntilJoinable(booking);
+                        long mins = LessonTimeHelper.minutesUntilJoinable(booking, "student");
                         holder.btnAction.setEnabled(false);
                         holder.btnAction.setBackgroundColor(Color.GRAY);
                         if (mins > 60) {
@@ -132,11 +135,45 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             holder.btnAction.setBackgroundColor(Color.GRAY);
             holder.btnCancel.setVisibility(View.VISIBLE);
             holder.btnAction.setEnabled(false);
+            holder.btnCancel.setOnClickListener(v -> showCancelDialog(booking.getBookingId()));
         } else if ("cancelled".equalsIgnoreCase(currentStatus)) {
             holder.tvStatus.setTextColor(Color.RED);
             holder.btnCancel.setVisibility(View.GONE);
             holder.btnAction.setVisibility(View.GONE);
+        } else if ("finished".equalsIgnoreCase(currentStatus)) {
+            holder.tvStatus.setTextColor(Color.BLUE);
+            holder.btnCancel.setVisibility(View.GONE);
+            holder.btnAction.setVisibility(View.GONE);
         }
+    }
+
+    private void showCancelDialog(String bookingId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Cancel Lesson");
+        builder.setMessage("Please provide a reason for cancellation:");
+
+        final EditText input = new EditText(context);
+        input.setHint("Enter reason here...");
+        builder.setView(input);
+
+        builder.setPositiveButton("Confirm Cancel", (dialog, which) -> {
+            String reason = input.getText().toString().trim();
+            if (reason.isEmpty()) {
+                Toast.makeText(context, "Reason is required to cancel", Toast.LENGTH_SHORT).show();
+            } else {
+                performCancellation(bookingId, reason);
+            }
+        });
+        builder.setNegativeButton("Keep Lesson", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void performCancellation(String bookingId, String reason) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Bookings").child(bookingId);
+        ref.child("status").setValue("cancelled");
+        ref.child("cancellationReason").setValue(reason)
+                .addOnSuccessListener(aVoid -> Toast.makeText(context, "Lesson cancelled", Toast.LENGTH_SHORT).show());
     }
 
     private void autoUpdateStatusInFirebase(String bookingId, String newStatus) {

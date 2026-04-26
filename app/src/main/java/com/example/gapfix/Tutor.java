@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Tutor implements Serializable {
     private String name;
     private String bio;
-    public String id; // Add this
+    public String id; 
 
     private String imageResourceLink;
     private ArrayList<SubjectPreference> preferences;
@@ -17,6 +17,7 @@ public class Tutor implements Serializable {
         public String name;
         public int price;
         public String currency;
+        public int duration; // Duration in minutes
 
         public SubjectPreference() {} // Required for Firebase
     }
