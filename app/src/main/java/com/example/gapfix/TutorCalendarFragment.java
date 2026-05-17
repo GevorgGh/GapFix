@@ -1,5 +1,6 @@
 package com.example.gapfix;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,13 +25,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TutorCalendarFragment extends Fragment {
 
     private static final String TAG = "CalendarDebug";
     private RecyclerView rvDates, rvBookings;
-    private TextView tvNoClasses;
+    private View tvNoClasses;
     private DatabaseReference bookingsRef;
     private String currentUserId;
 
@@ -46,7 +49,7 @@ public class TutorCalendarFragment extends Fragment {
 
         rvDates = view.findViewById(R.id.rv_dates);
         rvBookings = view.findViewById(R.id.rv_bookings);
-        tvNoClasses = view.findViewById(R.id.tv_no_classes);
+        tvNoClasses = view.findViewById(R.id.tv_no_classes_container);
 
         currentUserId = FirebaseAuth.getInstance().getUid();
         bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
@@ -55,10 +58,15 @@ public class TutorCalendarFragment extends Fragment {
         bookingAdapter = new BookingTutorAdapter(displayedBookings, getContext());
         rvBookings.setAdapter(bookingAdapter);
 
+        view.findViewById(R.id.btn_sessions).setOnClickListener(v -> {
+            Intent i = new Intent(requireContext(), SessionsActivity.class);
+            i.putExtra("role", "Tutor");
+            startActivity(i);
+        });
+
         populateDateList();
         setupDateList();
 
-        // Load today by default
         loadBookingsForDate(new Date());
 
         return view;
@@ -109,13 +117,22 @@ public class TutorCalendarFragment extends Fragment {
                 if (!isAdded()) return;
                 
                 List<Booking> filteredList = new ArrayList<>();
+                Set<String> seenPackageIds = new HashSet<>();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Booking b = ds.getValue(Booking.class);
                     if (b != null) {
                         long ts = b.getTimestamp();
                         // Check if booking timestamp falls within the selected day
                         if (ts >= startOfDay && ts <= endOfDay) {
-                            filteredList.add(b);
+                            // For package bookings, only show one representative entry
+                            if (b.isPackage() && b.getPackageId() != null) {
+                                if (!seenPackageIds.contains(b.getPackageId())) {
+                                    seenPackageIds.add(b.getPackageId());
+                                    filteredList.add(b);
+                                }
+                            } else {
+                                filteredList.add(b);
+                            }
                         }
                     }
                 }

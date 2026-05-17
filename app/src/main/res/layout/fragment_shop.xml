@@ -11,20 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
-            android:layout_width="412dp"
-            android:layout_height="797dp"
-            tools:layout_editor_absoluteX="-1dp"
-            tools:layout_editor_absoluteY="93dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-        </ScrollView>
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="410dp"
+            android:id="@+id/headerLayout"
+            android:layout_width="0dp"
             android:layout_height="92dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,26 +34,18 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.566"
                 app:strokeColor="@color/gray"
-                app:strokeWidth="3dp" >
+                app:strokeWidth="3dp">
 
                 <EditText
                     android:id="@+id/editTextText3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:autofillHints="none"
                     android:ems="10"
+                    android:hint="Search..."
                     android:inputType="text"
-                    android:text="Name" />
+                    android:text="" />
             </com.google.android.material.card.MaterialCardView>
-
-            <FrameLayout
-                android:layout_width="104dp"
-                android:layout_height="58dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </FrameLayout>
 
             <ImageView
                 android:id="@+id/imageView8"
@@ -72,10 +53,27 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="4dp"
+                android:contentDescription="Search"
                 android:src="@drawable/search"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/shopScrollView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLayout">
+
+            <LinearLayout
+                android:id="@+id/shopContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -40,6 +40,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GapFix">
         <activity
+            android:name=".SessionsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ReviewWritingActivity"
             android:exported="false" />
         <activity

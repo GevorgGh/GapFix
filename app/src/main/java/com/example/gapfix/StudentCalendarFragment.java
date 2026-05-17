@@ -1,7 +1,7 @@
 package com.example.gapfix;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,9 +29,8 @@ import java.util.List;
 
 public class StudentCalendarFragment extends Fragment {
 
-    private static final String TAG = "StudentCalendar";
     private RecyclerView rvDates, rvBookings;
-    private TextView tvNoClasses;
+    private View tvNoClasses;
     private DateAdapter dateAdapter;
     private BookingAdapter bookingAdapter;
     private List<DateModel> dateList;
@@ -47,7 +46,13 @@ public class StudentCalendarFragment extends Fragment {
 
         rvDates = view.findViewById(R.id.rv_dates);
         rvBookings = view.findViewById(R.id.rv_bookings);
-        tvNoClasses = view.findViewById(R.id.tv_no_classes);
+        tvNoClasses = view.findViewById(R.id.tv_no_classes_container);
+        
+        view.findViewById(R.id.btn_sessions).setOnClickListener(v -> {
+            Intent i = new Intent(requireContext(), SessionsActivity.class);
+            i.putExtra("role", "Student");
+            startActivity(i);
+        });
 
         setupDatePicker();
 
@@ -56,7 +61,6 @@ public class StudentCalendarFragment extends Fragment {
         rvBookings.setLayoutManager(new LinearLayoutManager(getContext()));
         rvBookings.setAdapter(bookingAdapter);
 
-        // Load today's classes by default
         loadBookingsForDate(new Date());
 
         return view;
@@ -66,7 +70,6 @@ public class StudentCalendarFragment extends Fragment {
         dateList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
 
-        // Show the next 14 days
         for (int i = 0; i < 14; i++) {
             dateList.add(new DateModel(calendar.getTime()));
             calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -83,7 +86,6 @@ public class StudentCalendarFragment extends Fragment {
     private void loadBookingsForDate(Date date) {
         if (currentStudentId == null) return;
 
-        // Calculate the range for the entire day in milliseconds (Local Time)
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -111,7 +113,6 @@ public class StudentCalendarFragment extends Fragment {
                     Booking booking = data.getValue(Booking.class);
                     if (booking != null) {
                         long ts = booking.getTimestamp();
-                        // Check if booking falls within the selected 24-hour window
                         if (ts >= startOfDay && ts <= endOfDay) {
                             bookingList.add(booking);
                         }

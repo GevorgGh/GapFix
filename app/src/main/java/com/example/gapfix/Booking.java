@@ -10,11 +10,19 @@ public class Booking implements Serializable {
     private String lessonTime;
     private long timestamp; // UTC Timestamp in milliseconds
     private String subject;
+    private int duration; // Duration in minutes
     private String status; // pending, confirmed, completed, cancelled, free_trial_pending, finished
     private String tutorName;
     private String tutorImage;
     private boolean isFree; // Track if this is a free lesson
-    private String cancellationReason; // New field for reason
+    private boolean isPackage; // New field for package lessons
+    private String packageId; // Grouping ID for packages
+    private int packageTotalLessons; // Total lessons in this package
+    private String cancellationReason;
+    private String suggestedSourceDay;
+    private String suggestedDestDay;
+    private String suggestedTime;
+    private String suggestionMessage;
 
     public Booking() {}
 
@@ -52,6 +60,9 @@ public class Booking implements Serializable {
     public String getSubject() { return subject; }
     public void setSubject(String subject) { this.subject = subject; }
 
+    public int getDuration() { return duration; }
+    public void setDuration(int duration) { this.duration = duration; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
@@ -64,6 +75,27 @@ public class Booking implements Serializable {
     public boolean isFree() { return isFree; }
     public void setFree(boolean free) { isFree = free; }
 
+    public boolean isPackage() { return isPackage; }
+    public void setPackage(boolean aPackage) { isPackage = aPackage; }
+
+    public String getPackageId() { return packageId; }
+    public void setPackageId(String packageId) { this.packageId = packageId; }
+
+    public int getPackageTotalLessons() { return packageTotalLessons; }
+    public void setPackageTotalLessons(int packageTotalLessons) { this.packageTotalLessons = packageTotalLessons; }
+
     public String getCancellationReason() { return cancellationReason; }
     public void setCancellationReason(String cancellationReason) { this.cancellationReason = cancellationReason; }
+
+    public String getSuggestedSourceDay() { return suggestedSourceDay; }
+    public void setSuggestedSourceDay(String suggestedSourceDay) { this.suggestedSourceDay = suggestedSourceDay; }
+
+    public String getSuggestedDestDay() { return suggestedDestDay; }
+    public void setSuggestedDestDay(String suggestedDestDay) { this.suggestedDestDay = suggestedDestDay; }
+
+    public String getSuggestedTime() { return suggestedTime; }
+    public void setSuggestedTime(String suggestedTime) { this.suggestedTime = suggestedTime; }
+
+    public String getSuggestionMessage() { return suggestionMessage; }
+    public void setSuggestionMessage(String suggestionMessage) { this.suggestionMessage = suggestionMessage; }
 }

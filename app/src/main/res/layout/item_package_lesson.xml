@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="6dp"
+    android:paddingHorizontal="8dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/tvLessonNumber"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="@drawable/rounded_input_field"
+        android:gravity="center"
+        android:text="#1"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:textColor="@color/gapfix_green" />
+
+    <TextView
+        android:id="@+id/tvLessonDateTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:text="Tue, May 20 • 14:00"
+        android:textSize="13sp"
+        android:textColor="@color/gapfix_text_dark" />
+
+    <TextView
+        android:id="@+id/tvLessonItemStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="pending"
+        android:textSize="11sp"
+        android:textColor="@color/gapfix_text_secondary" />
+
+</LinearLayout>

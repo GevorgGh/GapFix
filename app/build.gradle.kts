@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.firebase.firestore)
 
     // Testing
+    testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }

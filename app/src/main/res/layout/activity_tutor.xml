@@ -5,11 +5,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="#F8F9FA">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingBottom="120dp"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,29 +23,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- Background Image (e.g. library/books) -->
                 <ImageView
                     android:id="@+id/tutor_banner"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
+                    android:layout_height="180dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/person_circle" 
+                    android:src="@drawable/person_circle"
                     android:background="#F0F0F0" />
 
-                <!-- Profile Image centered and overlapping -->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/tutor_image"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
                     android:layout_gravity="center_horizontal|bottom"
-                    android:layout_marginBottom="-40dp"
-                    android:padding="4dp"
+                    android:layout_marginBottom="-45dp"
+                    android:padding="3dp"
                     android:background="@color/white"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/ProfileImageShape"
                     app:strokeColor="@color/gray"
-                    app:strokeWidth="1dp"
-                    tools:src="@drawable/person_circle" />
+                    app:strokeWidth="1dp" />
             </FrameLayout>
 
             <LinearLayout
@@ -52,14 +51,14 @@
                 android:layout_marginTop="50dp"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:paddingHorizontal="24dp">
+                android:paddingHorizontal="16dp">
 
                 <TextView
                     android:id="@+id/tutor_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gapfix_text_dark"
-                    android:textSize="32sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
                     tools:text="Gevorg" />
 
@@ -67,141 +66,260 @@
                     android:id="@+id/tutorPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="2dp"
                     android:textColor="@color/gapfix_text_secondary"
-                    android:textSize="16sp"
+                    android:textSize="13sp"
                     android:text="Available Subjects &amp; Rates" />
 
+                <!-- Tutor Profile Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#EAEAEA">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tutor Profile"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="@color/gapfix_text_dark"
+                            android:layout_marginBottom="12dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <!-- Rating Box -->
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/rating_card"
+                                android:layout_width="120dp"
+                                android:layout_height="wrap_content"
+                                app:cardBackgroundColor="#F3E8FF"
+                                app:cardCornerRadius="8dp"
+                                app:cardElevation="0dp">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    android:padding="12dp">
+
+                                    <TextView
+                                        android:id="@+id/tv_avg_rating"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="4.8"
+                                        android:textColor="@color/gapfix_text_dark"
+                                        android:textSize="32sp"
+                                        android:textStyle="bold" />
+
+                                    <RatingBar
+                                        android:id="@+id/summary_rating_bar"
+                                        style="@style/Widget.AppCompat.RatingBar.Small"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:numStars="5"
+                                        android:rating="4.8"
+                                        android:progressTint="#FBBF24"
+                                        android:secondaryProgressTint="#FBBF24"
+                                        android:progressBackgroundTint="#D1D5DB" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Out of 5 Stars"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/gapfix_text_secondary" />
+
+                                    <TextView
+                                        android:id="@+id/tv_review_count"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="4 Reviews"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/gapfix_text_secondary" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <!-- About Section -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="16dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tv_about_title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="About Gevorg"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/gapfix_text_dark"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/tutor_bio"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:ellipsize="end"
+                                    android:maxLines="3"
+                                    android:textColor="@color/gapfix_text_dark"
+                                    android:textSize="12sp"
+                                    android:lineSpacingExtra="2dp"
+                                    tools:text="Passionate tutor with 5 years experience in clear, effective learning..." />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Read More"
+                                    android:textColor="#5A5F5D"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_member_since"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:textColor="@color/gapfix_text_secondary"
+                                    android:textSize="10sp"
+                                    android:text="Member since 2024" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <!-- Specialties -->
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp">
+
+                            <TextView
+                                android:id="@+id/tv_specialties_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Specialties"
+                                android:textStyle="bold"
+                                android:textColor="@color/gapfix_text_dark"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:text="Added by Tutor"
+                                android:textColor="@color/gapfix_text_secondary"
+                                android:textSize="10sp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/tutor_subjects_chips"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tv_specialties_title"
+                                android:layout_marginTop="8dp"
+                                app:chipSpacingHorizontal="6dp" />
+                        </RelativeLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Reviews Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="20dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="About Tutor"
-                        android:textColor="@color/gapfix_text_secondary"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/tutor_bio"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:lineSpacingExtra="4dp"
-                        android:textColor="@color/gapfix_text_dark"
-                        android:textSize="15sp"
-                        tools:text="A passionate educator with 5+ years of experience..." />
-
-                    <TextView
-                        android:id="@+id/tv_member_since"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/gapfix_text_secondary"
-                        android:textSize="13sp"
-                        android:text="Member since 2021" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:text="Specialties"
-                        android:textColor="@color/gapfix_text_secondary"
-                        android:textSize="18sp" />
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/tutor_subjects_chips"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        app:chipSpacingHorizontal="8dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
                         android:text="Reviews"
-                        android:textColor="@color/gapfix_text_secondary"
-                        android:textSize="18sp" />
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/gapfix_text_dark"
+                        android:layout_marginBottom="12dp"/>
 
-                    <LinearLayout
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/reviews"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <!-- Rating Summary -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:paddingEnd="24dp">
-
-                            <TextView
-                                android:id="@+id/tv_avg_rating"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="5.0"
-                                android:textColor="@color/gapfix_text_dark"
-                                android:textSize="40sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Out of 5"
-                                android:textColor="@color/gapfix_text_secondary"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tv_review_count"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="1 Review"
-                                android:textColor="@color/gapfix_text_secondary"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <!-- Individual Review RecyclerView -->
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/reviews"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:nestedScrollingEnabled="false"
-                            tools:listitem="@layout/review_card" />
-                    </LinearLayout>
+                        android:nestedScrollingEnabled="false"
+                        tools:listitem="@layout/review_card" />
                 </LinearLayout>
-            </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="100dp" />
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/white"
-        android:padding="16dp">
+        app:cardElevation="10dp"
+        app:cardCornerRadius="0dp"
+        app:cardBackgroundColor="@color/white">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBookLesson"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:backgroundTint="@color/gapfix_green"
-            android:text="Book Free Lesson"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            app:cornerRadius="27dp" />
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBookTrial"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:backgroundTint="#008253"
+                    android:text="Book Trial Lesson"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    app:cornerRadius="6dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBookLesson"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:backgroundTint="#008253"
+                    android:text="Book Lesson"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    app:cornerRadius="6dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Trial is 30 mins. Paid lessons are 60 mins."
+                android:textColor="@color/gapfix_text_secondary"
+                android:textSize="10sp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

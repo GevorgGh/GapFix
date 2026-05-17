@@ -128,7 +128,6 @@ public class VideoCallActivity extends AppCompatActivity {
 
         initUI();
         
-        // Cleanup old listeners if any
         if (callRef != null && callStateListener != null) callRef.removeEventListener(callStateListener);
         if (bookingRef != null && bookingListener != null) bookingRef.removeEventListener(bookingListener);
         
@@ -177,7 +176,6 @@ public class VideoCallActivity extends AppCompatActivity {
         tvCallerName = findViewById(R.id.tv_caller_name);
         tvTimer = findViewById(R.id.tv_timer);
 
-        // Reset visibility
         localVideoCard.setVisibility(View.GONE);
         timerCard.setVisibility(View.GONE);
         layoutControls.setVisibility(View.GONE);
@@ -290,20 +288,11 @@ public class VideoCallActivity extends AppCompatActivity {
     private void finishLessonAction() {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
-        
-        Log.d(TAG, "finishLessonAction: Sending request for " + uid);
-        
-        // USE BOOKING_REF instead of CALL_REF for finish requests
-        // This avoids permission issues on the Calls node
         bookingRef.child("finishRequests").child(uid).setValue(true)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(VideoCallActivity.this, "Finish request sent. Waiting for partner...", Toast.LENGTH_SHORT).show();
                     btnFinishLesson.setEnabled(false);
                     btnFinishLesson.setAlpha(0.5f);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "finishLessonAction: Firebase write failed", e);
-                    Toast.makeText(VideoCallActivity.this, "Firebase Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -313,31 +302,62 @@ public class VideoCallActivity extends AppCompatActivity {
         isTimerFinished = true;
 
         String myUid = FirebaseAuth.getInstance().getUid();
-        
-        // ONLY THE TUTOR updates the official booking status to avoid Student permission issues
-        // If we are the tutor OR if the partner already left (no remote user), we cleanup
         if (myUid != null && myUid.equals(tutorId)) {
             updateBookingStatusToFinished();
         }
 
         updateCallState("ended");
         checkIfStudentAndOpenReview();
+        addLessonCount();
+    }
+
+    private void addLessonCount() {
+        if (tutorId == null) return;
+
+        DatabaseReference tutorRef = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child("Tutor")
+                .child(tutorId);
+
+        tutorRef.child("lessonsCount").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot snapshot = task.getResult();
+                int currentCount = 0;
+
+                if (snapshot.exists() && snapshot.getValue() != null) {
+                    currentCount = snapshot.getValue(Integer.class);
+                }
+
+                tutorRef.child("lessonsCount").setValue(currentCount + 1);
+
+            } else {
+                Log.e(TAG, "Failed to get lesson count", task.getException());
+            }
+        });
     }
 
     private void updateBookingStatusToFinished() {
         if (bookingId == null || bookingId.equals("test_room")) return;
         
-        Log.d(TAG, "Tutor updating booking status to finished");
-        bookingRef.child("status").setValue("finished");
-        
         bookingRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    Boolean isFree = snapshot.child("isFree").getValue(Boolean.class);
                     String studentId = snapshot.child("studentId").getValue(String.class);
-                    if (isFree != null && isFree && studentId != null && tutorId != null) {
-                        FirebaseDatabase.getInstance().getReference("FreeLessonsUsed").child(studentId).child(tutorId).setValue(true);
+                    String subject = snapshot.child("subject").getValue(String.class);
+                    String status = snapshot.child("status").getValue(String.class);
+                    Boolean isFree = snapshot.child("isFree").getValue(Boolean.class);
+
+                    boolean wasTrial = "free_trial_pending".equals(status) || (isFree != null && isFree);
+
+                    bookingRef.child("status").setValue("finished");
+
+                    if (wasTrial && studentId != null && tutorId != null && subject != null) {
+                        FirebaseDatabase.getInstance().getReference("FreeLessonsUsed")
+                                .child(studentId)
+                                .child(tutorId)
+                                .child(subject)
+                                .setValue(true);
                     }
                 }
             }
@@ -393,11 +413,9 @@ public class VideoCallActivity extends AppCompatActivity {
                 String state = snapshot.child("state").getValue(String.class);
                 if ("ended".equals(state)) {
                     finalizeCall();
-                    return;
                 } else if ("cancelled".equals(state)) {
                     isEnding = true;
                     cancelBooking();
-                    return;
                 } else if ("offline".equals(state)) {
                     Toast.makeText(VideoCallActivity.this, "Partner left the call", Toast.LENGTH_SHORT).show();
                 }
@@ -415,14 +433,12 @@ public class VideoCallActivity extends AppCompatActivity {
                 
                 String status = snapshot.child("status").getValue(String.class);
                 if ("finished".equals(status)) {
-                    Log.d(TAG, "Booking status changed to finished, ending call");
                     finalizeCall();
                     return;
                 }
 
                 DataSnapshot finishReqs = snapshot.child("finishRequests");
                 if (finishReqs.getChildrenCount() >= 2) {
-                    Log.d(TAG, "Mutual agreement reached on Booking node");
                     finalizeCall();
                 } else if (finishReqs.getChildrenCount() == 1) {
                     String myUid = FirebaseAuth.getInstance().getUid();

@@ -1,6 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.GapFix" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="fontFamily">@font/noto_sans</item>
+
+        <!-- Fix: Remove purple status bar and match it to app background -->
+        <item name="android:statusBarColor">@color/gapfix_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="MyDatePickerTheme" parent="Theme.AppCompat.Light.Dialog">
@@ -27,6 +31,19 @@
     <style name="ProfileImageShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">#D1D5DB</item>
+        <item name="colorControlActivated">#FBBF24</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="Theme.GapFix" parent="Base.Theme.GapFix" />

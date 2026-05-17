@@ -38,7 +38,6 @@ public class HomeStudentActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize permission launcher
         requestPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
@@ -48,17 +47,13 @@ public class HomeStudentActivity extends AppCompatActivity {
                 }
         );
 
-        // Ask for permission if on Android 13+
         askNotificationPermission();
 
-        // Ensure FCM token is up to date for this device
         GapFixApplication.updateFcmToken();
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_student);
 
-        // Start the background service that listens for call notifications
-        // (works across all screens, not just when this activity is open)
         ContextCompat.startForegroundService(this, new Intent(this, CallNotificationService.class));
 
         if (savedInstanceState == null) {
