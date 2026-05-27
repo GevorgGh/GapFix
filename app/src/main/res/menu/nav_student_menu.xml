@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/user_act"
+        android:title="@string/nav_home_label" />
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/shop"
+        android:title="@string/nav_shop_label" />
+    <item
+        android:id="@+id/nav_calendar"
+        android:icon="@drawable/cal"
+        android:title="Calendar" />
+    <item
+        android:id="@+id/nav_chat"
+        android:icon="@drawable/input_person"
+        android:title="@string/my_tutors" />
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/person_circle"
+        android:title="Profile" />
+</menu>

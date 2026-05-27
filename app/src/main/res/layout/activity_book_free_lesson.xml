@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Book a Lesson"
+        android:text="@string/ext_book_a_lesson"
         android:textColor="@color/gapfix_text_dark"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -69,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:text="Tutor Name"
+                    android:text="@string/ext_tutor_name"
                     android:textSize="22sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -92,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Select one subject"
+            android:text="@string/ext_select_one_subject"
             android:textColor="@color/gapfix_text_dark"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -109,7 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Select Schedule"
+            android:text="@string/ext_select_schedule"
             android:textColor="@color/gapfix_text_dark"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -119,12 +119,12 @@
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Select Date"
-            android:textColor="#008253"
+            android:text="@string/ext_select_date"
+            android:textColor="@color/gapfix_green"
             app:cornerRadius="12dp"
             app:icon="@drawable/ic_calendar"
-            app:iconTint="#008253"
-            app:strokeColor="#008253"
+            app:iconTint="@color/gapfix_green"
+            app:strokeColor="@color/gapfix_green"
             app:strokeWidth="1.5dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -133,12 +133,12 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="12dp"
-            android:text="Select Time"
-            android:textColor="#008253"
+            android:text="@string/ext_select_time"
+            android:textColor="@color/gapfix_green"
             app:cornerRadius="12dp"
             app:icon="@drawable/ic_clock"
-            app:iconTint="#008253"
-            app:strokeColor="#008253"
+            app:iconTint="@color/gapfix_green"
+            app:strokeColor="@color/gapfix_green"
             app:strokeWidth="1.5dp" />
 
         <View
@@ -151,12 +151,12 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="32dp"
-            android:backgroundTint="#008253"
-            android:text="Confirm Booking"
-            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/gapfix_green"
+            android:text="@string/ext_confirm_booking"
+            android:textColor="@color/color_surface"
             app:cornerRadius="12dp"
             app:icon="@drawable/ic_check"
-            app:iconTint="#FFFFFF" />
+            app:iconTint="@color/color_surface" />
 
     </LinearLayout>
 

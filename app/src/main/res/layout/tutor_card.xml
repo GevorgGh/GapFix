@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="BIO"
+            android:text="@string/ext_bio"
             android:textAllCaps="true"
             android:textColor="@color/gray"
             android:textSize="12sp"
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="SUBJECTS &amp; RATES"
+            android:text="@string/ext_subjects_and_rates"
             android:textAllCaps="true"
             android:textColor="@color/gray"
             android:textSize="12sp"
@@ -83,25 +83,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tutor_bio" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/tutor_subjects_chips"
+        <LinearLayout
+            android:id="@+id/subjects_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:chipSpacingVertical="2dp"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label_subjects">
-
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Accounting - $120" />
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Adult Education - $1000" />
-        </com.google.android.material.chip.ChipGroup>
+            app:layout_constraintTop_toBottomOf="@+id/label_subjects" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

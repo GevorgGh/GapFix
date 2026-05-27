@@ -54,7 +54,7 @@ public class ReviewWritingActivity extends AppCompatActivity {
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         
-        // Fetch Tutor Name
+        
         rootRef.child("Users").child("Tutor").child(tutorId).child("name")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -66,7 +66,7 @@ public class ReviewWritingActivity extends AppCompatActivity {
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
 
-        // Fetch Subject from Booking
+        
         rootRef.child("Bookings").child(bookingId).child("subject")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -89,7 +89,6 @@ public class ReviewWritingActivity extends AppCompatActivity {
         }
 
         if (tutorId == null) {
-            Toast.makeText(this, "Error: Tutor information missing", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }

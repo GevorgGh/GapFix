@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Review implements Serializable {
     private String reviewId;
-    private String review; // Matches ReviewWritingActivity key
+    private String review; 
     private float rating;
     private String studentId;
     private String studentName;

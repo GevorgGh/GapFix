@@ -129,8 +129,7 @@ public class NewChatActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(NewChatActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                }
         });
     }
 

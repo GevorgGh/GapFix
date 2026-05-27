@@ -14,7 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Mon"
+        android:text="@string/ext_mon"
         android:textStyle="bold"
         android:textColor="@color/gapfix_text_dark" />
 
@@ -23,7 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.4"
-        android:text="—"
+        android:text="@string/ext_dash"
         android:textSize="12sp"
         android:textColor="@color/gapfix_text_secondary"
         android:gravity="center" />
@@ -33,7 +33,7 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time"
+        android:text="@string/ext_time"
         android:textSize="12sp"
         android:textAllCaps="false"
         app:icon="@drawable/ic_clock"

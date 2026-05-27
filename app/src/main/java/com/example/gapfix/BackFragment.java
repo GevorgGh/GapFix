@@ -9,17 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link BackFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class BackFragment extends Fragment {
 
 
 
     public BackFragment() {
-        // Required empty public constructor
+        
     }
 
 
@@ -40,12 +36,14 @@ public class BackFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        
         View view = inflater.inflate(R.layout.fragment_back, container, false);
 
         LinearLayout back = view.findViewById(R.id.back);
         back.setOnClickListener(v -> {
-            requireActivity().finish();
+            if (getActivity() != null) {
+                getActivity().getOnBackPressedDispatcher().onBackPressed();
+            }
         });
 
         return view;

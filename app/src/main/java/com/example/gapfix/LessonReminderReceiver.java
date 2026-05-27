@@ -9,16 +9,13 @@ import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
-/**
- * BroadcastReceiver fired by AlarmManager 5 minutes before a lesson.
- * Shows a high-priority local notification to both student and tutor.
- */
+
 public class LessonReminderReceiver extends BroadcastReceiver {
 
     public static final String EXTRA_BOOKING_ID  = "bookingId";
     public static final String EXTRA_SUBJECT      = "subject";
     public static final String EXTRA_TIME         = "lessonTime";
-    public static final String EXTRA_ROLE         = "role"; // "student" | "tutor"
+    public static final String EXTRA_ROLE         = "role"; 
 
     private static final String CHANNEL_ID   = "gapfix_lesson_reminders";
     private static final String CHANNEL_NAME = "Lesson Reminders";
@@ -32,7 +29,7 @@ public class LessonReminderReceiver extends BroadcastReceiver {
         if (subject == null)    subject    = "Your lesson";
         if (lessonTime == null) lessonTime = "";
 
-        // Deep-link to the correct home screen based on role
+        
         Class<?> targetClass = "tutor".equals(role)
                 ? HomeTutorActivity.class
                 : HomeStudentActivity.class;
@@ -50,7 +47,7 @@ public class LessonReminderReceiver extends BroadcastReceiver {
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Create channel (idempotent on Android O+)
+        
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
         channel.setDescription("Reminders fired 5 minutes before each lesson");

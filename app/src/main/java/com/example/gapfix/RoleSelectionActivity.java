@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,6 +32,7 @@ public class RoleSelectionActivity extends AppCompatActivity {
     private EditText dobField;
     private Button continueBtn;
     private String selectedRole = "";
+    private FrameLayout backFr;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -44,6 +46,11 @@ public class RoleSelectionActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.backFr, new BackFragment())
+                .commit();
+
         tutorCard = findViewById(R.id.tutorCard);
         studentCard = findViewById(R.id.studentCard);
         dobField = findViewById(R.id.editTextDate2);
@@ -55,7 +62,6 @@ public class RoleSelectionActivity extends AppCompatActivity {
         dobField.setFocusable(false);
         dobField.setClickable(true);
         dobField.setOnClickListener(v -> {
-            Log.d("GapFix_Debug", "DOB Field Clicked"); // Check your Logcat for this!
             showDatePicker();
         });
 
@@ -104,7 +110,7 @@ public class RoleSelectionActivity extends AppCompatActivity {
                     dobField.setText(date);
                 }, year, month, day);
 
-        // 3. Set the constraint
+        
         datePickerDialog.getDatePicker().setMaxDate(maxDateCalendar.getTimeInMillis());
         datePickerDialog.show();
     }
@@ -131,20 +137,18 @@ public class RoleSelectionActivity extends AppCompatActivity {
             userUpdates.put("dob", dob);
             userUpdates.put("email", user.getEmail());
             userUpdates.put("name", user.getDisplayName());
+            userUpdates.put("isComplete", false);
 
             mDatabase.child("Users").child(selectedRole).child(uid).setValue(userUpdates)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Class<?> targetClass = selectedRole.equals("Student") ?
                                     StudentPreferences.class : TutorSubjectActivity.class;
-                            Toast.makeText(RoleSelectionActivity.this, targetClass.getSimpleName() + ' ' + selectedRole, Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(RoleSelectionActivity.this, targetClass));
                             finish();
                         } else {
                             continueBtn.setEnabled(true);
-                            Toast.makeText(RoleSelectionActivity.this, "Error: " +
-                                    task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                            }
                     });
         }
     }

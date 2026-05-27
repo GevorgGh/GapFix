@@ -7,6 +7,8 @@ android {
     namespace = "com.example.gapfix"
     compileSdk = 36
 
+    compileSdkExtension = 19
+
     defaultConfig {
         applicationId = "com.example.gapfix"
         minSdk = 26
@@ -68,6 +70,8 @@ dependencies {
     implementation("io.agora.rtc:chat-sdk:1.3.2")
     implementation(libs.firebase.functions)
     implementation(libs.firebase.firestore)
+    implementation(libs.pdf.viewer.fragment)
+    implementation(libs.ccp)
 
     // Testing
     testImplementation(libs.junit)

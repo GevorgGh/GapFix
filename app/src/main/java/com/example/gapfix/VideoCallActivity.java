@@ -49,7 +49,9 @@ public class VideoCallActivity extends AppCompatActivity {
             Manifest.permission.CAMERA
     };
 
-    private String appId, channelName, bookingId, tutorId;
+    public static String activeBookingId = null;
+
+    private String appId, channelName, bookingId, tutorId, otherId;
     private RtcEngine mRtcEngine;
 
     private FrameLayout localContainer, remoteContainer;
@@ -75,7 +77,6 @@ public class VideoCallActivity extends AppCompatActivity {
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
             runOnUiThread(() -> {
-                Log.d(TAG, "Joined Channel: " + channel);
                 if (!getIntent().getBooleanExtra("IS_INCOMING", false)) {
                     notifyOtherParty();
                 }
@@ -86,7 +87,6 @@ public class VideoCallActivity extends AppCompatActivity {
         @Override
         public void onUserJoined(int uid, int elapsed) {
             runOnUiThread(() -> {
-                Log.d(TAG, "Remote User Joined: " + uid);
                 isRemoteUserJoined = true;
                 setupRemoteVideo(uid);
                 enterActiveCallMode();
@@ -96,13 +96,12 @@ public class VideoCallActivity extends AppCompatActivity {
         @Override
         public void onUserOffline(int uid, int reason) {
             runOnUiThread(() -> {
-                Log.d(TAG, "Remote User Offline: " + uid);
-                Toast.makeText(VideoCallActivity.this, "Partner disconnected. Waiting...", Toast.LENGTH_SHORT).show();
+                
             });
         }
 
         @Override
-        public void onError(int err) { Log.e(TAG, "Agora Error: " + err); }
+        public void onError(int err) { }
     };
 
     @Override
@@ -120,11 +119,20 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     private void handleIntent(Intent intent) {
+        String incomingBookingId = intent.getStringExtra("BOOKING_ID");
+        if (incomingBookingId == null) incomingBookingId = "test_room";
+
+        
+        
+        if (mRtcEngine != null && incomingBookingId.equals(bookingId)) {
+            return;
+        }
+
         isEnding = false;
         appId = getString(R.string.appIdAgora);
-        bookingId = intent.getStringExtra("BOOKING_ID");
-        if (bookingId == null) bookingId = "test_room";
+        bookingId = incomingBookingId;
         channelName = bookingId;
+        activeBookingId = bookingId;
 
         initUI();
         
@@ -217,7 +225,7 @@ public class VideoCallActivity extends AppCompatActivity {
             mRtcEngine = RtcEngine.create(config);
             mRtcEngine.enableVideo();
             mRtcEngine.startPreview();
-        } catch (Exception e) { Log.e(TAG, "Agora Initialization Failed", e); }
+        } catch (Exception e) { }
     }
 
     private void setupLocalVideo(boolean isOverlay) {
@@ -280,17 +288,48 @@ public class VideoCallActivity extends AppCompatActivity {
         if (isTimerFinished) {
             finalizeCall();
         } else {
-            updateCallState("offline");
+            boolean isIncoming = getIntent().getBooleanExtra("IS_INCOMING", false);
+            if (isIncoming && !isRemoteUserJoined) {
+                updateCallState("declined");
+            } else {
+                updateCallState("offline");
+            }
             finish();
         }
     }
-
     private void finishLessonAction() {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
         bookingRef.child("finishRequests").child(uid).setValue(true)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(VideoCallActivity.this, "Finish request sent. Waiting for partner...", Toast.LENGTH_SHORT).show();
+                    if (uid.equals(tutorId)){
+                        bookingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                otherId = snapshot.child("studentId").getValue(String.class);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                        bookingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (Boolean.FALSE.equals(snapshot.child("finishRequests").child(otherId).getValue(Boolean.class))){
+                                    btnFinishLesson.setEnabled(false);
+                                    btnFinishLesson.setAlpha(0.5f);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
                     btnFinishLesson.setEnabled(false);
                     btnFinishLesson.setAlpha(0.5f);
                 });
@@ -331,8 +370,7 @@ public class VideoCallActivity extends AppCompatActivity {
                 tutorRef.child("lessonsCount").setValue(currentCount + 1);
 
             } else {
-                Log.e(TAG, "Failed to get lesson count", task.getException());
-            }
+                }
         });
     }
 
@@ -344,24 +382,64 @@ public class VideoCallActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     String studentId = snapshot.child("studentId").getValue(String.class);
+                    String tId = snapshot.child("tutorId").getValue(String.class);
                     String subject = snapshot.child("subject").getValue(String.class);
                     String status = snapshot.child("status").getValue(String.class);
                     Boolean isFree = snapshot.child("isFree").getValue(Boolean.class);
+
+                    Object priceObj = snapshot.child("price").getValue();
+                    double lessonPrice = 0.0;
+                    if (priceObj instanceof Long) lessonPrice = ((Long) priceObj).doubleValue();
+                    else if (priceObj instanceof Double) lessonPrice = (Double) priceObj;
+                    else if (priceObj instanceof Integer) lessonPrice = ((Integer) priceObj).doubleValue();
 
                     boolean wasTrial = "free_trial_pending".equals(status) || (isFree != null && isFree);
 
                     bookingRef.child("status").setValue("finished");
 
-                    if (wasTrial && studentId != null && tutorId != null && subject != null) {
+                    if (wasTrial && studentId != null && tId != null && subject != null) {
                         FirebaseDatabase.getInstance().getReference("FreeLessonsUsed")
                                 .child(studentId)
-                                .child(tutorId)
+                                .child(tId)
                                 .child(subject)
                                 .setValue(true);
+                    } else if (tId != null && lessonPrice > 0) {
+                        awardTutorMoney(tId, lessonPrice);
                     }
                 }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    private void awardTutorMoney(String targetTutorId, double amount) {
+        DatabaseReference tutorMoneyRef = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child("Tutor")
+                .child(targetTutorId)
+                .child("earnedMoney");
+
+        tutorMoneyRef.runTransaction(new com.google.firebase.database.Transaction.Handler() {
+            @NonNull
+            @Override
+            public com.google.firebase.database.Transaction.Result doTransaction(@NonNull com.google.firebase.database.MutableData currentData) {
+                double currentMoney = 0.0;
+                if (currentData.getValue() != null) {
+                    Object val = currentData.getValue();
+                    if (val instanceof Long) currentMoney = ((Long) val).doubleValue();
+                    else if (val instanceof Double) currentMoney = (Double) val;
+                    else if (val instanceof Integer) currentMoney = ((Integer) val).doubleValue();
+                }
+                currentData.setValue(currentMoney + amount);
+                return com.google.firebase.database.Transaction.success(currentData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError error, boolean committed, DataSnapshot currentData) {
+                if (error != null) {
+                    } else {
+                    }
+            }
         });
     }
 
@@ -413,11 +491,17 @@ public class VideoCallActivity extends AppCompatActivity {
                 String state = snapshot.child("state").getValue(String.class);
                 if ("ended".equals(state)) {
                     finalizeCall();
-                } else if ("cancelled".equals(state)) {
+                } else if ("cancelled".equals(state) || "declined".equals(state)) {
                     isEnding = true;
-                    cancelBooking();
+                    if ("cancelled".equals(state)) {
+                        cancelBooking();
+                    } else {
+                        finish();
+                    }
                 } else if ("offline".equals(state)) {
-                    Toast.makeText(VideoCallActivity.this, "Partner left the call", Toast.LENGTH_SHORT).show();
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (!isFinishing() && !isDestroyed()) finish();
+                    }, 2000);
                 }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
@@ -440,11 +524,6 @@ public class VideoCallActivity extends AppCompatActivity {
                 DataSnapshot finishReqs = snapshot.child("finishRequests");
                 if (finishReqs.getChildrenCount() >= 2) {
                     finalizeCall();
-                } else if (finishReqs.getChildrenCount() == 1) {
-                    String myUid = FirebaseAuth.getInstance().getUid();
-                    if (myUid != null && !finishReqs.hasChild(myUid)) {
-                        Toast.makeText(VideoCallActivity.this, "Partner wants to finish the lesson", Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
@@ -454,22 +533,30 @@ public class VideoCallActivity extends AppCompatActivity {
 
     private void startClassTimer() {
         if (classTimer != null) return;
-        bookingRef.child("timestamp").addListenerForSingleValueEvent(new ValueEventListener() {
+        bookingRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
-                    startCountdown(System.currentTimeMillis());
-                    return;
+                long scheduledStartTime = System.currentTimeMillis();
+                int durationMins = 30; 
+
+                if (snapshot.exists()) {
+                    Long ts = snapshot.child("timestamp").getValue(Long.class);
+                    if (ts != null) {
+                        scheduledStartTime = ts;
+                    }
+                    Object durObj = snapshot.child("duration").getValue();
+                    if (durObj instanceof Number) {
+                        durationMins = ((Number) durObj).intValue();
+                    }
                 }
-                long scheduledStartTime = snapshot.getValue(Long.class);
-                startCountdown(scheduledStartTime);
+                startCountdown(scheduledStartTime, durationMins);
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    private void startCountdown(long scheduledStartTime) {
-        long totalDuration = 30 * 60 * 1000;
+    private void startCountdown(long scheduledStartTime, int durationMins) {
+        long totalDuration = (long) durationMins * 60 * 1000;
         long scheduledEndTime = scheduledStartTime + totalDuration;
         long remaining = scheduledEndTime - System.currentTimeMillis();
 
@@ -554,6 +641,9 @@ public class VideoCallActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (bookingId != null && bookingId.equals(activeBookingId)) {
+            activeBookingId = null;
+        }
         if (classTimer != null) classTimer.cancel();
         if (callRef != null && callStateListener != null) callRef.removeEventListener(callStateListener);
         if (bookingRef != null && bookingListener != null) bookingRef.removeEventListener(bookingListener);

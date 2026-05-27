@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/color_surface"
+    app:strokeColor="@color/color_border"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header: Student & Date -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivStudentPhoto"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/person_circle"
+                app:shapeAppearanceOverlay="@style/ProfileImageShape"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tvStudentName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="@string/ext_gev"
+                android:textColor="@color/gapfix_text_dark"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/ivStudentPhoto"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tvLessonDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ext_may_19"
+                android:textColor="@color/gapfix_text_dark"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Subject & Lesson # & Time -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvLessonSubject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="44dp"
+                android:text="@string/ext_applied_mathematics_package_12_lessons"
+                android:textColor="@color/gapfix_text_secondary"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tvLessonTime"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvLessonTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ext_14_00"
+                android:textColor="@color/gapfix_text_dark"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Status -->
+        <TextView
+            android:id="@+id/tvLessonStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/ext_status"
+            android:textColor="@color/color_error"
+            android:textSize="13sp" />
+
+        <!-- Package Details & Actions container -->
+        <LinearLayout
+            android:id="@+id/layoutPackageSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Package & Duration -->
+            <LinearLayout
+                android:id="@+id/layoutPackageInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="44dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvPackageBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_package_badge"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:text="@string/ext_package"
+                    android:textColor="@color/gapfix_green"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="4dp"
+                    android:layout_height="4dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:src="@drawable/dot_separator" />
+
+                <TextView
+                    android:id="@+id/tvDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ext_mins"
+                    android:textColor="@color/gapfix_text_secondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReviewCalendar"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="4dp"
+                android:text="@string/ext_review_calendar"
+                android:textColor="@color/gapfix_green"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:rippleColor="@color/gapfix_green_background" />
+
+            <!-- Hidden fields to maintain compatibility -->
+            <TextView android:id="@+id/tvSummaryStart" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+            <TextView android:id="@+id/tvSummaryEnd" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+            <TextView android:id="@+id/tvDatesPreview" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+            <LinearLayout android:id="@+id/layoutSummarySchedule" android:layout_width="0dp" android:layout_height="0dp" android:orientation="vertical" android:visibility="gone">
+                <TextView android:id="@+id/tvSummarySchedule" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- View all lessons toggle -->
+        <TextView
+            android:id="@+id/btnExpandPackage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@string/ext_view_all_lessons_in_package_2"
+            android:textColor="@color/gapfix_green"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <!-- Expanded List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPackageLessons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <!-- Footer Buttons -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnJoin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        android:minHeight="48dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/ext_join_class"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:backgroundTint="@color/color_success"
+            app:cornerRadius="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelTutor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        android:minHeight="48dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/ext_cancel_change"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:backgroundTint="@color/color_error"
+            app:cornerRadius="12dp" />
+
+        <LinearLayout
+            android:id="@+id/layoutLessonActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="12dp"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAccept"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+        android:minHeight="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="@string/ext_accept"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                app:backgroundTint="@color/gapfix_green"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+        android:minHeight="48dp"
+                android:layout_weight="1"
+                android:text="@string/ext_reject"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                app:backgroundTint="@color/color_text_secondary"
+                app:cornerRadius="8dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutPackagePendingActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:weightSum="2"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnConfirmSchedule"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="@string/ext_confirm_schedule"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                app:backgroundTint="@color/color_text_primary"
+                app:cornerRadius="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSuggestOrReject"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/ext_suggest_reject"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                app:backgroundTint="@color/color_text_secondary"
+                app:cornerRadius="8dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

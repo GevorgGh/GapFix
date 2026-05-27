@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/color_border"
+    app:cardBackgroundColor="@color/color_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/ivFileIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_icon_background"
+            android:padding="10dp"
+            android:src="@drawable/outline_assignment_24"
+            app:tint="@color/gapfix_green" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvFileSubject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gapfix_green"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:textAllCaps="true"/>
+
+            <TextView
+                android:id="@+id/tvFileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ext_auto_file_name"
+                android:textColor="@color/gapfix_text_dark"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1"/>
+
+            <TextView
+                android:id="@+id/tvUploadDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ext_auto_uploaded_date"
+                android:textColor="@color/gapfix_text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReviewed"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        android:minHeight="48dp"
+                android:text="@string/ext_auto_i_reviewed_it"
+                android:textSize="10sp"
+                android:textAllCaps="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingHorizontal="8dp"
+                app:cornerRadius="8dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/color_border"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDeleteArchive"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            app:tint="@color/color_error"
+            android:contentDescription="Delete Archive Item"
+            android:padding="8dp"
+            android:scaleType="centerInside"/>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

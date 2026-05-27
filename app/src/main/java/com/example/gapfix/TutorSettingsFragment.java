@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,14 +28,15 @@ import com.google.firebase.database.ValueEventListener;
 public class TutorSettingsFragment extends Fragment {
 
     private TextView tvName, tvEmail;
+    private ImageView ivProfile;
     private MaterialButton btnLogout;
     private ImageButton btnEditProfile;
-    private TextView btnManageSubjects, btnCertificates, btnNotifications, btnPrivacy;
+    private TextView btnManageSubjects, btnCertificates, btnLanguage, btnAbout;
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
 
     public TutorSettingsFragment() {
-        // Required empty public constructor
+        
     }
 
     @Override
@@ -41,15 +44,16 @@ public class TutorSettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tutor_settings, container, false);
 
-        // Initialize UI components
+        
         tvName = view.findViewById(R.id.tvName);
         tvEmail = view.findViewById(R.id.tvEmail);
+        ivProfile = view.findViewById(R.id.ivProfilePic);
         btnLogout = view.findViewById(R.id.btnLogout);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         btnManageSubjects = view.findViewById(R.id.btnManageSubjects);
         btnCertificates = view.findViewById(R.id.btnCertificates);
-        btnNotifications = view.findViewById(R.id.btnNotifications);
-        btnPrivacy = view.findViewById(R.id.btnPrivacy);
+        btnLanguage = view.findViewById(R.id.btnLanguage);
+        btnAbout = view.findViewById(R.id.btnAbout);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -62,11 +66,13 @@ public class TutorSettingsFragment extends Fragment {
             loadUserData();
         }
 
-        // Set up click listeners
+        
         btnLogout.setOnClickListener(v -> logout());
 
         btnEditProfile.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Edit Profile coming soon", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), EditProfileActivity.class);
+            intent.putExtra("ROLE", "Tutor");
+            startActivity(intent);
         });
 
         btnManageSubjects.setOnClickListener(v -> {
@@ -80,18 +86,70 @@ public class TutorSettingsFragment extends Fragment {
 
         btnCertificates.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AddCertificatesActivity.class);
+            intent.putExtra("from_settings", true);
             startActivity(intent);
         });
 
-        btnNotifications.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Notification settings coming soon", Toast.LENGTH_SHORT).show();
+        btnAbout.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "GapFix v 1.0", Toast.LENGTH_SHORT).show();
         });
 
-        btnPrivacy.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Privacy settings coming soon", Toast.LENGTH_SHORT).show();
-        });
+        
+        String currentLang = LocaleHelper.getLanguage(requireContext());
+        btnLanguage.setText("App Language (" + getLanguageName(currentLang) + ")");
+        btnLanguage.setOnClickListener(v -> showLanguageBottomSheet());
 
         return view;
+    }
+
+    private String getLanguageName(String lang) {
+        if ("hy".equals(lang)) return "Հայերեն";
+        if ("ru".equals(lang)) return "Русский";
+        return "English";
+    }
+
+    private void showLanguageBottomSheet() {
+        View sheetView = getLayoutInflater().inflate(R.layout.layout_languages_bottom_sheet, null);
+        com.google.android.material.bottomsheet.BottomSheetDialog dialog = 
+            new com.google.android.material.bottomsheet.BottomSheetDialog(requireContext());
+        dialog.setContentView(sheetView);
+
+        android.widget.RadioGroup rgLanguages = sheetView.findViewById(R.id.rgLanguages);
+        com.google.android.material.radiobutton.MaterialRadioButton rbArmenian = sheetView.findViewById(R.id.rbArmenian);
+        com.google.android.material.radiobutton.MaterialRadioButton rbEnglish = sheetView.findViewById(R.id.rbEnglish);
+        com.google.android.material.radiobutton.MaterialRadioButton rbRussian = sheetView.findViewById(R.id.rbRussian);
+        com.google.android.material.button.MaterialButton btnContinue = sheetView.findViewById(R.id.btnContinue);
+
+        String currentLang = LocaleHelper.getLanguage(requireContext());
+        if ("hy".equals(currentLang)) {
+            rbArmenian.setChecked(true);
+        } else if ("ru".equals(currentLang)) {
+            rbRussian.setChecked(true);
+        } else {
+            rbEnglish.setChecked(true);
+        }
+
+        btnContinue.setOnClickListener(v -> {
+            String selectedLang = "en";
+            int checkedId = rgLanguages.getCheckedRadioButtonId();
+            if (checkedId == R.id.rbArmenian) {
+                selectedLang = "hy";
+            } else if (checkedId == R.id.rbRussian) {
+                selectedLang = "ru";
+            }
+
+            if (!selectedLang.equals(currentLang)) {
+                LocaleHelper.setLocale(requireContext(), selectedLang);
+                dialog.dismiss();
+                if (getActivity() != null) {
+                    getActivity().recreate();
+                }
+            } else {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     private void loadUserData() {
@@ -100,27 +158,38 @@ public class TutorSettingsFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (isAdded() && snapshot.exists()) {
                     String name = snapshot.child("name").getValue(String.class);
+                    String imageUrl = snapshot.child("imageResourceLink").getValue(String.class);
+                    if (imageUrl == null) imageUrl = snapshot.child("profilePicture").getValue(String.class);
+                    
                     tvName.setText(name != null ? name : "Tutor");
+                    
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
+                        Glide.with(TutorSettingsFragment.this)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.person_circle)
+                                .circleCrop()
+                                .into(ivProfile);
+                    } else {
+                        ivProfile.setImageResource(R.drawable.person_circle);
+                    }
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                if (isAdded()) {
-                    Toast.makeText(getContext(), "Error loading profile", Toast.LENGTH_SHORT).show();
-                }
+                
             }
         });
     }
 
     private void logout() {
-        // Stop the background service before logging out
+        
         if (getActivity() != null) {
             getActivity().stopService(new Intent(getActivity(), CallNotificationService.class));
 
             mAuth.signOut();
 
-            // Clear saved role in SharedPreferences
+            
             SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
             prefs.edit().clear().apply();
 

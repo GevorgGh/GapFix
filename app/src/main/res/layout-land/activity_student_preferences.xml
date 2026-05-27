@@ -10,80 +10,101 @@
 
     <FrameLayout
         android:id="@+id/backFr"
-        android:layout_width="119dp"
-        android:layout_height="54dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </FrameLayout>
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
         android:layout_marginTop="16dp"
-        android:text="Select subjects that you would want to learn"
+        android:layout_marginHorizontal="24dp"
+        android:text="@string/select_subjects_you_want_to_learn"
         android:textAlignment="center"
         android:textColor="@color/gapfix_green"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold"
+        android:fontFamily="@font/noto_sans"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchView"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/searchCard"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="@color/bg_tint"
-        android:elevation="2dp"
-        app:iconifiedByDefault="false"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toTopOf="@id/btnSave"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView11"
-        app:queryHint="Search subjects..." />
+        app:layout_constraintTop_toBottomOf="@id/textView11">
 
-    <ListView
-        android:id="@+id/listSuggestions"
-        android:layout_width="0dp"
-        android:layout_height="200sp"
-        android:layout_marginHorizontal="16dp"
-        android:background="@color/bg_tint"
-        android:divider="@color/gapfix_bg"
-        android:dividerHeight="0.5dp"
-        android:scrollbars="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchView" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@android:color/transparent"
+                app:queryHint="Search subjects..." />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_border" />
+
+            <ListView
+                android:id="@+id/listSuggestions"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@color/color_border"
+                android:dividerHeight="0.5dp"
+                android:scrollbars="vertical" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
     <TextView
         android:id="@+id/labelSelected"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Selected Subjects:"
-        android:textColor="@color/text"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/selected_subjects"
+        android:textColor="@color/gapfix_text_dark"
+        android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/listSuggestions" />
+        android:fontFamily="@font/noto_sans"
+        app:layout_constraintStart_toEndOf="@id/guideline_center"
+        app:layout_constraintTop_toBottomOf="@id/textView11" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/chipScroll"
-        android:layout_width="1245dp"
-        android:layout_height="330dp"
-        android:layout_margin="16dp"
-        android:fadeScrollbars="false"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="8dp"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline_center"
         app:layout_constraintTop_toBottomOf="@id/labelSelected">
 
         <com.google.android.material.chip.ChipGroup
@@ -94,14 +115,37 @@
             app:chipSpacingVertical="4dp" />
     </androidx.core.widget.NestedScrollView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_margin="16dp"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="@color/gapfix_green"
-        android:text="Finish Profile"
+        android:text="@string/ext_finish_profile"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="24dp"
+        app:layout_constraintBottom_toTopOf="@id/tvSkip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSkip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:padding="4dp"
+        android:text="@string/ext_skip"
+        android:textAlignment="center"
+        android:textColor="@color/gapfix_text_secondary"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

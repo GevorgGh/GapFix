@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="Settings"
+            android:text="@string/ext_settings"
             android:textColor="@color/gapfix_text_dark"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -37,12 +37,13 @@
                 android:orientation="horizontal"
                 android:padding="16dp">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivProfilePic"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/person_circle"
-                    app:tint="@color/gapfix_green" />
+                    app:shapeAppearanceOverlay="@style/ProfileImageShape" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -55,7 +56,7 @@
                         android:id="@+id/tvName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Loading..."
+                        android:text="@string/ext_loading"
                         android:textColor="@color/gapfix_text_dark"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -64,7 +65,7 @@
                         android:id="@+id/tvEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="email@example.com"
+                        android:text="@string/ext_email_example_com"
                         android:alpha="0.6"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -83,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="ACCOUNT"
+            android:text="@string/ext_learning"
             android:textColor="@color/gray"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -101,40 +102,52 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/btnNotifications"
+                    android:id="@+id/btnSubjects"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="16dp"
-                    android:text="Notifications"
-                    android:textSize="16sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="#EEEEEE" />
-
-                <TextView
-                    android:id="@+id/btnPrivacy"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="16dp"
-                    android:text="Privacy &amp; Security"
+                    android:text="@string/ext_change_subjects"
                     android:textSize="16sp" />
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/ext_auto_languages"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+            <TextView
+                android:id="@+id/btnLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:text="@string/ext_auto_app_language"
+                android:textSize="16sp" />
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="SUPPORT"
+            android:text="@string/ext_support"
             android:textColor="@color/gray"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -146,39 +159,16 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="2dp">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/btnAbout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/btnHelp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="16dp"
-                    android:text="Help Center"
-                    android:textSize="16sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="#EEEEEE" />
-
-                <TextView
-                    android:id="@+id/btnAbout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="16dp"
-                    android:text="About GapFix"
-                    android:textSize="16sp" />
-            </LinearLayout>
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:text="@string/ext_about_gapfix"
+                android:textSize="16sp" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
@@ -186,10 +176,10 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Logout"
+            android:text="@string/ext_logout"
             android:textColor="@color/error"
             app:cornerRadius="16dp"
-            app:rippleColor="#20FF0000" />
+            app:rippleColor="@color/color_error" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

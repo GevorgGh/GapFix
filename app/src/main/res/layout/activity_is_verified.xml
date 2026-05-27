@@ -15,52 +15,71 @@
         android:orientation="vertical"
         android:padding="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Custom premium icon envelope -->
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
             android:src="@drawable/baseline_email_24"
-            app:tint="@color/gapfix_green" />
+            app:tint="@color/gapfix_green"
+            android:scaleType="centerInside"
+            android:contentDescription="Verification email icon" />
 
+        <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Verify your email"
-            android:textColor="@color/gapfix_text_dark"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="28dp"
+            android:text="@string/ext_verify_your_email"
+            android:textColor="@color/gapfix_green"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/noto_sans" />
 
+        <!-- Instructions -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:gravity="center"
-            android:text="We've sent a verification link to your email. Please check your inbox and click the link to continue."
-            android:textColor="@color/gapfix_text_dark"
-            android:textSize="16sp" />
+            android:text="@string/ext_we_ve_sent_a_verification"
+            android:textColor="@color/gapfix_text_secondary"
+            android:textSize="16sp"
+            android:fontFamily="@font/noto_sans"
+            android:lineSpacingExtra="4dp" />
 
-        <Button
+        <!-- Action Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVerified"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="32dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="36dp"
             android:backgroundTint="@color/gapfix_green"
-            android:text="I've verified my email"
+            android:text="@string/ext_i_ve_verified_my_email"
             android:textAllCaps="false"
+            android:textColor="@color/white"
             android:textSize="16sp"
-            app:cornerRadius="12dp" />
+            android:textStyle="bold"
+            app:cornerRadius="14dp"
+            app:elevation="2dp" />
 
+        <!-- Resend Link -->
         <TextView
             android:id="@+id/btnResend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:padding="8dp"
-            android:text="Resend email"
+            android:text="@string/ext_resend_verification_email"
             android:textColor="@color/gapfix_green"
-            android:textStyle="bold" />
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/noto_sans"
+            android:clickable="true"
+            android:focusable="true" />
 
     </LinearLayout>
 

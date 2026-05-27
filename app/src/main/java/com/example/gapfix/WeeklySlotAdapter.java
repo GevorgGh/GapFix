@@ -23,7 +23,7 @@ public class WeeklySlotAdapter extends RecyclerView.Adapter<WeeklySlotAdapter.Vi
 
     private List<WeeklySlot> slots;
     private FragmentManager fragmentManager;
-    // Global start date (local midnight ms). -1 means not set.
+    
     private long globalStartDateMs = -1;
 
     public WeeklySlotAdapter(List<WeeklySlot> slots, FragmentManager fragmentManager) {
@@ -31,25 +31,22 @@ public class WeeklySlotAdapter extends RecyclerView.Adapter<WeeklySlotAdapter.Vi
         this.fragmentManager = fragmentManager;
     }
 
-    /**
-     * Called when the user picks a global start date from the package sheet.
-     * Recomputes each slot's first-occurrence date and refreshes the list.
-     */
+    
     public void setGlobalStartDate(long localStartDateMs) {
         this.globalStartDateMs = localStartDateMs;
-        // Recalculate startDateMs for every slot
+        
         for (WeeklySlot slot : slots) {
             slot.startDateMs = computeFirstOccurrence(localStartDateMs, slot.dayName);
         }
         notifyDataSetChanged();
     }
 
-    /** Returns the local-midnight ms of the first occurrence of dayName on/after baseMs. */
+    
     private long computeFirstOccurrence(long baseMs, String dayName) {
         int targetDay = getDayOfWeek(dayName);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(baseMs);
-        // Zero out time so we compare pure dates
+        
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
@@ -73,7 +70,7 @@ public class WeeklySlotAdapter extends RecyclerView.Adapter<WeeklySlotAdapter.Vi
         WeeklySlot slot = slots.get(position);
         holder.tvDay.setText(slot.dayName);
 
-        // Show computed first-occurrence date (or placeholder)
+        
         if (slot.startDateMs != -1) {
             SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
             holder.tvStartDate.setText(sdf.format(new java.util.Date(slot.startDateMs)));
@@ -81,7 +78,7 @@ public class WeeklySlotAdapter extends RecyclerView.Adapter<WeeklySlotAdapter.Vi
             holder.tvStartDate.setText("— pick start date above —");
         }
 
-        // Show chosen time (or placeholder)
+        
         if (slot.hour != -1) {
             holder.btnTime.setText(String.format(Locale.getDefault(), "%02d:%02d", slot.hour, slot.minute));
         } else {

@@ -43,10 +43,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         String userId = userIds.get(position);
 
         holder.tvName.setText(contact.getName());
-        holder.tvLastMessage.setText(contact.getEmail()); // Show email as secondary info
+        holder.tvLastMessage.setText(contact.getEmail()); 
         holder.tvTime.setVisibility(View.GONE);
 
-        // Load image if available
+        
         Glide.with(holder.itemView.getContext())
                 .load(contact.getImageResourceLink() != null ? contact.getImageResourceLink() : R.drawable.person_circle)
                 .placeholder(R.drawable.person_circle)

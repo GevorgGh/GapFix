@@ -1,28 +1,33 @@
 package com.example.gapfix;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.io.Serializable;
 
+@IgnoreExtraProperties
 public class Booking implements Serializable {
     private String bookingId;
     private String studentId;
     private String tutorId;
     private String lessonDate;
     private String lessonTime;
-    private long timestamp; // UTC Timestamp in milliseconds
+    private long timestamp; 
     private String subject;
-    private int duration; // Duration in minutes
-    private String status; // pending, confirmed, completed, cancelled, free_trial_pending, finished
+    private int duration; 
+    private String status; 
     private String tutorName;
     private String tutorImage;
-    private boolean isFree; // Track if this is a free lesson
-    private boolean isPackage; // New field for package lessons
-    private String packageId; // Grouping ID for packages
-    private int packageTotalLessons; // Total lessons in this package
+    private boolean isFree; 
+    private boolean isPackage; 
+    private String packageId; 
+    private int packageTotalLessons; 
     private String cancellationReason;
     private String suggestedSourceDay;
     private String suggestedDestDay;
     private String suggestedTime;
     private String suggestionMessage;
+    private long suggestedTimestamp; 
+    private double price;
 
     public Booking() {}
 
@@ -38,7 +43,7 @@ public class Booking implements Serializable {
         this.status = "pending";
     }
 
-    // Getters and Setters
+    
     public String getBookingId() { return bookingId; }
     public void setBookingId(String bookingId) { this.bookingId = bookingId; }
 
@@ -98,4 +103,10 @@ public class Booking implements Serializable {
 
     public String getSuggestionMessage() { return suggestionMessage; }
     public void setSuggestionMessage(String suggestionMessage) { this.suggestionMessage = suggestionMessage; }
+
+    public long getSuggestedTimestamp() { return suggestedTimestamp; }
+    public void setSuggestedTimestamp(long suggestedTimestamp) { this.suggestedTimestamp = suggestedTimestamp; }
+
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 }

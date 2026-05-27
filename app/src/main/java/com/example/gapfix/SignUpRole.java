@@ -35,7 +35,8 @@ public class SignUpRole extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(SignUpRole.this, SignUpActivity.class);
-                i.putExtra("ROLE",prof);
+                i.putExtra("ROLE", prof);
+                i.putExtra("isGoogle", getIntent().getBooleanExtra("isGoogle", false));
                 startActivity(i);
             }
         });

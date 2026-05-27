@@ -5,23 +5,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class TutorAdapter extends RecyclerView.Adapter<TutorAdapter.TutorViewHolder> {
 
-    private ArrayList<Tutor> tutorList;
+    private final ArrayList<Tutor> tutorList;
 
     public TutorAdapter(ArrayList<Tutor> tutorList) {
         this.tutorList = tutorList;
+    }
+
+    public void refresh() {
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -34,75 +38,66 @@ public class TutorAdapter extends RecyclerView.Adapter<TutorAdapter.TutorViewHol
     @Override
     public void onBindViewHolder(@NonNull TutorViewHolder holder, int position) {
         Tutor tutor = tutorList.get(position);
+        holder.bind(tutor);
 
-        if (tutor != null) {
-            // Set Name and Bio
-            holder.nameText.setText(tutor.getName());
-            holder.bioText.setText(tutor.getBio());
-
-            // Load Profile Image with Glide
-            Glide.with(holder.itemView.getContext())
-                    .load(tutor.getImageResourceLink() != null ? tutor.getImageResourceLink() : R.drawable.person_circle)
-                    .placeholder(R.drawable.person_circle)
-                    .circleCrop()
-                    .into(holder.profileImage);
-
-            // Clear old chips before adding new ones
-            holder.chipGroup.removeAllViews();
-
-            if (tutor.getPreferences() != null) {
-                for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
-                    Chip chip = new Chip(holder.itemView.getContext());
-
-                    // UPDATED: Display "Subject Name - CurrencyPrice / Duration mins"
-                    String chipLabel = String.format("%s - %s%d / %dmins", 
-                        pref.name, pref.currency, pref.price, pref.duration);
-
-                    chip.setText(chipLabel);
-                    chip.setClickable(false);
-                    chip.setFocusable(false);
-                    chip.setCheckable(false);
-
-                    // Styling to match GapFix theme
-                    chip.setChipStrokeColorResource(R.color.gapfix_green);
-                    chip.setChipStrokeWidth(2f);
-                    chip.setChipBackgroundColorResource(android.R.color.white);
-
-                    holder.chipGroup.addView(chip);
-                }
-            }
-
-            // Click listener to open detailed Tutor Activity
-            holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), TutorActivity.class);
-                intent.putExtra("tutor", tutor);
-                v.getContext().startActivity(intent);
-            });
-        }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), TutorActivity.class);
+            intent.putExtra("tutor", tutor);
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return tutorList != null ? tutorList.size() : 0;
+        return tutorList.size();
     }
 
     public static class TutorViewHolder extends RecyclerView.ViewHolder {
-        TextView nameText, bioText;
-        ChipGroup chipGroup;
-        ImageView profileImage;
+        private final TextView tvName, tvBio;
+        private final ImageView ivProfile;
+        private final LinearLayout subjectsContainer;
 
         public TutorViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.tutor_name);
-            bioText = itemView.findViewById(R.id.tutor_bio);
-            chipGroup = itemView.findViewById(R.id.tutor_subjects_chips);
-            profileImage = itemView.findViewById(R.id.tutor_image);
+            tvName = itemView.findViewById(R.id.tutor_name);
+            tvBio = itemView.findViewById(R.id.tutor_bio);
+            ivProfile = itemView.findViewById(R.id.tutor_image);
+            subjectsContainer = itemView.findViewById(R.id.subjects_container);
         }
-    }
 
-    // Helper method to update list from Firebase
-    public void updateList(ArrayList<Tutor> newList) {
-        this.tutorList = newList;
-        notifyDataSetChanged();
+        public void bind(Tutor tutor) {
+            tvName.setText(tutor.getName());
+            tvBio.setText(tutor.getBio());
+
+            Glide.with(itemView.getContext())
+                    .load(tutor.getImageResourceLink() != null ? tutor.getImageResourceLink() : R.drawable.person_circle)
+                    .placeholder(R.drawable.person_circle)
+                    .into(ivProfile);
+
+            subjectsContainer.removeAllViews();
+            if (tutor.getPreferences() != null) {
+                for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
+                    View subjectView = LayoutInflater.from(itemView.getContext()).inflate(R.layout.item_tutor_subject_shop, subjectsContainer, false);
+                    
+                    TextView tvSubjectName = subjectView.findViewById(R.id.tvSubjectName);
+                    TextView tvPriceTime = subjectView.findViewById(R.id.tvPriceTime);
+
+                    tvSubjectName.setText(SubjectHelper.getTranslatedSubject(pref.name));
+                    
+                    String currency = (pref.currency != null) ? pref.currency : "$";
+                    int duration = pref.duration > 0 ? pref.duration : 60;
+                    
+                    tvPriceTime.setText(String.format(Locale.getDefault(), "%s%d • %d mins", 
+                            currency, (int) pref.price, duration));
+                    
+                    if (subjectsContainer.getChildCount() > 0) {
+                        
+                        subjectView.setPadding(0, 4, 0, 0);
+                    }
+
+                    subjectsContainer.addView(subjectView);
+                }
+            }
+        }
     }
 }

@@ -23,8 +23,15 @@ import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import android.app.AlertDialog;
 
 public class HomeTutorActivity extends AppCompatActivity {
+
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -38,26 +45,23 @@ public class HomeTutorActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize permission launcher
+        
         requestPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
-                    if (isGranted) {
-                        Log.d("HomeTutor", "Notification permission granted");
-                    }
                 });
 
-        // Ask for permission if on Android 13+
+        
         askNotificationPermission();
 
-        // Ensure FCM token is up to date for this device
+        
         GapFixApplication.updateFcmToken();
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_tutor);
 
-        // Start the background service that listens for call notifications
-        // (works across all screens, not just when this activity is open)
+        
+        
         ContextCompat.startForegroundService(this, new Intent(this, CallNotificationService.class));
 
         if (savedInstanceState == null) {
@@ -68,9 +72,38 @@ public class HomeTutorActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(0, systemBars.top, 0, systemBars.bottom);
             return insets;
         });
+
+        checkIfRegistrationSkipped();
+    }
+
+    private void checkIfRegistrationSkipped() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child("Tutor")
+                .child(user.getUid())
+                .child("skippedRegistration")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists() && Boolean.TRUE.equals(snapshot.getValue(Boolean.class))) {
+                        showCompleteProfileDialog();
+                    }
+                });
+    }
+
+    private void showCompleteProfileDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Complete Your Profile")
+                .setMessage("You skipped some professional details. Would you like to add your certificates now to build trust with students?")
+                .setPositiveButton("Yes, Finish", (dialog, which) -> {
+                    startActivity(new Intent(this, TutorSubjectActivity.class));
+                })
+                .setNegativeButton("Later", null)
+                .show();
     }
 
     private void askNotificationPermission() {

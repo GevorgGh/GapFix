@@ -25,9 +25,8 @@ public class ChatListFragment extends Fragment {
 
     private RecyclerView rvConversations;
     private ConversationAdapter adapter;
-    private List<FirestoreConversation> conversationList = new ArrayList<>();
+    private final List<FirestoreConversation> conversationList = new ArrayList<>();
     private TextView tvNoChats;
-    private FloatingActionButton fabNewChat;
     private String currentUserId;
     private ListenerRegistration chatListener;
 
@@ -39,7 +38,7 @@ public class ChatListFragment extends Fragment {
 
         rvConversations = view.findViewById(R.id.rvConversations);
         tvNoChats = view.findViewById(R.id.tvNoChats);
-        fabNewChat = view.findViewById(R.id.fabNewChat);
+        FloatingActionButton fabNewChat = view.findViewById(R.id.fabNewChat);
         currentUserId = FirebaseAuth.getInstance().getUid();
 
         setupRecyclerView();
@@ -55,6 +54,7 @@ public class ChatListFragment extends Fragment {
     private void setupRecyclerView() {
         adapter = new ConversationAdapter(conversationList, conversation -> {
             Intent intent = new Intent(getContext(), ChatActivity.class);
+            intent.putExtra("CHAT_ID", conversation.chatId); 
             intent.putExtra("CHAT_USER_ID", conversation.otherUserId);
             intent.putExtra("CHAT_USER_NAME", conversation.otherUserName);
             startActivity(intent);
@@ -63,47 +63,79 @@ public class ChatListFragment extends Fragment {
         rvConversations.setAdapter(adapter);
     }
 
+    @SuppressWarnings("unchecked")
     private void startListeningForChats() {
         if (currentUserId == null) return;
 
-        // CRUCIAL: Connect to the 'gapfix' database instance
-        FirebaseFirestore.getInstance("gapfix")
+        chatListener = com.google.firebase.firestore.FirebaseFirestore.getInstance("gapfix")
                 .collection("chats")
                 .whereArrayContains("participants", currentUserId)
                 .addSnapshotListener((snapshots, e) -> {
-                    if (e != null || snapshots == null) return;
+                    if (e != null) {
+                        return;
+                    }
+                    if (snapshots == null) return;
 
                     conversationList.clear();
                     for (QueryDocumentSnapshot doc : snapshots) {
                         FirestoreConversation conv = doc.toObject(FirestoreConversation.class);
+                        conv.chatId = doc.getId(); 
+
                         
-                        // 1. Identify other user
-                        List<String> participants = (List<String>) doc.get("participants");
-                        if (participants != null) {
+                        conv.unreadCount = (Map<String, Long>) doc.get("unreadCount");
+
+                        
+                        Object participantsObj = doc.get("participants");
+                        if (participantsObj instanceof List) {
+                            @SuppressWarnings("unchecked")
+                            List<String> participants = (List<String>) participantsObj;
                             for (String id : participants) {
-                                if (!id.equals(currentUserId)) {
+                                if (id != null && !id.equals(currentUserId)) {
                                     conv.otherUserId = id;
+                                    break;
                                 }
                             }
                         }
+
                         
-                        // 2. Fetch other user's name from metadata Map
+                        if (conv.otherUserId == null) {
+                            
+                            Map<String, Object> data = doc.getData();
+                            for (String key : data.keySet()) {
+                                if (key.startsWith("user_") && !key.equals("user_" + currentUserId)) {
+                                    conv.otherUserId = key.replace("user_", "");
+                                }
+                            }
+                        }
+
+                        
                         Object namesObj = doc.get("participantNames");
                         if (namesObj instanceof Map && conv.otherUserId != null) {
                             Map<String, String> namesMap = (Map<String, String>) namesObj;
                             conv.otherUserName = namesMap.get(conv.otherUserId);
                         }
 
-                        // 3. Fetch other user's image from metadata Map
+                        
                         Object imagesObj = doc.get("participantImages");
                         if (imagesObj instanceof Map && conv.otherUserId != null) {
                             Map<String, String> imagesMap = (Map<String, String>) imagesObj;
                             conv.otherUserImage = imagesMap.get(conv.otherUserId);
                         }
-                        
+
                         conversationList.add(conv);
                     }
+
                     
+                    conversationList.sort((c1, c2) -> {
+                        long t1 = (c1.lastMessageTime != null) ? c1.lastMessageTime.toDate().getTime() : 0;
+                        long t2 = (c2.lastMessageTime != null) ? c2.lastMessageTime.toDate().getTime() : 0;
+                        
+                        if (t1 == 0 && t2 == 0) return 0;
+                        if (t1 == 0) return -1;
+                        if (t2 == 0) return 1;
+                        return Long.compare(t2, t1);
+                    });
+
                     tvNoChats.setVisibility(conversationList.isEmpty() ? View.VISIBLE : View.GONE);
                     rvConversations.setVisibility(conversationList.isEmpty() ? View.GONE : View.VISIBLE);
                     adapter.notifyDataSetChanged();

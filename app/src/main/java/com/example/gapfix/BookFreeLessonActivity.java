@@ -128,7 +128,7 @@ public class BookFreeLessonActivity extends AppCompatActivity {
 
         setupPickers(btnSelectDate, btnSelectTime);
 
-// Locate this inside btnBook.setOnClickListener in onCreate
+
         btnBook.setOnClickListener(v -> {
             if (selectedSubject == null) {
                 Toast.makeText(this, "Please select a subject", Toast.LENGTH_SHORT).show();
@@ -137,10 +137,9 @@ public class BookFreeLessonActivity extends AppCompatActivity {
             } else {
                 long finalTimestamp = calculateTimestamp(selectedDateMs, selectedHour, selectedMinute);
 
-                // Changed for testing: 1 * 60_000L is 1 minute
+                
                 if (finalTimestamp < System.currentTimeMillis() + (1 * 60_000L)) {
-                    Toast.makeText(this, "For testing: Bookings must be at least 1 minute from now", Toast.LENGTH_LONG).show();
-                } else {
+                    } else {
                     String dateStr = btnSelectDate.getText().toString();
                     String timeStr = btnSelectTime.getText().toString();
                     bookLesson(selectedSubject, dateStr, timeStr, finalTimestamp, tutorId, studentId);
@@ -250,9 +249,32 @@ public class BookFreeLessonActivity extends AppCompatActivity {
         String bId = newBookingRef.getKey();
         Booking newBooking = new Booking(bId, sId, tId, date, time, subject, timestamp);
 
+        Tutor tutor = (Tutor) getIntent().getSerializableExtra("tutor");
+        double lessonPrice = 0.0;
+        int duration = 0;
+        if (tutor != null && tutor.getPreferences() != null) {
+            for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
+                if (pref.name != null && pref.name.equalsIgnoreCase(subject)) {
+                    lessonPrice = pref.price;
+                    duration = pref.duration;
+                    break;
+                }
+            }
+        }
+
+        newBooking.setFree(isTrial);
+        newBooking.setPrice(isTrial ? 0 : lessonPrice);
+        if (tutor != null) {
+            newBooking.setTutorName(tutor.getName());
+        }
+
         if (isTrial) {
+            newBooking.setDuration(30); 
             newBooking.setStatus("free_trial_pending");
         } else {
+            if (duration > 0) {
+                newBooking.setDuration(duration);
+            }
             newBooking.setStatus("pending");
         }
 

@@ -2,7 +2,6 @@ package com.example.gapfix;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,21 +28,12 @@ public class IsVerifiedActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         role = getIntent().getStringExtra("ROLE");
-        
-        Log.d("IsVerified", "Role received: " + role);
 
         Button btnVerified = findViewById(R.id.btnVerified);
         TextView btnResend = findViewById(R.id.btnResend);
 
-        btnVerified.setOnClickListener(v -> {
-            Log.d("IsVerified", "Verified button clicked");
-            checkEmailVerification();
-        });
-
-        btnResend.setOnClickListener(v -> {
-            Log.d("IsVerified", "Resend button clicked");
-            resendVerificationEmail();
-        });
+        btnVerified.setOnClickListener(v -> checkEmailVerification());
+        btnResend.setOnClickListener(v -> resendVerificationEmail());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -58,19 +48,15 @@ public class IsVerifiedActivity extends AppCompatActivity {
             user.reload().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     if (user.isEmailVerified()) {
-                        Log.d("IsVerified", "Email is verified, redirecting...");
                         redirectBasedOnRole();
                     } else {
-                        Log.d("IsVerified", "Email NOT verified yet");
-                        Toast.makeText(this, "Email is not verified yet. Please check your inbox.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.msg_email_not_verified, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.e("IsVerified", "User reload failed", task.getException());
-                    Toast.makeText(this, "Failed to refresh user status: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    String error = task.getException() != null ? task.getException().getMessage() : "Unknown Error";
+                    Toast.makeText(this, getString(R.string.err_refresh_user_failed, error), Toast.LENGTH_SHORT).show();
                 }
             });
-        } else {
-            Log.e("IsVerified", "No current user found");
         }
     }
 
@@ -79,11 +65,10 @@ public class IsVerifiedActivity extends AppCompatActivity {
         if (user != null) {
             user.sendEmailVerification().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Log.d("IsVerified", "Verification email sent");
-                    Toast.makeText(this, "Verification email sent.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.msg_verification_email_sent_short, Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e("IsVerified", "Send verification email failed", task.getException());
-                    Toast.makeText(this, "Failed to send email: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    String error = task.getException() != null ? task.getException().getMessage() : "Unknown Error";
+                    Toast.makeText(this, getString(R.string.err_send_email_failed, error), Toast.LENGTH_SHORT).show();
                 }
             });
         }

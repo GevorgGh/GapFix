@@ -73,13 +73,11 @@ public class ForgotPass extends AppCompatActivity {
         mAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        startActivity(new Intent(ForgotPass.this, LoginActivity.class));
-
                         Toast.makeText(ForgotPass.this, "Reset link sent to your email!", Toast.LENGTH_LONG).show();
+                        finish();
                     } else {
                         String error = task.getException().getMessage();
-                        Toast.makeText(ForgotPass.this, "Error: " + error, Toast.LENGTH_SHORT).show();
-                    }
+                        }
                 });
 
     }

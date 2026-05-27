@@ -37,11 +37,13 @@ public class TutorSubjectFragment extends Fragment {
     private TutorSubjectAdapter adapter;
     private List<Subject> subjectList = new ArrayList<>();
     private List<String> allSubjectsList = new ArrayList<>();
+    private final java.util.Map<String, String> canonicalToTranslatedMap = new java.util.HashMap<>();
+    private final java.util.Map<String, String> translatedToCanonicalMap = new java.util.HashMap<>();
     private DatabaseReference tutorRef;
     private FirebaseUser user;
 
     public TutorSubjectFragment() {
-        // Required empty public constructor
+        
     }
 
     @Override
@@ -49,16 +51,16 @@ public class TutorSubjectFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tutor_subject, container, false);
 
-        // Initialize UI components
+        
         subjectDropdown = view.findViewById(R.id.subjectDropdown);
         currencyDropdown = view.findViewById(R.id.currencyDropdown);
         etPrice = view.findViewById(R.id.etPrice);
-        etDuration = view.findViewById(R.id.etDuration); // Initialize duration field
+        etDuration = view.findViewById(R.id.etDuration); 
         btnAddSubject = view.findViewById(R.id.btnAddSubject);
         btnSaveAll = view.findViewById(R.id.btnSaveAll);
         rvSubjects = view.findViewById(R.id.rvSubjects);
 
-        // Initialize Firebase
+        
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             tutorRef = FirebaseDatabase.getInstance().getReference("Users")
@@ -101,10 +103,34 @@ public class TutorSubjectFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) return;
                 allSubjectsList.clear();
+                canonicalToTranslatedMap.clear();
+                translatedToCanonicalMap.clear();
+
+                String lang = LocaleHelper.getLanguage(requireContext());
+
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    String s = data.getValue(String.class);
-                    if (s != null) allSubjectsList.add(s);
+                    String canonicalName = null;
+                    String translatedName = null;
+
+                    Object value = data.getValue();
+                    if (value instanceof String) {
+                        canonicalName = (String) value;
+                        translatedName = canonicalName;
+                    } else if (value instanceof java.util.Map) {
+                        @SuppressWarnings("unchecked")
+                        java.util.Map<String, String> translations = (java.util.Map<String, String>) value;
+                        canonicalName = translations.get("en");
+                        translatedName = translations.get(lang);
+                        if (translatedName == null) translatedName = canonicalName;
+                    }
+
+                    if (canonicalName != null && translatedName != null) {
+                        allSubjectsList.add(translatedName);
+                        canonicalToTranslatedMap.put(canonicalName, translatedName);
+                        translatedToCanonicalMap.put(translatedName, canonicalName);
+                    }
                 }
+
                 Collections.sort(allSubjectsList);
 
                 if (getContext() != null) {
@@ -114,6 +140,11 @@ public class TutorSubjectFragment extends Fragment {
                             allSubjectsList
                     );
                     subjectDropdown.setAdapter(subjectAdapter);
+                }
+                
+                
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
                 }
             }
 
@@ -153,13 +184,16 @@ public class TutorSubjectFragment extends Fragment {
             return;
         }
 
+        String canonicalName = translatedToCanonicalMap.get(sub);
+        if (canonicalName == null) canonicalName = sub; 
+
         try {
             double price = Double.parseDouble(priceStr);
             int duration = Integer.parseInt(durationStr);
-            subjectList.add(new Subject(sub, price, curr, duration));
+            subjectList.add(new Subject(canonicalName, price, curr, duration));
             adapter.notifyItemInserted(subjectList.size() - 1);
 
-            // Clear inputs
+            
             subjectDropdown.setText("");
             etPrice.setText("");
             etDuration.setText("");

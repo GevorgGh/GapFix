@@ -1,10 +1,10 @@
 package com.example.gapfix;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +35,7 @@ public class SessionsActivity extends AppCompatActivity {
     private List<Booking> filteredList = new ArrayList<>();
     private String currentUserId;
     private String userRole;
+    private final Set<String> seenCancelledIds = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +67,19 @@ public class SessionsActivity extends AppCompatActivity {
         rvSessions = findViewById(R.id.rvSessions);
         emptyState = findViewById(R.id.emptyState);
 
-        // Determine which adapter to use based on role
+        
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null) {
+                View badgeView = LayoutInflater.from(this).inflate(R.layout.tab_badge, null);
+                TextView tvTitle = badgeView.findViewById(R.id.tab_title);
+                tvTitle.setText(tab.getText());
+                tab.setCustomView(badgeView);
+            }
+        }
+        updateTabColors();
+
         if ("Tutor".equals(userRole)) {
-            // If we are a tutor, we need the Tutor adapter
-            // Note: If you have a separate TutorBookingAdapter, use that here.
-            // Assuming BookingTutorAdapter is intended for tutors in this screen too.
             BookingTutorAdapter tutorAdapter = new BookingTutorAdapter(filteredList, this);
             rvSessions.setAdapter(tutorAdapter);
         } else {
@@ -83,11 +92,63 @@ public class SessionsActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                filterData(tab.getPosition());
+                int position = tab.getPosition();
+                filterData(position);
+                updateTabColors();
+
+                if (position == 2) { 
+                    markCancelledAsSeen();
+                    setupTabBadge(2, 0);
+                }
             }
-            @Override public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override public void onTabUnselected(TabLayout.Tab tab) {
+                updateTabColors();
+            }
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
+    }
+
+    private void updateTabColors() {
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null && tab.getCustomView() != null) {
+                TextView tvTitle = tab.getCustomView().findViewById(R.id.tab_title);
+                if (tab.isSelected()) {
+                    tvTitle.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.gapfix_green));
+                } else {
+                    tvTitle.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.gapfix_text_secondary));
+                }
+            }
+        }
+    }
+
+    private void markCancelledAsSeen() {
+        for (Booking b : fullList) {
+            if ("cancelled".equalsIgnoreCase(b.getStatus())) {
+                seenCancelledIds.add(b.getBookingId());
+            }
+        }
+        getSharedPreferences("SeenBookings", MODE_PRIVATE).edit()
+                .putStringSet("seen_cancelled_" + currentUserId, seenCancelledIds)
+                .apply();
+    }
+
+    private void setupTabBadge(int tabIndex, int count) {
+        TabLayout.Tab tab = tabLayout.getTabAt(tabIndex);
+        if (tab == null || tab.getCustomView() == null) return;
+
+        
+        if (tabLayout.getSelectedTabPosition() == tabIndex) {
+            count = 0;
+        }
+
+        TextView tvBadge = tab.getCustomView().findViewById(R.id.tab_badge);
+        if (count > 0) {
+            tvBadge.setText(String.valueOf(count));
+            tvBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvBadge.setVisibility(View.GONE);
+        }
     }
 
     private void determineRoleAndLoadData() {
@@ -103,17 +164,66 @@ public class SessionsActivity extends AppCompatActivity {
     }
 
     private void loadSessions() {
+        
+        Set<String> savedSeen = getSharedPreferences("SeenBookings", MODE_PRIVATE)
+                .getStringSet("seen_cancelled_" + currentUserId, new HashSet<>());
+        seenCancelledIds.clear();
+        seenCancelledIds.addAll(savedSeen);
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Bookings");
         String field = "Tutor".equals(userRole) ? "tutorId" : "studentId";
+        final boolean isTutor = "Tutor".equals(userRole);
 
         ref.orderByChild(field).equalTo(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 fullList.clear();
+                long now = System.currentTimeMillis();
+                int pendingCount = 0;
+                int cancelledCount = 0;
+
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Booking b = data.getValue(Booking.class);
-                    if (b != null) fullList.add(b);
+                    if (b != null) {
+                        b.setBookingId(data.getKey());
+                        
+                        String s = b.getStatus();
+                        long duration = b.getDuration() > 0 ? b.getDuration() : LessonTimeHelper.DEFAULT_DURATION_MINUTES;
+                        long endTime = b.getTimestamp() + (duration * 60 * 1000L);
+                        if (now > endTime && ("confirmed".equals(s) || "pending".equals(s) || "free_trial_pending".equals(s) || "suggestion_pending".equals(s))) {
+                            data.getRef().child("status").setValue("cancelled");
+                            data.getRef().child("cancellationReason").setValue("Time expired");
+                            b.setStatus("cancelled");
+                        }
+                        fullList.add(b);
+
+                        
+                        String status = b.getStatus() != null ? b.getStatus().toLowerCase() : "";
+                        
+                        if (isTutor) {
+                            
+                            if (status.equals("pending") || status.equals("free_trial_pending")) {
+                                pendingCount++;
+                            }
+                        } else {
+                            
+                            if (status.equals("suggestion_pending")) {
+                                pendingCount++;
+                            }
+                        }
+
+                        if (status.equals("cancelled")) {
+                            if (!seenCancelledIds.contains(b.getBookingId())) {
+                                cancelledCount++;
+                            }
+                        }
+                    }
                 }
+
+                
+                setupTabBadge(1, pendingCount);  
+                setupTabBadge(2, cancelledCount); 
+
                 filterData(tabLayout.getSelectedTabPosition());
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
@@ -123,26 +233,70 @@ public class SessionsActivity extends AppCompatActivity {
     private void filterData(int position) {
         filteredList.clear();
         long now = System.currentTimeMillis();
+        
+        Set<String> pendingPackages = new HashSet<>();
+        for (Booking b : fullList) {
+            if (b.isPackage() && b.getPackageId() != null) {
+                String s = b.getStatus() != null ? b.getStatus().toLowerCase() : "";
+                if (s.contains("pending") || s.contains("suggestion")) {
+                    pendingPackages.add(b.getPackageId());
+                }
+            }
+        }
+
         Set<String> addedPackages = new HashSet<>();
 
         for (Booking b : fullList) {
             String status = b.getStatus() != null ? b.getStatus().toLowerCase() : "";
-            
+            String pkgId = b.getPackageId();
+            boolean isPkg = b.isPackage() && pkgId != null;
+            long duration = b.getDuration() > 0 ? b.getDuration() : LessonTimeHelper.DEFAULT_DURATION_MINUTES;
+
             boolean matchTab = false;
-            if (position == 0) { // Current
-                if (status.equals("confirmed") && (now < b.getTimestamp() + (60 * 60 * 1000))) matchTab = true;
-            } else if (position == 1) { // Pending
-                if (status.contains("pending")) matchTab = true;
-            } else if (position == 2) { // History
-                if (status.equals("finished") || status.equals("done") || status.equals("cancelled")) matchTab = true;
+            if (position == 0) { 
+                if (isPkg && pendingPackages.contains(pkgId)) {
+                    matchTab = false;
+                } else if (status.equals("confirmed") && (now < b.getTimestamp() + (duration * 60 * 1000L))) {
+                    matchTab = true;
+                }
+            } else if (position == 1) { 
+                if (isPkg) {
+                    if (pendingPackages.contains(pkgId) && (status.contains("pending") || status.contains("suggestion"))) {
+                        matchTab = true;
+                    }
+                } else {
+                    if (status.contains("pending") || status.contains("suggestion")) matchTab = true;
+                }
+            } else if (position == 2) { 
+                if (isPkg) {
+                    boolean hasActive = pendingPackages.contains(pkgId);
+                    if (!hasActive) {
+                        for (Booking other : fullList) {
+                            if (pkgId.equals(other.getPackageId())) {
+                                String s = other.getStatus() != null ? other.getStatus().toLowerCase() : "";
+                                long dur = other.getDuration() > 0 ? other.getDuration() : LessonTimeHelper.DEFAULT_DURATION_MINUTES;
+                                if (s.equals("confirmed") && (now < other.getTimestamp() + (dur * 60 * 1000L))) {
+                                    hasActive = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!hasActive && (status.equals("finished") || status.equals("done") || status.equals("cancelled") || status.equals("completed"))) {
+                        matchTab = true;
+                    }
+                } else {
+                    if (status.equals("finished") || status.equals("done") || status.equals("cancelled") || status.equals("completed")) {
+                        matchTab = true;
+                    }
+                }
             }
 
             if (matchTab) {
-                // Logic: If it's a package, only show one "entry" in the Pending/Sessions tab to avoid clutter
-                if (b.isPackage() && b.getPackageId() != null) {
-                    if (!addedPackages.contains(b.getPackageId())) {
+                if (isPkg) {
+                    if (!addedPackages.contains(pkgId)) {
                         filteredList.add(b);
-                        addedPackages.add(b.getPackageId());
+                        addedPackages.add(pkgId);
                     }
                 } else {
                     filteredList.add(b);

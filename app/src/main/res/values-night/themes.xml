@@ -3,5 +3,17 @@
     <style name="Base.Theme.GapFix" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <item name="fontFamily">@font/noto_sans</item>
+
+        <!-- Primary brand colors -->
+        <item name="colorPrimary">@color/gapfix_green</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/color_icon_bg_green</item>
+        <item name="colorOnPrimaryContainer">@color/gapfix_green</item>
+
+        <!-- Secondary brand colors -->
+        <item name="colorSecondary">@color/color_success</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">#1A2E1A</item>
+        <item name="colorOnSecondaryContainer">@color/color_success</item>
     </style>
 </resources>

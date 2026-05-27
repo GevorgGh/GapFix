@@ -1,6 +1,5 @@
 package com.example.gapfix;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder
         holder.tvDayName.setText(date.getDayName());
         holder.tvDateNumber.setText(date.getDayNumber());
 
-        // Highlight if selected
+        
         if (position == selectedPosition) {
             holder.cardCircle.setCardBackgroundColor(
                     ContextCompat.getColor(holder.itemView.getContext(), R.color.gapfix_green_background)
@@ -50,8 +49,12 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder
                     ContextCompat.getColor(holder.itemView.getContext(), R.color.gapfix_green)
             );
         } else {
-            holder.cardCircle.setCardBackgroundColor(Color.parseColor("#E0E0E0"));
-            holder.tvDateNumber.setTextColor(Color.BLACK);
+            holder.cardCircle.setCardBackgroundColor(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.color_date_inactive)
+            );
+            holder.tvDateNumber.setTextColor(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.color_text_primary)
+            );
         }
 
         holder.itemView.setOnClickListener(v -> {

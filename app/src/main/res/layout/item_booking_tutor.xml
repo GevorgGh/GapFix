@@ -8,8 +8,8 @@
     android:layout_marginVertical="6dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="4dp"
-    app:cardBackgroundColor="#FFFFFF"
-    app:strokeColor="#EEEEEE"
+    app:cardBackgroundColor="@color/color_surface"
+    app:strokeColor="@color/color_border"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -25,8 +25,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivStudentPhoto"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:src="@drawable/person_circle"
                 app:shapeAppearanceOverlay="@style/ProfileImageShape"
                 app:layout_constraintStart_toStartOf="parent"
@@ -34,29 +34,38 @@
 
             <TextView
                 android:id="@+id/tvStudentName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Gev"
+                android:layout_marginEnd="8dp"
+                android:text="@string/ext_gev"
                 android:textColor="@color/gapfix_text_dark"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1"
                 app:layout_constraintStart_toEndOf="@id/ivStudentPhoto"
-                app:layout_constraintTop_toTopOf="@id/ivStudentPhoto" />
+                app:layout_constraintTop_toTopOf="@id/ivStudentPhoto"
+                app:layout_constraintEnd_toStartOf="@+id/layoutTopRightInfo" />
 
             <TextView
                 android:id="@+id/tvLessonSubject"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Applied Mathematics (Package · 12 lessons) [CONFIRMED]"
+                android:layout_marginEnd="8dp"
+                android:text="@string/ext_applied_mathematics_package_12_lessons"
                 android:textColor="@color/gapfix_green"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="2"
                 app:layout_constraintStart_toStartOf="@id/tvStudentName"
-                app:layout_constraintTop_toBottomOf="@id/tvStudentName" />
+                app:layout_constraintTop_toBottomOf="@id/tvStudentName"
+                app:layout_constraintEnd_toStartOf="@+id/layoutTopRightInfo" />
 
             <!-- Top Right Info -->
             <LinearLayout
+                android:id="@+id/layoutTopRightInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -68,38 +77,45 @@
                     android:id="@+id/tvLessonDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Wed, May 20"
-                    android:textColor="#888888"
+                    android:text="@string/ext_wed_may_20"
+                    android:textColor="@color/color_text_muted"
                     android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/tvLessonTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="12:00"
+                    android:text="@string/ext_12_00"
                     android:textColor="@color/gapfix_text_dark"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/layoutSummarySchedule"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginTop="4dp">
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/rounded_input_field"
+                    android:backgroundTint="@color/gapfix_green_background"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp">
                     <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
                         android:src="@drawable/ic_history"
-                        app:tint="#555555" />
+                        app:tint="@color/gapfix_green"
+                        android:contentDescription="@null" />
                     <TextView
                         android:id="@+id/tvSummarySchedule"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="Proposed Pattern:\nFri/Mon/Wed\n(View List)"
+                        android:text="@string/ext_proposed_pattern_nfri_mon_wed"
                         android:textSize="9sp"
-                        android:textColor="#555555" />
+                        android:textStyle="bold"
+                        android:textColor="@color/gapfix_green" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -110,84 +126,106 @@
             android:id="@+id/layoutPackageSummary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:paddingHorizontal="16dp"
-            android:paddingBottom="16dp"
-            android:weightSum="2">
+            android:paddingBottom="12dp">
 
-            <!-- Left: Summary -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_border"
+                android:layout_marginBottom="12dp" />
+
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:baselineAligned="false"
+                android:weightSum="2">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- Left: Summary -->
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Summary:"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="#555555"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_weight="1.1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvSummaryStart"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ext_summary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/color_text_secondary"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvSummaryStart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ext_start_may_18_2026"
+                        android:textSize="11sp"
+                        android:textColor="@color/gapfix_text_dark"
+                        android:layout_marginBottom="4dp"
+                        android:drawablePadding="6dp"
+                        app:drawableStartCompat="@drawable/baseline_calendar_today_24_small"
+                        app:drawableTint="@color/color_text_muted" />
+
+                    <TextView
+                        android:id="@+id/tvSummaryEnd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ext_end_jun_12_2026"
+                        android:textSize="11sp"
+                        android:textColor="@color/gapfix_text_dark"
+                        android:drawablePadding="6dp"
+                        app:drawableStartCompat="@drawable/baseline_check_circle_24_small"
+                        app:drawableTint="@color/gapfix_green" />
+                </LinearLayout>
+
+                <!-- Right: Selected Dates -->
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="📅 Start: May 18, 2026."
-                    android:textSize="11sp"
-                    android:textColor="@color/gapfix_text_dark"
-                    android:layout_marginBottom="4dp" />
+                    android:layout_weight="0.9"
+                    android:orientation="vertical"
+                    android:gravity="end">
 
-                <TextView
-                    android:id="@+id/tvSummaryEnd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="✅ End: Jun 12, 2026."
-                    android:textSize="11sp"
-                    android:textColor="@color/gapfix_text_dark" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ext_selected_dates"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/color_text_secondary"
+                        android:layout_marginBottom="8dp" />
 
-            <!-- Right: Selected Dates -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center_horizontal">
+                    <TextView
+                        android:id="@+id/tvDatesPreview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ext_may_18_n_may_20"
+                        android:textSize="11sp"
+                        android:textColor="@color/gapfix_text_dark"
+                        android:layout_marginBottom="12dp"
+                        android:gravity="end"
+                        android:lineSpacingExtra="2dp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Selected Dates:"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="#555555"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/tvDatesPreview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="• May 18\n• May 20\n• May 22\n• May 25\n+ 8 more"
-                    android:textSize="11sp"
-                    android:textColor="@color/gapfix_text_dark"
-                    android:layout_marginBottom="12dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnReviewCalendar"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:text="Review Calendar"
-                    android:textSize="10sp"
-                    android:textAllCaps="false"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:textColor="@color/gapfix_text_secondary"
-                    app:strokeColor="@color/gapfix_green"
-                    app:cornerRadius="16dp" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnReviewCalendar"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ext_review_calendar"
+                        android:textSize="10sp"
+                        android:textAllCaps="false"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:textColor="@color/gapfix_green"
+                        android:padding="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
@@ -197,11 +235,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="8dp"
-            android:text="▼ View all lessons in package"
+            android:padding="10dp"
+            android:text="@string/ext_view_all_lessons_in_package_2"
             android:textColor="@color/gapfix_green"
-            android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:background="@color/gapfix_green_background" />
 
         <!-- Expanded List -->
         <androidx.recyclerview.widget.RecyclerView
@@ -215,26 +254,28 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnJoin"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="wrap_content"
+        android:minHeight="48dp"
             android:layout_marginHorizontal="12dp"
             android:layout_marginTop="12dp"
-            android:text="JOIN CLASS"
+            android:text="@string/ext_join_class"
             android:textAllCaps="false"
             android:textSize="12sp"
             android:textStyle="bold"
             android:visibility="gone"
-            app:backgroundTint="#4CAF50"
+            app:backgroundTint="@color/color_success"
             app:cornerRadius="12dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelTutor"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="wrap_content"
+        android:minHeight="48dp"
             android:layout_margin="12dp"
-            android:text="Cancel / Change"
+            android:text="@string/ext_cancel_change"
             android:textAllCaps="false"
             android:textSize="12sp"
-            app:backgroundTint="#8B0000"
+            app:backgroundTint="@color/color_error"
             app:cornerRadius="12dp" />
 
         <!-- Single Lesson Actions (Hidden for packages) -->
@@ -242,31 +283,32 @@
             android:id="@+id/layoutLessonActions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="12dp"
             android:visibility="gone">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAccept"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:text="Accept"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/ext_accept"
                 android:textAllCaps="false"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:backgroundTint="@color/gapfix_green"
                 app:cornerRadius="8dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnReject"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:text="Reject"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/ext_reject"
+                android:textColor="@color/color_text_secondary"
                 android:textAllCaps="false"
-                android:textSize="12sp"
-                app:backgroundTint="#7B1831"
+                android:textSize="14sp"
                 app:cornerRadius="8dp" />
         </LinearLayout>
 
@@ -274,32 +316,30 @@
             android:id="@+id/layoutPackagePendingActions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
+            android:orientation="vertical"
             android:visibility="gone">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConfirmSchedule"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_weight="1"
-                android:text="Confirm Schedule"
-                android:textSize="12sp"
+                android:text="@string/ext_confirm_schedule"
+                android:textSize="14sp"
                 android:textAllCaps="false"
                 android:textStyle="bold"
-                app:backgroundTint="#1B5E20"
+                app:backgroundTint="@color/color_text_primary"
                 app:cornerRadius="0dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSuggestOrReject"
-                android:layout_width="0dp"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_weight="1"
-                android:text="Suggest / Reject"
-                android:textSize="12sp"
+                android:text="@string/ext_suggest_reject"
+                android:textSize="14sp"
                 android:textAllCaps="false"
                 android:textStyle="bold"
-                app:backgroundTint="#7B1831"
+                android:textColor="@color/color_text_secondary"
                 app:cornerRadius="0dp"/>
         </LinearLayout>
 

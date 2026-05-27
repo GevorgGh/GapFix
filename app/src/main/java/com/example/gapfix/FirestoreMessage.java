@@ -5,8 +5,18 @@ import java.util.Objects;
 
 public class FirestoreMessage {
     public String senderId;
+    public String receiverId; 
     public String text;
     public Timestamp timestamp;
+    public String type; 
+    public String fileUrl;
+    public String documentId;
+    public String homeworkStatus; 
+    public long lessonTimestamp; 
+    public String subject; 
+    public String solutionUrl; 
+    public String tutorFeedback; 
+    public String chatId; 
 
     public FirestoreMessage() {} 
 

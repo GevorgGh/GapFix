@@ -6,7 +6,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/gapfix_bg"
     tools:context=".HomeStudentActivity">
 
@@ -24,7 +23,7 @@
     <FrameLayout
         android:id="@+id/navFr"
         android:layout_width="match_parent"
-        android:layout_height="79dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

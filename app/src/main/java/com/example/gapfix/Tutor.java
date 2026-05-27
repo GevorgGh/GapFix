@@ -11,18 +11,18 @@ public class Tutor implements Serializable {
     private String imageResourceLink;
     private ArrayList<SubjectPreference> preferences;
 
-    public Tutor() {} // Required for Firebase
+    public Tutor() {} 
 
     public static class SubjectPreference implements Serializable {
         public String name;
         public int price;
         public String currency;
-        public int duration; // Duration in minutes
+        public int duration; 
 
-        public SubjectPreference() {} // Required for Firebase
+        public SubjectPreference() {} 
     }
 
-    // Getters and Setters
+    
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 

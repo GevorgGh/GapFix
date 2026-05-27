@@ -17,7 +17,7 @@
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
-            android:background="#D1D5DB" />
+            android:background="@color/color_slate_dark" />
 
         <!-- Header: Request Info -->
         <LinearLayout
@@ -40,7 +40,7 @@
                     android:id="@+id/tvSheetStudentName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gev"
+                    android:text="@string/ext_gev"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:textColor="@color/gapfix_text_dark" />
@@ -48,7 +48,7 @@
                     android:id="@+id/tvSheetPackageInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Applied Mathematics (Package - 12 lessons)"
+                    android:text="@string/ext_applied_mathematics_package_12_lessons_2"
                     android:textSize="12sp"
                     android:textColor="@color/gapfix_text_secondary" />
             </LinearLayout>
@@ -57,7 +57,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#E5E7EB"
+            android:background="@color/color_slate_medium"
             android:layout_marginBottom="16dp" />
 
         <!-- Main Content Area: Split Style -->
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Left-ish: Request Summary Card -->
+            <!-- Request Summary Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,8 +74,8 @@
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#E5E7EB"
-                app:cardBackgroundColor="#F9FAFB">
+                app:strokeColor="@color/color_slate_medium"
+                app:cardBackgroundColor="@color/color_surface">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -88,14 +88,14 @@
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:layout_marginBottom="8dp" />
-                    <TextView android:id="@+id/tvSheetSummaryTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="• 12 sessions total" android:textSize="12sp" android:layout_marginBottom="4dp"/>
-                    <TextView android:id="@+id/tvSheetSummaryStart" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="• Start: May 20, 2026" android:textSize="12sp" android:layout_marginBottom="4dp"/>
-                    <TextView android:id="@+id/tvSheetSummarySchedule" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="• Schedule: Wed/Thu/Fri @ 12:00" android:textSize="12sp" android:layout_marginBottom="4dp"/>
-                    <TextView android:id="@+id/tvSheetSummaryEnd" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="• Projected End: Jun 12, 2026" android:textSize="12sp"/>
+                    <TextView android:id="@+id/tvSheetSummaryTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_12_sessions_total" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+                    <TextView android:id="@+id/tvSheetSummaryStart" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_start_may_20_2026" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+                    <TextView android:id="@+id/tvSheetSummarySchedule" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_schedule_wed_thu_fri_12" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+                    <TextView android:id="@+id/tvSheetSummaryEnd" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_projected_end_jun_12_2026" android:textSize="12sp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Counter-Offer / Conflict Panel -->
+            <!-- Counter-Offer / Conflict Panel Header -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -104,32 +104,36 @@
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp" />
 
+            <!-- ADDED ID HERE: cardConflictAction -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardConflictAction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#FED7D7"
-                app:cardBackgroundColor="#FFF5F5">
+                app:strokeColor="@color/color_error_border"
+                app:cardBackgroundColor="@color/color_error_bg">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="12dp">
-                    
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:layout_marginBottom="8dp">
+                        <!-- ADDED ID HERE: tvPanelHeaderTitle -->
                         <TextView
+                            android:id="@+id/tvPanelHeaderTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/conflicts_identified"
                             android:textStyle="bold"
-                            android:textColor="#C53030"
+                            android:textColor="@color/color_error"
                             android:textSize="13sp" />
                     </LinearLayout>
 
@@ -155,16 +159,16 @@
                             android:textSize="12sp"/>
                     </RadioGroup>
 
-                    <!-- Change Option -->
+                    <!-- Change Option for Bulk Pattern -->
                     <LinearLayout
                         android:id="@+id/layoutChangeOptions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rounded_input_field"
-                        android:backgroundTint="#EBF4FF"
+                        android:backgroundTint="@color/color_accent_bg"
                         android:orientation="vertical"
                         android:padding="12dp">
-                        
+
                         <TextView
                             android:id="@+id/tvSourcePatternLabel"
                             android:layout_width="wrap_content"
@@ -173,7 +177,7 @@
                             android:textStyle="bold"
                             android:textSize="12sp"
                             android:layout_marginBottom="4dp"/>
-                        
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -210,7 +214,7 @@
                                 style="@style/Widget.MaterialComponents.Button.TextButton"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="14:00"
+                                android:text="@string/ext_14_00"
                                 android:textSize="12sp"
                                 android:padding="0dp"
                                 android:textColor="@color/gapfix_green"
@@ -221,10 +225,77 @@
                             android:id="@+id/tvBulkEffectPreview"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="May 20, May 27, Jun 03, Jun 10 → All moved to 14:00"
+                            android:text="@string/ext_may_20_may_27_jun"
                             android:textSize="11sp"
-                            android:textColor="#2B6CB0"
+                            android:textColor="@color/color_info"
                             android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Change Option for Single Lesson -->
+                    <LinearLayout
+                        android:id="@+id/layoutChangeSingleLesson"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_input_field"
+                        android:backgroundTint="@color/color_accent_bg"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:visibility="gone">
+
+                        <!-- NEW: Dropdown context block -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ext_auto_select_lesson_to_reschedule"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:layout_marginBottom="4dp"/>
+
+                        <Spinner
+                            android:id="@+id/spinnerLessonsInPackage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="40dp"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ext_auto_select_new_date_amp_time"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnDestDateSingle"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
+                                android:text="@string/ext_auto_select_date"
+                                android:textSize="12sp"
+                                android:textColor="@color/gapfix_green"
+                                app:strokeColor="@color/gapfix_green" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnDestTimeSingle"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="4dp"
+                                android:text="@string/ext_auto_select_time"
+                                android:textSize="12sp"
+                                android:textColor="@color/gapfix_green"
+                                app:strokeColor="@color/gapfix_green" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -255,38 +326,35 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2"
+                android:orientation="vertical"
                 android:layout_marginBottom="8dp">
-                
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSheetSubmitCounter"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="4dp"
                     android:text="@string/submit_counter_offer"
                     android:textAllCaps="false"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    app:backgroundTint="#2D3748"
+                    app:backgroundTint="@color/color_text_primary"
                     app:cornerRadius="8dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSheetRejectProposal"
-                    android:layout_width="0dp"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
                     android:text="@string/reject_proposal"
                     android:textAllCaps="false"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    app:backgroundTint="#742A2A"
+                    android:textColor="@color/color_text_secondary"
                     app:cornerRadius="8dp"
                     app:icon="@drawable/ic_close"
                     app:iconSize="14dp"
-                    app:iconTint="@color/white"/>
+                    app:iconTint="@color/color_text_secondary"/>
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -297,7 +365,7 @@
                 android:text="@string/cancel_action"
                 android:textAllCaps="false"
                 android:textColor="@color/gapfix_text_secondary"
-                app:strokeColor="#E2E8F0"
+                app:strokeColor="@color/color_slate_medium"
                 app:cornerRadius="8dp" />
 
         </LinearLayout>

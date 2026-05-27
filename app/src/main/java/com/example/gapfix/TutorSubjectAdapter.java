@@ -26,9 +26,9 @@ public class TutorSubjectAdapter extends RecyclerView.Adapter<TutorSubjectAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Subject sub = list.get(position);
-        holder.name.setText(sub.name);
+        holder.name.setText(SubjectHelper.getTranslatedSubject(sub.name));
         
-        // Updated to include duration in the display string
+        
         String displayInfo = String.format("%s %.0f / %d mins", sub.currency, sub.price, sub.duration);
         holder.price.setText(displayInfo);
 

@@ -6,6 +6,9 @@ public class User {
     public String role;
     public String dob;
     public String fcmToken;
+    public String phone;
+    public String gender;
+    public String bio;
 
 
     public User() {
@@ -44,6 +47,15 @@ public class User {
 
     public void setFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
     public String getFcmToken() { return fcmToken; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
 
     public String imageResourceLink;
     public String getImageResourceLink() { return imageResourceLink; }

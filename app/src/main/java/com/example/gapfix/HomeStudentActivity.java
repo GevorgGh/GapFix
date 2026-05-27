@@ -23,8 +23,15 @@ import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import android.app.AlertDialog;
 
 public class HomeStudentActivity extends AppCompatActivity {
+
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -41,9 +48,6 @@ public class HomeStudentActivity extends AppCompatActivity {
         requestPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
-                    if (isGranted) {
-                        Log.d("HomeStudent", "Notification permission granted");
-                    }
                 }
         );
 
@@ -70,6 +74,35 @@ public class HomeStudentActivity extends AppCompatActivity {
                 return insets;
             });
         }
+
+        checkIfRegistrationSkipped();
+    }
+
+    private void checkIfRegistrationSkipped() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child("Student")
+                .child(user.getUid())
+                .child("skippedRegistration")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists() && Boolean.TRUE.equals(snapshot.getValue(Boolean.class))) {
+                        showCompleteProfileDialog();
+                    }
+                });
+    }
+
+    private void showCompleteProfileDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Complete Your Profile")
+                .setMessage("You skipped some steps during registration. Would you like to complete them now to get the best experience?")
+                .setPositiveButton("Yes, Finish", (dialog, which) -> {
+                    startActivity(new Intent(this, StudentPreferences.class));
+                })
+                .setNegativeButton("Later", null)
+                .show();
     }
 
     private void askNotificationPermission() {

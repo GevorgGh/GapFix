@@ -23,6 +23,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
 
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
+
     private FirebaseAuth mAuth;
 
     @Override
@@ -59,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginUser(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.err_fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
         mAuth.signInWithEmailAndPassword(email, password)
@@ -67,12 +72,13 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // Use the new token-based method
+                            
                             GapFixApplication.fetchTokenAndLogin(user.getUid());
                             checkDatabaseForProfile(user.getUid());
                         }
                     } else {
-                        Toast.makeText(this, "Login Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        String error = task.getException() != null ? task.getException().getMessage() : "Unknown error";
+                        Toast.makeText(this, getString(R.string.err_login_failed, error), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -87,21 +93,39 @@ public class LoginActivity extends AppCompatActivity {
 
                     db.child("Users").child("Student").child(uid).get().addOnCompleteListener(task -> {
                         if (task.isSuccessful() && task.getResult().exists()) {
-                            if (freshToken != null) {
-                                db.child("Users").child("Student").child(uid).child("fcmToken").setValue(freshToken);
+                            Boolean isComplete = task.getResult().child("isComplete").getValue(Boolean.class);
+                            
+                            if (isComplete != null && isComplete) {
+                                if (freshToken != null) {
+                                    db.child("Users").child("Student").child(uid).child("fcmToken").setValue(freshToken);
+                                }
+                                editor.putString("user_role", "Student").apply();
+                                startActivity(new Intent(LoginActivity.this, HomeStudentActivity.class));
+                                finishAffinity();
+                            } else {
+                                
+                                editor.putString("user_role", "Student").apply();
+                                startActivity(new Intent(LoginActivity.this, StudentPreferences.class));
+                                finishAffinity();
                             }
-                            editor.putString("user_role", "Student").apply();
-                            startActivity(new Intent(LoginActivity.this, HomeStudentActivity.class));
-                            finishAffinity();
                         } else {
                             db.child("Users").child("Tutor").child(uid).get().addOnCompleteListener(tutorTask -> {
                                 if (tutorTask.isSuccessful() && tutorTask.getResult().exists()) {
-                                    if (freshToken != null) {
-                                        db.child("Users").child("Tutor").child(uid).child("fcmToken").setValue(freshToken);
+                                    Boolean isComplete = tutorTask.getResult().child("isComplete").getValue(Boolean.class);
+                                    
+                                    if (isComplete != null && isComplete) {
+                                        if (freshToken != null) {
+                                            db.child("Users").child("Tutor").child(uid).child("fcmToken").setValue(freshToken);
+                                        }
+                                        editor.putString("user_role", "Tutor").apply();
+                                        startActivity(new Intent(LoginActivity.this, HomeTutorActivity.class));
+                                        finishAffinity();
+                                    } else {
+                                        
+                                        editor.putString("user_role", "Tutor").apply();
+                                        startActivity(new Intent(LoginActivity.this, TutorSubjectActivity.class));
+                                        finishAffinity();
                                     }
-                                    editor.putString("user_role", "Tutor").apply();
-                                    startActivity(new Intent(LoginActivity.this, HomeTutorActivity.class));
-                                    finishAffinity();
                                 } else {
                                     editor.putString("user_role", "None").apply();
                                     startActivity(new Intent(LoginActivity.this, RoleSelectionActivity.class));

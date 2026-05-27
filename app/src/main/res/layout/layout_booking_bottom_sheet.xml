@@ -16,7 +16,7 @@
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
-            android:background="#D1D5DB" />
+            android:background="@color/color_slate_dark" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
                 android:id="@+id/tvSheetTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Book Regular Lesson"
+                android:text="@string/ext_book_regular_lesson"
                 android:textColor="@color/gapfix_text_dark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -45,8 +45,9 @@
                     android:id="@+id/btnSingleLesson"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="Single Lesson"
+                    android:layout_height="wrap_content"
+        android:minHeight="48dp"
+                    android:text="@string/ext_single_lesson"
                     android:textSize="11sp"
                     android:paddingHorizontal="12dp"
                     android:textAllCaps="false"
@@ -56,8 +57,9 @@
                     android:id="@+id/btnPackage"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="Package"
+                    android:layout_height="wrap_content"
+        android:minHeight="48dp"
+                    android:text="@string/ext_package"
                     android:textSize="11sp"
                     android:paddingHorizontal="12dp"
                     android:textAllCaps="false"
@@ -68,7 +70,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select Subject"
+            android:text="@string/ext_select_subject"
             android:textColor="@color/gapfix_text_dark"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -92,7 +94,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Schedule"
+                android:text="@string/ext_select_schedule"
                 android:textColor="@color/gapfix_text_dark"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -112,11 +114,11 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:text="Select Date"
+                    android:text="@string/ext_select_date"
                     android:textColor="@color/gapfix_text_dark"
                     android:textAllCaps="false"
                     android:gravity="start|center_vertical"
-                    app:strokeColor="#E0E0E0"
+                    app:strokeColor="@color/color_slate_medium"
                     app:cornerRadius="8dp"
                     app:icon="@drawable/ic_calendar"
                     app:iconTint="@color/gapfix_green"
@@ -129,11 +131,11 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="Select Time"
+                    android:text="@string/ext_select_time"
                     android:textColor="@color/gapfix_text_dark"
                     android:textAllCaps="false"
                     android:gravity="start|center_vertical"
-                    app:strokeColor="#E0E0E0"
+                    app:strokeColor="@color/color_slate_medium"
                     app:cornerRadius="8dp"
                     app:icon="@drawable/ic_clock"
                     app:iconTint="@color/gapfix_green"
@@ -152,7 +154,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lesson Quantity"
+                android:text="@string/ext_lesson_quantity"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal" />
 
@@ -168,7 +170,7 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:text="-"
+                    android:text="@string/ext_minus"
                     android:insetLeft="0dp"
                     android:insetTop="0dp"
                     android:insetRight="0dp"
@@ -178,7 +180,7 @@
                     android:id="@+id/tvQuantity"
                     android:layout_width="80dp"
                     android:layout_height="40dp"
-                    android:text="12"
+                    android:text="@string/ext_12"
                     android:gravity="center"
                     android:background="@drawable/rounded_input_field"
                     android:layout_marginHorizontal="16dp"
@@ -189,7 +191,7 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:text="+"
+                    android:text="@string/ext_plus"
                     android:insetLeft="0dp"
                     android:insetTop="0dp"
                     android:insetRight="0dp"
@@ -202,14 +204,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Apply 5% Pro Discount?"
+                android:text="@string/ext_apply_5_pro_discount"
                 android:textSize="12sp"
                 app:buttonTint="@color/gapfix_green"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1. Set Global Start Date"
+                android:text="@string/ext_1_set_global_start_date"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
 
@@ -219,10 +221,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:layout_marginTop="8dp"
-                android:text="Choose Base Start Date"
+                android:text="@string/ext_choose_base_start_date"
                 android:textColor="@color/gapfix_text_dark"
                 android:textAllCaps="false"
-                app:strokeColor="#E0E0E0"
+                app:strokeColor="@color/color_slate_medium"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_calendar"
                 app:iconTint="@color/gapfix_green" />
@@ -230,7 +232,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2. Select Recurring Days"
+                android:text="@string/ext_2_select_recurring_days"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
 
@@ -243,7 +245,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3. Set Time for Each Day"
+                android:text="@string/ext_3_set_time_for_each"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
 
@@ -258,10 +260,10 @@
                 android:id="@+id/tvPackageDurationInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="These slots will be booked for X weeks."
+                android:text="@string/ext_these_slots_will_be_booked"
                 android:textSize="12sp"
                 android:textAlignment="center"
-                android:background="#F3F4F6"
+                android:background="@color/color_slate_light"
                 android:padding="8dp"
                 android:layout_marginTop="12dp" />
         </LinearLayout>
@@ -270,22 +272,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false"
+            android:orientation="vertical"
             android:layout_marginTop="24dp">
 
-            <!-- Left: Summary -->
+            <!-- Summary -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
                 android:orientation="vertical"
-                android:paddingEnd="12dp">
+                android:layout_marginBottom="24dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Booking Summary"
+                    android:text="@string/ext_booking_summary"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     android:layout_marginBottom="8dp"/>
@@ -293,7 +293,7 @@
                 <TextView android:id="@+id/tvSummarySubjectLine"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="No subject selected"
+                    android:text="@string/ext_no_subject_selected"
                     android:textSize="11sp"
                     android:textColor="@color/gapfix_text_secondary"
                     android:layout_marginBottom="4dp"/>
@@ -302,8 +302,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Subtotal:" android:textSize="11sp" android:textColor="@color/gapfix_text_secondary"/>
-                    <TextView android:id="@+id/tvSummarySubtotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="$0.00" android:textSize="11sp" android:textColor="@color/gapfix_text_dark"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/ext_subtotal" android:textSize="11sp" android:textColor="@color/gapfix_text_secondary"/>
+                    <TextView android:id="@+id/tvSummarySubtotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/_0_00" android:textSize="11sp" android:textColor="@color/gapfix_text_dark"/>
                 </LinearLayout>
 
                 <LinearLayout android:id="@+id/layoutDiscount"
@@ -311,8 +311,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="gone">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Discount (5%):" android:textSize="11sp" android:textColor="#B91C1C"/>
-                    <TextView android:id="@+id/tvSummaryDiscount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-$0.00" android:textSize="11sp" android:textColor="#B91C1C"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/ext_discount_5" android:textSize="11sp" android:textColor="@color/color_error"/>
+                    <TextView android:id="@+id/tvSummaryDiscount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_0_00" android:textSize="11sp" android:textColor="@color/color_error"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -320,32 +320,31 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="4dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Fees:" android:textSize="11sp" android:textColor="@color/gapfix_text_secondary"/>
-                    <TextView android:id="@+id/tvSummaryFees" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="$0.00" android:textSize="11sp" android:textColor="@color/gapfix_text_dark"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/ext_fees" android:textSize="11sp" android:textColor="@color/gapfix_text_secondary"/>
+                    <TextView android:id="@+id/tvSummaryFees" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/_0_00" android:textSize="11sp" android:textColor="@color/gapfix_text_dark"/>
                 </LinearLayout>
 
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E5E7EB" android:layout_marginVertical="8dp"/>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/color_slate_medium" android:layout_marginVertical="8dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Total:" android:textStyle="bold" android:textSize="14sp" android:textColor="@color/gapfix_text_dark"/>
-                    <TextView android:id="@+id/tvSummaryTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="$0.00" android:textStyle="bold" android:textSize="14sp" android:textColor="@color/gapfix_text_dark"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/ext_total" android:textStyle="bold" android:textSize="14sp" android:textColor="@color/gapfix_text_dark"/>
+                    <TextView android:id="@+id/tvSummaryTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/_0_00" android:textStyle="bold" android:textSize="14sp" android:textColor="@color/gapfix_text_dark"/>
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Right: Payment & Agreement -->
+            <!-- Payment & Agreement -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Payment Method"
+                    android:text="@string/ext_select_payment_method"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     android:layout_marginBottom="8dp"/>
@@ -355,7 +354,7 @@
                     android:layout_height="48dp"
                     app:cardCornerRadius="8dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#008253"
+                    app:strokeColor="@color/gapfix_green"
                     app:cardElevation="0dp">
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -363,7 +362,7 @@
                         android:gravity="center_vertical"
                         android:paddingHorizontal="10dp">
                         <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_google_logo" android:layout_marginEnd="6dp"/>
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Card" android:textSize="11sp" android:textColor="@color/gapfix_text_dark" android:textStyle="bold"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/ext_card" android:textSize="11sp" android:textColor="@color/gapfix_text_dark" android:textStyle="bold"/>
                         <com.google.android.material.checkbox.MaterialCheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -378,7 +377,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="I agree to 24-hour Cancellation Policy"
+                    android:text="@string/ext_i_agree_to_24_hour"
                     android:textSize="10sp"
                     app:buttonTint="@color/gapfix_green"/>
 
@@ -390,8 +389,8 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="24dp"
-            android:text="Secure Payment &amp; Confirm Booking"
-            android:backgroundTint="#008253"
+            android:text="@string/ext_secure_payment_and_confirm_booking"
+            android:backgroundTint="@color/gapfix_green"
             android:textColor="@color/white"
             android:textAllCaps="false"
             android:textSize="15sp"
@@ -404,7 +403,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:text="Trial is 30 mins. Paid lessons are 60 mins."
+            android:text="@string/ext_trial_is_30_mins_paid"
             android:textColor="@color/gapfix_text_secondary"
             android:textSize="10sp" />
 

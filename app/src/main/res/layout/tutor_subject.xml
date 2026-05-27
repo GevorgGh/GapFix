@@ -41,7 +41,7 @@
             android:layout_height="48dp"
             android:background="@color/gapfix_bg"
             android:src="@android:drawable/ic_menu_delete"
-            app:tint="#D32F2F" />
+            app:tint="@color/color_error" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

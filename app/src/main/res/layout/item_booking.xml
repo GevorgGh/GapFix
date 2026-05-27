@@ -2,173 +2,154 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="#F0F0F0">
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/color_surface"
+    app:strokeColor="@color/color_border"
+    app:strokeWidth="1dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:orientation="vertical">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/tutor_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/person_circle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ProfileImageShape" />
-
-        <TextView
-            android:id="@+id/tv_tutor_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="8dp"
-            android:text="Tutor Name"
-            android:textColor="@color/gapfix_text_dark"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/tv_time"
-            app:layout_constraintStart_toEndOf="@+id/tutor_image"
-            app:layout_constraintTop_toTopOf="@+id/tutor_image" />
-
-        <TextView
-            android:id="@+id/tv_subject"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Mathematics"
-            android:textColor="@color/gapfix_green"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/tv_tutor_name"
-            app:layout_constraintStart_toStartOf="@+id/tv_tutor_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_tutor_name" />
-
-        <!-- Date + Time stacked on the right -->
-        <LinearLayout
-            android:id="@+id/dateTimeBlock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_tutor_name">
-
-            <TextView
-                android:id="@+id/tv_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="May 19"
-                android:textColor="@color/gapfix_text_secondary"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="14:30"
-                android:textColor="@color/gapfix_text_dark"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/footer"
+        <!-- Header Section -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/tutor_image">
+            android:padding="16dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/tutor_image"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/person_circle"
+                app:shapeAppearanceOverlay="@style/ProfileImageShape"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_tutor_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/ext_tutor_name"
+                android:textColor="@color/gapfix_text_dark"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintStart_toEndOf="@id/tutor_image"
+                app:layout_constraintTop_toTopOf="@id/tutor_image"
+                app:layout_constraintEnd_toStartOf="@+id/layoutTopRightInfo" />
+
+            <TextView
+                android:id="@+id/tv_subject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/ext_mathematics"
+                android:textColor="@color/gapfix_green"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="2"
+                app:layout_constraintStart_toStartOf="@id/tv_tutor_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_tutor_name"
+                app:layout_constraintEnd_toStartOf="@+id/layoutTopRightInfo" />
+
+            <!-- Top Right Info -->
+            <LinearLayout
+                android:id="@+id/layoutTopRightInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="end"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ext_may_19"
+                    android:textColor="@color/color_text_muted"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ext_14_30"
+                    android:textColor="@color/gapfix_text_dark"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Status & Package Toggle (if needed) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="12dp">
 
             <TextView
                 android:id="@+id/tv_status"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="• CONFIRMED"
-                android:textColor="@color/gapfix_text_secondary"
+                android:text="@string/ext_confirmed"
+                android:textColor="@color/color_text_muted"
                 android:textSize="11sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginStart="56dp"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_cancel"
+                android:id="@+id/btn_expand_package"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:text="Cancel"
-                android:textColor="@color/error"
-                android:textSize="12sp"
-                android:textAllCaps="false" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_action"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingHorizontal="16dp"
-                android:text="Join"
-                android:textSize="12sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/ext_view_all_lessons_in_package"
+                android:textSize="11sp"
                 android:textAllCaps="false"
-                app:backgroundTint="@color/gapfix_green"
-                app:cornerRadius="18dp" />
+                android:textColor="@color/gapfix_green"
+                android:visibility="gone"
+                android:background="@color/gapfix_green_background"/>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_package_lessons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone" />
         </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_expand_package"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="▼  View all lessons in package"
-            android:textSize="11sp"
-            android:textAllCaps="false"
-            android:textColor="@color/gapfix_green"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/footer" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_package_lessons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:nestedScrollingEnabled="false"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/btn_expand_package" />
 
         <!-- Tutor Suggestion Review Panel -->
         <LinearLayout
             android:id="@+id/layout_suggestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/rounded_input_field"
-            android:backgroundTint="#FFF5F5"
+            android:backgroundTint="@color/color_error_bg"
             android:orientation="vertical"
             android:padding="12dp"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/rv_package_lessons">
+            android:visibility="gone">
 
             <TextView
-                android:id="@+id/tv_suggestion_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🔄 Tutor Suggested Changes"
-                android:textColor="#C53030"
+                android:text="@string/ext_tutor_suggested_changes"
+                android:textColor="@color/color_error"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp"/>
@@ -177,7 +158,7 @@
                 android:id="@+id/tv_suggestion_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Move all Wednesdays to Tuesdays at 14:00"
+                android:text="@string/ext_move_all_wednesdays_to_tuesdays"
                 android:textSize="12sp"
                 android:textColor="@color/gapfix_text_dark"
                 android:layout_marginBottom="4dp"/>
@@ -186,7 +167,7 @@
                 android:id="@+id/tv_suggestion_msg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&quot;I have a conflict on Wednesdays now.&quot;"
+                android:text="@string/ext_quot_i_have_a_conflict"
                 android:textSize="11sp"
                 android:textStyle="italic"
                 android:textColor="@color/gapfix_text_secondary"
@@ -195,34 +176,80 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:orientation="vertical">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_accept_suggestion"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="4dp"
-                    android:text="Accept"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/ext_accept"
                     android:textAllCaps="false"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     app:backgroundTint="@color/gapfix_green"
                     app:cornerRadius="8dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_reject_suggestion"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="4dp"
-                    android:text="Reject"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/ext_reject"
                     android:textAllCaps="false"
-                    android:textSize="12sp"
-                    app:backgroundTint="#742A2A"
+                    android:textSize="14sp"
+                    android:textColor="@color/color_text_secondary"
                     app:cornerRadius="8dp" />
             </LinearLayout>
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Footer Actions -->
+        <LinearLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="12dp"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        android:minHeight="48dp"
+                android:text="@string/ext_cancel"
+                android:textColor="@color/error"
+                android:textSize="12sp"
+                android:textAllCaps="false" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_reschedule"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        android:minHeight="48dp"
+                android:text="@string/ext_auto_reschedule"
+                android:textColor="@color/gapfix_text_secondary"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+
+            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        android:minHeight="48dp"
+                android:text="@string/ext_join_2"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/gapfix_green"
+                app:cornerRadius="12dp" />
+        </LinearLayout>
+
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

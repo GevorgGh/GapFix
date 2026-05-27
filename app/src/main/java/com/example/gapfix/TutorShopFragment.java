@@ -6,13 +6,18 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.appcompat.widget.SearchView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.slider.RangeSlider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class TutorShopFragment extends Fragment {
 
@@ -29,6 +35,12 @@ public class TutorShopFragment extends Fragment {
     private ArrayList<Tutor> filteredTutors = new ArrayList<>();
     private ArrayList<Tutor> allMatchedTutors = new ArrayList<>();
     private TutorAdapter adapter;
+    private final java.util.Map<String, String> subjectsTranslationMap = new java.util.HashMap<>();
+
+    private ArrayList<String> studentSelectedSubjects = new ArrayList<>();
+    private ArrayList<String> filterSelectedSubjects = new ArrayList<>();
+    private float minPrice = 0, maxPrice = 200;
+    private String currentSearchQuery = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,19 +53,26 @@ public class TutorShopFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterByName(newText);
+                currentSearchQuery = newText;
+                applyAllFilters();
                 return true;
             }
             @Override
             public boolean onQueryTextSubmit(String query) {
-                filterByName(query);
+                currentSearchQuery = query;
+                applyAllFilters();
                 return true;
             }
         });
 
+        ImageButton btnFilter = view.findViewById(R.id.imageButton);
+        btnFilter.setOnClickListener(v -> showFilterBottomSheet());
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         adapter = new TutorAdapter(filteredTutors);
         recyclerView.setAdapter(adapter);
+
+        loadSubjectTranslations();
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -64,21 +83,24 @@ public class TutorShopFragment extends Fragment {
     }
 
     private void loadStudentPreferences() {
-        // Fetching what the Student wants to learn (e.g., "Accounting", "Math")
         mDatabase.child("Users").child("Student").child(currentUserId).child("preferences")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<String> studentSelectedSubjects = new ArrayList<>();
+                        studentSelectedSubjects.clear();
                         if (snapshot.exists()) {
                             for (DataSnapshot prefSnapshot : snapshot.getChildren()) {
                                 String pref = prefSnapshot.getValue(String.class);
                                 if (pref != null) {
-                                    studentSelectedSubjects.add(pref.trim().toLowerCase());
+                                    studentSelectedSubjects.add(pref);
                                 }
                             }
-                            fetchMatchingTutors(studentSelectedSubjects);
                         }
+                        
+                        filterSelectedSubjects.clear();
+                        filterSelectedSubjects.addAll(studentSelectedSubjects);
+                        
+                        fetchTutors();
                     }
 
                     @Override
@@ -86,7 +108,7 @@ public class TutorShopFragment extends Fragment {
                 });
     }
 
-    private void fetchMatchingTutors(ArrayList<String> studentSubjects) {
+    private void fetchTutors() {
         mDatabase.child("Users").child("Tutor").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -96,36 +118,29 @@ public class TutorShopFragment extends Fragment {
                     Tutor tutor = new Tutor();
                     tutor.setId(tutorSnapshot.getKey());
                     tutor.setName(tutorSnapshot.child("name").getValue(String.class));
-                    tutor.setBio(tutorSnapshot.child("Bio").getValue(String.class));
-                    tutor.setImageResourceLink(tutorSnapshot.child("profilePicture").getValue(String.class));
+                    tutor.setBio(tutorSnapshot.child("bio").getValue(String.class));
+                    
+                    String img = tutorSnapshot.child("imageResourceLink").getValue(String.class);
+                    if (img == null) img = tutorSnapshot.child("profilePicture").getValue(String.class);
+                    tutor.setImageResourceLink(img);
 
                     ArrayList<Tutor.SubjectPreference> tutorPrefs = new ArrayList<>();
                     DataSnapshot prefsSnapshot = tutorSnapshot.child("preferences");
 
-                    boolean isMatch = false;
                     if (prefsSnapshot.exists()) {
                         for (DataSnapshot subSnapshot : prefsSnapshot.getChildren()) {
                             Tutor.SubjectPreference pref = subSnapshot.getValue(Tutor.SubjectPreference.class);
                             if (pref != null) {
                                 tutorPrefs.add(pref);
-
-                                // Check if this specific tutor subject matches student interest
-                                if (studentSubjects.contains(pref.name.trim().toLowerCase())) {
-                                    isMatch = true;
-                                }
                             }
                         }
                     }
                     tutor.setPreferences(tutorPrefs);
 
-                    // Only add to list if they teach something the student likes
-                    if (isMatch) {
-                        allMatchedTutors.add(tutor);
-                    }
+                    allMatchedTutors.add(tutor);
                 }
 
-                // Initial display
-                filterByName("");
+                applyAllFilters();
             }
 
             @Override
@@ -133,18 +148,119 @@ public class TutorShopFragment extends Fragment {
         });
     }
 
-    private void filterByName(String query) {
-        filteredTutors.clear();
-        if (query == null || query.trim().isEmpty()) {
-            filteredTutors.addAll(allMatchedTutors);
-        } else {
-            String lower = query.toLowerCase().trim();
-            for (Tutor t : allMatchedTutors) {
-                if (t.getName() != null && t.getName().toLowerCase().contains(lower)) {
-                    filteredTutors.add(t);
+    private void showFilterBottomSheet() {
+        BottomSheetDialog dialog = new BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme);
+        View sheetView = getLayoutInflater().inflate(R.layout.layout_filter_tutor_shop, null);
+        dialog.setContentView(sheetView);
+
+        RangeSlider priceSlider = sheetView.findViewById(R.id.priceRangeSlider);
+        android.widget.TextView tvMin = sheetView.findViewById(R.id.tvMinPrice);
+        android.widget.TextView tvMax = sheetView.findViewById(R.id.tvMaxPrice);
+        ChipGroup chipGroup = sheetView.findViewById(R.id.chipGroupSubjects);
+        MaterialButton btnApply = sheetView.findViewById(R.id.btnApplyFilters);
+
+        priceSlider.setValues(minPrice, maxPrice);
+        tvMin.setText(String.format(Locale.getDefault(), "$%d", (int) minPrice));
+        tvMax.setText(String.format(Locale.getDefault(), "$%d", (int) maxPrice));
+
+        priceSlider.addOnChangeListener((slider, value, fromUser) -> {
+            java.util.List<Float> values = slider.getValues();
+            minPrice = values.get(0);
+            maxPrice = values.get(1);
+            tvMin.setText(String.format(Locale.getDefault(), "$%d", (int) minPrice));
+            tvMax.setText(String.format(Locale.getDefault(), "$%d", (int) maxPrice));
+        });
+
+        
+        for (String subject : studentSelectedSubjects) {
+            Chip chip = new Chip(getContext());
+            String translated = subjectsTranslationMap.get(subject);
+            chip.setText(translated != null ? translated : subject);
+            chip.setCheckable(true);
+            chip.setCheckable(true);
+            chip.setChecked(filterSelectedSubjects.contains(subject));
+            
+            chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    if (!filterSelectedSubjects.contains(subject)) filterSelectedSubjects.add(subject);
+                } else {
+                    filterSelectedSubjects.remove(subject);
                 }
+            });
+            chipGroup.addView(chip);
+        }
+
+        btnApply.setOnClickListener(v -> {
+            applyAllFilters();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void applyAllFilters() {
+        filteredTutors.clear();
+        
+        String queryLower = currentSearchQuery.toLowerCase().trim();
+
+        for (Tutor tutor : allMatchedTutors) {
+            
+            boolean matchesName = true;
+            if (!queryLower.isEmpty()) {
+                matchesName = tutor.getName() != null && tutor.getName().toLowerCase().contains(queryLower);
+            }
+            if (!matchesName) continue;
+
+            
+            boolean matchesFilters = false;
+            
+            if (filterSelectedSubjects.isEmpty()) {
+                if (studentSelectedSubjects.isEmpty()) {
+                    matchesFilters = true;
+                }
+            } else {
+                if (tutor.getPreferences() != null) {
+                    for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
+                        if (filterSelectedSubjects.contains(pref.name)) {
+                            if (pref.price >= minPrice && pref.price <= maxPrice) {
+                                matchesFilters = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (matchesFilters) {
+                filteredTutors.add(tutor);
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    private void loadSubjectTranslations() {
+        mDatabase.child("Subjects").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                subjectsTranslationMap.clear();
+                String lang = LocaleHelper.getLanguage(getContext());
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Object value = data.getValue();
+                    if (value instanceof String) {
+                        String s = (String) value;
+                        subjectsTranslationMap.put(s, s);
+                    } else if (value instanceof java.util.Map) {
+                        @SuppressWarnings("unchecked")
+                        java.util.Map<String, String> translations = (java.util.Map<String, String>) value;
+                        String canonical = translations.get("en");
+                        String translated = translations.get(lang);
+                        if (translated == null) translated = canonical;
+                        if (canonical != null) subjectsTranslationMap.put(canonical, translated);
+                    }
+                }
+                adapter.refresh();
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 }

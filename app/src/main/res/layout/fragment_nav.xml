@@ -1,102 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.bottomnavigation.BottomNavigationView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_nav"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_gravity="bottom"
-        android:layout_margin="8dp"
-        app:cardElevation="4dp"
-        app:cardCornerRadius="16dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="6dp">
-
-            <ImageView
-                android:id="@+id/nav_home"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:src="@drawable/shop"
-                android:padding="6dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@+id/nav_archive"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/nav_archive"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:src="@drawable/archive"
-                android:padding="6dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@+id/nav_calendar_clickable"
-                app:layout_constraintStart_toEndOf="@+id/nav_home"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <FrameLayout
-                android:id="@+id/nav_calendar_clickable"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@+id/nav_chat"
-                app:layout_constraintStart_toEndOf="@+id/nav_archive"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/nav_calendar_icon"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="6dp"
-                    android:src="@drawable/cal" />
-
-                <View
-                    android:id="@+id/notification_dot"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/red_dot"
-                    android:visibility="gone" />
-            </FrameLayout>
-
-            <ImageView
-                android:id="@+id/nav_chat"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:src="@drawable/chat_unfilled"
-                android:padding="6dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@+id/nav_profile"
-                app:layout_constraintStart_toEndOf="@+id/nav_calendar_clickable"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/nav_profile"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:src="@drawable/person"
-                android:padding="6dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/nav_chat"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-</FrameLayout>
+    android:layout_height="wrap_content"
+    android:minHeight="60dp"
+    android:background="@drawable/nav_background"
+    app:elevation="8dp"
+    app:itemIconSize="24dp"
+    app:itemIconTint="@color/nav_item_colors"
+    app:itemTextColor="@color/nav_item_colors"
+    app:itemActiveIndicatorStyle="@style/NavActiveIndicator"
+    app:labelVisibilityMode="labeled"
+    app:itemTextAppearanceActive="@style/NavLabelActive"
+    app:itemTextAppearanceInactive="@style/NavLabelInactive"
+    app:menu="@menu/nav_student_menu" />

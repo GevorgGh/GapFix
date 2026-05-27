@@ -29,6 +29,9 @@ playServicesNearby = "19.3.0"
 playServicesAuth = "21.3.0"
 firebaseMessaging = "25.0.1"
 firebaseFunctions = "21.1.0"
+pdfViewer = "1.0.0-alpha18"
+pdfViewerFragment = "1.0.0-alpha18"
+ccp = "2.7.3"
 
 [libraries]
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
@@ -62,6 +65,9 @@ cardview-v7 = { group = "com.android.support", name = "cardview-v7", version.ref
 legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+pdf-viewer = { group = "androidx.pdf", name = "pdf-viewer", version.ref = "pdfViewer" }
+pdf-viewer-fragment = { group = "androidx.pdf", name = "pdf-viewer-fragment", version.ref = "pdfViewerFragment" }
+ccp = { group = "com.hbb20", name = "ccp", version.ref = "ccp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

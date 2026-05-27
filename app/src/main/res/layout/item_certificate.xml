@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/color_slate_light">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/ivCertIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_icon_background"
+            android:padding="8dp"
+            android:src="@drawable/baseline_check_circle_24_small"
+            app:tint="@color/gapfix_green"
+            android:contentDescription="@null" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvCertTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ext_auto_certificate_title"
+                android:textColor="@color/gapfix_text_dark"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/noto_sans" />
+
+            <TextView
+                android:id="@+id/tvCertStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ext_click_to_view_file"
+                android:textColor="@color/gapfix_text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/noto_sans" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnEditCert"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/baseline_edit_24"
+            app:tint="@color/gapfix_green"
+            android:contentDescription="Edit" />
+
+        <ImageButton
+            android:id="@+id/btnDeleteCert"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            app:tint="@color/error"
+            android:contentDescription="Delete" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,33 +56,38 @@ import java.util.UUID;
 
 public class TutorActivity extends AppCompatActivity {
 
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
+
     private ReviewAdapter adapter;
     private RecyclerView reviewsRv;
     private List<Review> reviewList;
     private Button btnBookTrial, btnBookLesson;
     private Tutor tutor;
     
-    private TextView tvAvgRating, tvReviewCount, tvMemberSince, tvAboutTitle;
+    private TextView tvAvgRating, tvReviewCount, tvAboutTitle;
     private RatingBar summaryRatingBar;
     private ImageView tutorBanner;
 
-    // Selection fields for the booking process
+    
     private Tutor.SubjectPreference selectedPref;
     private String selectedSubjectName;
     private long selectedDateMs = -1;
     private int selectedHour = -1;
     private int selectedMinute = -1;
     
-    // Package Logic Fields
+    
     private boolean isPackageMode = false;
     private int packageQuantity = 12;
     private long packageStartDateMs = -1;
     private List<WeeklySlot> weeklySlots = new ArrayList<>();
     private WeeklySlotAdapter weeklySlotAdapter;
+    private final java.util.Map<String, String> canonicalToTranslatedMap = new java.util.HashMap<>();
 
-    // Beautiful subject colors cycling
-    private final String[] SUBJECT_COLORS = {"#7E22CE", "#1D4ED8", "#059669", "#B91C1C", "#C2410C"};
-    private final String[] DAYS = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+    private static final String[] SUBJECT_COLORS = {"#7E22CE", "#1D4ED8", "#059669", "#B91C1C", "#C2410C"};
+    private static final String[] DAYS = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,15 +102,43 @@ public class TutorActivity extends AppCompatActivity {
             return;
         }
 
-        initUI();
-        fetchReviewsByTutorId(tutor.getId());
+        loadTranslationsAndInit();
+    }
+
+    private void loadTranslationsAndInit() {
+        FirebaseDatabase.getInstance().getReference("Subjects").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                canonicalToTranslatedMap.clear();
+                String lang = LocaleHelper.getLanguage(TutorActivity.this);
+
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Object value = data.getValue();
+                    if (value instanceof String) {
+                        String name = (String) value;
+                        canonicalToTranslatedMap.put(name, name);
+                    } else if (value instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, String> translations = (Map<String, String>) value;
+                        String canonical = translations.get("en");
+                        String rawTranslated = translations.get(lang);
+                        String finalTranslated = (rawTranslated != null) ? rawTranslated : canonical;
+                        if (canonical != null) {
+                            canonicalToTranslatedMap.put(canonical, finalTranslated);
+                        }
+                    }
+                }
+                initUI();
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) { initUI(); }
+        });
     }
 
     private void initUI() {
         TextView tutorName = findViewById(R.id.tutor_name);
         TextView tutorBio = findViewById(R.id.tutor_bio);
         tvAboutTitle = findViewById(R.id.tv_about_title);
-        ChipGroup tutorSubjectsChips = findViewById(R.id.tutor_subjects_chips);
+        LinearLayout subjectsContainer = findViewById(R.id.subjects_container);
         reviewsRv = findViewById(R.id.reviews);
         ImageView profileImage = findViewById(R.id.tutor_image);
         tutorBanner = findViewById(R.id.tutor_banner);
@@ -113,7 +147,6 @@ public class TutorActivity extends AppCompatActivity {
         
         tvAvgRating = findViewById(R.id.tv_avg_rating);
         tvReviewCount = findViewById(R.id.tv_review_count);
-        tvMemberSince = findViewById(R.id.tv_member_since);
         summaryRatingBar = findViewById(R.id.summary_rating_bar);
 
         reviewList = new ArrayList<>();
@@ -123,22 +156,26 @@ public class TutorActivity extends AppCompatActivity {
 
         tutorName.setText(tutor.getName());
         tutorBio.setText(tutor.getBio());
-        tvAboutTitle.setText("About " + tutor.getName());
-        tvMemberSince.setText("Member since 2024"); 
+        tvAboutTitle.setText(getString(R.string.ext_about_gevorg).replace("Gevorg", tutor.getName()));
 
-        tutorSubjectsChips.removeAllViews();
+        subjectsContainer.removeAllViews();
         if (tutor.getPreferences() != null) {
-            for (int i = 0; i < tutor.getPreferences().size(); i++) {
-                Tutor.SubjectPreference pref = tutor.getPreferences().get(i);
-                Chip chip = new Chip(this);
-                chip.setText(getShortSubjectInfo(pref));
+            for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
+                View subjectView = getLayoutInflater().inflate(R.layout.item_tutor_subject_shop, subjectsContainer, false);
                 
-                String colorStr = SUBJECT_COLORS[i % SUBJECT_COLORS.length];
-                chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor(colorStr)));
-                chip.setTextColor(Color.WHITE);
-                chip.setChipStrokeWidth(0f);
-                chip.setClickable(false);
-                tutorSubjectsChips.addView(chip);
+                TextView tvSubjectName = subjectView.findViewById(R.id.tvSubjectName);
+                TextView tvPriceTime = subjectView.findViewById(R.id.tvPriceTime);
+
+                String displayName = canonicalToTranslatedMap.get(pref.name);
+                tvSubjectName.setText(displayName != null ? displayName : pref.name);
+                
+                String currency = (pref.currency != null) ? pref.currency : "$";
+                int duration = pref.duration > 0 ? pref.duration : 60;
+                
+                tvPriceTime.setText(String.format(Locale.getDefault(), "%s%d • %d mins", 
+                        currency, pref.price, duration));
+                
+                subjectsContainer.addView(subjectView);
             }
         }
 
@@ -149,12 +186,14 @@ public class TutorActivity extends AppCompatActivity {
                 .into(profileImage);
         
         Glide.with(this)
-                .load("https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1000&auto=format&fit=crop")
+                .load("https://images.unsplash.com/photo-1513258496099-48168024adb0?q=80&w=2070&auto=format&fit=crop")
                 .centerCrop()
                 .into(tutorBanner);
 
         btnBookTrial.setOnClickListener(v -> showBookingBottomSheet(true));
         btnBookLesson.setOnClickListener(v -> showBookingBottomSheet(false));
+
+        fetchReviewsByTutorId(tutor.getId());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -164,8 +203,11 @@ public class TutorActivity extends AppCompatActivity {
     }
 
     private String getShortSubjectInfo(Tutor.SubjectPreference pref) {
+        String displayName = canonicalToTranslatedMap.get(pref.name);
+        if (displayName == null) displayName = pref.name;
+        
         return String.format(Locale.getDefault(), "%s %s%d • %dm", 
-                pref.name, pref.currency, pref.price, pref.duration);
+                displayName, pref.currency, (int)pref.price, pref.duration);
     }
 
     private void showBookingBottomSheet(boolean isTrial) {
@@ -173,7 +215,7 @@ public class TutorActivity extends AppCompatActivity {
         View sheetView = getLayoutInflater().inflate(R.layout.layout_booking_bottom_sheet, null);
         dialog.setContentView(sheetView);
 
-        // Bind Sheet Views
+        
         TextView tvTitle = sheetView.findViewById(R.id.tvSheetTitle);
         ChipGroup chipGroup = sheetView.findViewById(R.id.sheet_subjects_chips);
         MaterialButtonToggleGroup toggleType = sheetView.findViewById(R.id.toggleLessonType);
@@ -201,7 +243,7 @@ public class TutorActivity extends AppCompatActivity {
         CheckBox cbPolicy = sheetView.findViewById(R.id.cbPolicy);
         MaterialButton btnConfirm = sheetView.findViewById(R.id.btnSheetConfirm);
 
-        // Initial State
+        
         selectedPref = null;
         selectedSubjectName = null;
         isPackageMode = false;
@@ -210,21 +252,22 @@ public class TutorActivity extends AppCompatActivity {
         weeklySlots.clear();
         tvQty.setText(String.valueOf(packageQuantity));
         
-        tvTitle.setText(isTrial ? "Book Trial Lesson" : "Book Regular Lesson");
+        tvTitle.setText(isTrial ? R.string.ext_book_trial_lesson : R.string.ext_book_regular_lesson);
         toggleType.setVisibility(isTrial ? View.GONE : View.VISIBLE);
         layoutSingle.setVisibility(View.VISIBLE);
         layoutPackage.setVisibility(View.GONE);
-        cbPolicy.setText("I agree to tutor's 24-hour Cancellation Policy");
+        cbPolicy.setText(R.string.ext_i_agree_to_24_hour);
 
-        // Populate Subjects in Sheet
+        
         if (tutor.getPreferences() != null) {
-            for (int i = 0; i < tutor.getPreferences().size(); i++) {
-                Tutor.SubjectPreference pref = tutor.getPreferences().get(i);
+            for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
                 Chip chip = new Chip(this);
                 chip.setText(getShortSubjectInfo(pref));
                 chip.setCheckable(true);
                 chip.setClickable(true);
-                chip.setChipBackgroundColor(createChipColorStateList(SUBJECT_COLORS[i % SUBJECT_COLORS.length]));
+                
+                int colorIndex = tutor.getPreferences().indexOf(pref) % SUBJECT_COLORS.length;
+                chip.setChipBackgroundColor(createChipColorStateList(SUBJECT_COLORS[colorIndex]));
                 chip.setTextColor(Color.WHITE);
                 chip.setChipStrokeWidth(0f);
                 chip.setId(View.generateViewId());
@@ -232,7 +275,7 @@ public class TutorActivity extends AppCompatActivity {
             }
         }
 
-        // Setup Recurring Day Chips
+        
         for (String day : DAYS) {
             Chip chip = new Chip(this);
             chip.setText(day);
@@ -250,16 +293,15 @@ public class TutorActivity extends AppCompatActivity {
 
         Runnable updateSummary = () -> {
             if (selectedPref == null) {
-                tvSummarySubjLine.setText("No subject selected");
+                tvSummarySubjLine.setText(R.string.ext_no_subject_selected);
                 tvSummarySubtotal.setText("$0.00");
                 tvSummaryFees.setText("$0.00");
                 tvSummaryTotal.setText("$0.00");
-                btnConfirm.setText("Secure Payment & Confirm Booking");
+                btnConfirm.setText(R.string.ext_secure_payment_and_confirm_booking);
                 return;
             }
 
             int count = isPackageMode ? packageQuantity : 1;
-            // CORRECTED MONEY LOGIC: Price in DB is for the specified duration (e.g. $60 for 90m)
             double subtotal = selectedPref.price * count;
             if (isTrial) subtotal = 0;
 
@@ -267,10 +309,12 @@ public class TutorActivity extends AppCompatActivity {
             double fees = (subtotal - discount) * 0.05; 
             double total = subtotal - discount + fees;
 
-            String currency = selectedPref.currency != null ? selectedPref.currency : "$";
-            // Summary format matching image: "Subject (90m) x 1: $90.00"
+            String currency = (selectedPref.currency != null) ? selectedPref.currency : "$";
+            String displayName = canonicalToTranslatedMap.get(selectedPref.name);
+            if (displayName == null) displayName = selectedPref.name;
+
             tvSummarySubjLine.setText(String.format(Locale.getDefault(), "%s (%dm) x %d", 
-                    selectedPref.name, selectedPref.duration, count));
+                    displayName, selectedPref.duration, count));
             
             tvSummarySubtotal.setText(String.format(Locale.getDefault(), "%s%.2f", currency, subtotal));
             
@@ -282,14 +326,14 @@ public class TutorActivity extends AppCompatActivity {
             }
 
             tvSummaryFees.setText(String.format(Locale.getDefault(), "%s%.2f", currency, fees));
-            tvSummaryTotal.setText(String.format(Locale.getDefault(), "Total: %s%.2f", currency, total));
+            tvSummaryTotal.setText(String.format(Locale.getDefault(), "%s %s%.2f", getString(R.string.ext_total), currency, total));
             
-            btnConfirm.setText(String.format(Locale.getDefault(), "Secure Payment & Confirm Booking (%s%.2f)", currency, total));
+            btnConfirm.setText(String.format(Locale.getDefault(), "%s (%s%.2f)", getString(R.string.ext_secure_payment_and_confirm_booking), currency, total));
 
             if (isPackageMode && !weeklySlots.isEmpty()) {
                 int slotsPerWeek = weeklySlots.size();
                 int weeksNeeded = (int) Math.ceil((double) packageQuantity / slotsPerWeek);
-                tvDurationInfo.setText(String.format(Locale.getDefault(), "These %d weekly slots will be booked for %d weeks to complete your %d-lesson package.", slotsPerWeek, weeksNeeded, packageQuantity));
+                tvDurationInfo.setText(getString(R.string.ext_these_slots_will_be_booked).replace("X", String.valueOf(weeksNeeded)));
             }
         };
 
@@ -343,7 +387,6 @@ public class TutorActivity extends AppCompatActivity {
             }
             weeklySlots.clear();
             weeklySlots.addAll(newSlots);
-            // If a global start date was already chosen, compute dates for any new slots
             if (packageStartDateMs != -1) {
                 weeklySlotAdapter.setGlobalStartDate(packageStartDateMs);
             } else {
@@ -354,7 +397,6 @@ public class TutorActivity extends AppCompatActivity {
 
         MaterialButton btnPackageStartDate = sheetView.findViewById(R.id.btnPackageStartDate);
         btnPackageStartDate.setOnClickListener(v -> showDatePicker(date -> {
-            // Convert UTC picker result to local midnight
             java.util.Calendar utcCal = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
             utcCal.setTimeInMillis(date);
             java.util.Calendar localCal = java.util.Calendar.getInstance();
@@ -366,7 +408,6 @@ public class TutorActivity extends AppCompatActivity {
             packageStartDateMs = localCal.getTimeInMillis();
             String label = new java.text.SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(localCal.getTime());
             btnPackageStartDate.setText(label);
-            // Propagate to all selected slots
             weeklySlotAdapter.setGlobalStartDate(packageStartDateMs);
             updateSummary.run();
         }));
@@ -382,21 +423,21 @@ public class TutorActivity extends AppCompatActivity {
         }));
 
         btnConfirm.setOnClickListener(v -> {
-            if (selectedSubjectName == null) { Toast.makeText(this, "Select a subject", Toast.LENGTH_SHORT).show(); return; }
-            if (!cbPolicy.isChecked()) { Toast.makeText(this, "Please agree to the policy", Toast.LENGTH_SHORT).show(); return; }
+            if (selectedSubjectName == null) { Toast.makeText(this, R.string.ext_select_one_subject, Toast.LENGTH_SHORT).show(); return; }
+            if (!cbPolicy.isChecked()) { Toast.makeText(this, R.string.agree_terms_text, Toast.LENGTH_SHORT).show(); return; }
 
             if (isPackageMode) {
-                if (packageStartDateMs == -1) { Toast.makeText(this, "Please choose a start date", Toast.LENGTH_SHORT).show(); return; }
-                if (weeklySlots.isEmpty()) { Toast.makeText(this, "Select at least one recurring day", Toast.LENGTH_SHORT).show(); return; }
+                if (packageStartDateMs == -1) { Toast.makeText(this, R.string.ext_choose_base_start_date, Toast.LENGTH_SHORT).show(); return; }
+                if (weeklySlots.isEmpty()) { Toast.makeText(this, R.string.ext_2_select_recurring_days, Toast.LENGTH_SHORT).show(); return; }
                 for (WeeklySlot slot : weeklySlots) {
                     if (slot.hour == -1) {
-                        Toast.makeText(this, "Please set a time for all selected days", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.ext_3_set_time_for_each, Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
                 performPackageBooking(dialog);
             } else {
-                if (selectedDateMs == -1 || selectedHour == -1) { Toast.makeText(this, "Select date and time", Toast.LENGTH_SHORT).show(); return; }
+                if (selectedDateMs == -1 || selectedHour == -1) { Toast.makeText(this, R.string.ext_select_schedule, Toast.LENGTH_SHORT).show(); return; }
                 long ts = calculateTimestamp(selectedDateMs, selectedHour, selectedMinute);
                 if (ts <= System.currentTimeMillis()) {
                     Toast.makeText(this, "Cannot book in the past", Toast.LENGTH_SHORT).show();
@@ -422,7 +463,6 @@ public class TutorActivity extends AppCompatActivity {
             for (WeeklySlot slot : weeklySlots) {
                 if (createdCount >= packageQuantity) break;
                 
-                // slot.startDateMs is already local-midnight for the correct weekday
                 Calendar localCal = Calendar.getInstance();
                 localCal.setTimeInMillis(slot.startDateMs);
                 localCal.set(Calendar.HOUR_OF_DAY, slot.hour);
@@ -438,6 +478,7 @@ public class TutorActivity extends AppCompatActivity {
                 b.setPackageTotalLessons(packageQuantity);
                 b.setTutorName(tutor.getName());
                 b.setDuration(selectedPref.duration);
+                b.setPrice(selectedPref.price);
                 newRef.setValue(b);
                 
                 createdCount++;
@@ -445,7 +486,7 @@ public class TutorActivity extends AppCompatActivity {
             weeksOffset++;
         }
         
-        Toast.makeText(this, "Package Booked Successfully (" + packageQuantity + " lessons)!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Package Booked Successfully!", Toast.LENGTH_LONG).show();
         dialog.dismiss();
         startActivity(new Intent(this, HomeStudentActivity.class));
         finish();
@@ -461,6 +502,7 @@ public class TutorActivity extends AppCompatActivity {
         newBooking.setFree(isTrial);
         newBooking.setTutorName(tutor.getName());
         newBooking.setDuration(selectedPref.duration);
+        newBooking.setPrice(isTrial ? 0 : selectedPref.price);
 
         newRef.setValue(newBooking).addOnSuccessListener(aVoid -> {
             if (isTrial) {
@@ -479,7 +521,7 @@ public class TutorActivity extends AppCompatActivity {
         CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointForward.now());
         MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
-                .setTitleText("Select Date")
+                .setTitleText(R.string.ext_select_date)
                 .setCalendarConstraints(constraintsBuilder.build())
                 .build();
         picker.addOnPositiveButtonClickListener(listener::onDateSelected);
@@ -490,7 +532,7 @@ public class TutorActivity extends AppCompatActivity {
         MaterialTimePicker picker = new MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_24H)
                 .setHour(12).setMinute(0)
-                .setTitleText("Select Time")
+                .setTitleText(R.string.ext_select_time)
                 .build();
         picker.addOnPositiveButtonClickListener(v -> listener.onTimeSelected(picker.getHour(), picker.getMinute()));
         picker.show(getSupportFragmentManager(), "TIME_PICKER");
@@ -521,8 +563,6 @@ public class TutorActivity extends AppCompatActivity {
     private void fetchReviewsByTutorId(String tutorId) {
         if (tutorId == null) return;
         DatabaseReference reviewsRef = FirebaseDatabase.getInstance().getReference("Reviews").child(tutorId);
-        reviewsRv.setLayoutManager(new LinearLayoutManager(this));
-        reviewsRv.setAdapter(adapter);
 
         reviewsRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -542,11 +582,11 @@ public class TutorActivity extends AppCompatActivity {
                     float avg = totalRating / count;
                     tvAvgRating.setText(String.format(Locale.US, "%.1f", avg));
                     summaryRatingBar.setRating(avg);
-                    tvReviewCount.setText(String.format(Locale.US, "%d %s", count, count == 1 ? "Review" : "Reviews"));
+                    tvReviewCount.setText(String.format(Locale.US, "%d %s", count, getString(R.string.ext_reviews)));
                 } else {
                     tvAvgRating.setText("0.0");
                     summaryRatingBar.setRating(0);
-                    tvReviewCount.setText("0 Reviews");
+                    tvReviewCount.setText(String.format(Locale.US, "0 %s", getString(R.string.ext_reviews)));
                 }
             }
             @Override public void onCancelled(@NonNull DatabaseError databaseError) {}
@@ -586,7 +626,8 @@ public class TutorActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists() && snapshot.getValue(Boolean.class)) {
+                        Boolean used = snapshot.getValue(Boolean.class);
+                        if (Boolean.TRUE.equals(used)) {
                             Toast.makeText(TutorActivity.this, "Trial already used.", Toast.LENGTH_SHORT).show();
                             btn.setEnabled(false); btn.setAlpha(0.5f);
                         } else {

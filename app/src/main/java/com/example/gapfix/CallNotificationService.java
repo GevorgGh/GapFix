@@ -39,19 +39,12 @@ public class CallNotificationService extends Service {
     public void onCreate() {
         super.onCreate();
         createNotificationChannels();
-        
-        Notification notification = buildSilentForegroundNotification();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(1001, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
-        } else {
-            startForeground(1001, notification);
-        }
     }
 
     private void createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager manager = getSystemService(NotificationManager.class);
-            NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID_SERVICE, "GapFix Active", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID_SERVICE, "GapFix Status", NotificationManager.IMPORTANCE_MIN);
             manager.createNotificationChannel(serviceChannel);
 
             NotificationChannel callChannel = new NotificationChannel(CHANNEL_ID_CALLS, "Incoming Calls", NotificationManager.IMPORTANCE_HIGH);
@@ -63,6 +56,19 @@ public class CallNotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_SERVICE)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setOngoing(true)
+                .build();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(2001, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        } else {
+            startForeground(2001, notification);
+        }
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null && notifQuery == null) {
             startListening(user.getUid());
@@ -83,7 +89,7 @@ public class CallNotificationService extends Service {
                 String message = snapshot.child("message").getValue(String.class);
                 String bId = snapshot.child("bookingId").getValue(String.class);
                 
-                // FIX: Check the actual value of isCall, not just its existence
+                
                 Boolean isCallValue = snapshot.child("isCall").getValue(Boolean.class);
                 boolean isCall = isCallValue != null && isCallValue;
                 
@@ -102,7 +108,12 @@ public class CallNotificationService extends Service {
     }
 
     private void handleIncomingCall(String title, String message, String bId) {
-        // 1. Prepare the Intent
+        
+        if (bId != null && bId.equals(VideoCallActivity.activeBookingId)) {
+            return;
+        }
+
+        
         Intent callIntent = new Intent(this, VideoCallActivity.class);
         callIntent.putExtra("BOOKING_ID", bId);
         callIntent.putExtra("IS_INCOMING", true);
@@ -111,14 +122,14 @@ public class CallNotificationService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, new Random().nextInt(), callIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        // 2. Show the Notification with fullScreenIntent (Official way to pop up Activity from background)
+        
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID_CALLS)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(title != null ? title : "Incoming Call")
                 .setContentText(message != null ? message : "Someone is calling you...")
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_CALL)
-                .setFullScreenIntent(pendingIntent, true) // This pops up the activity
+                .setFullScreenIntent(pendingIntent, true) 
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .setAutoCancel(true)
@@ -128,12 +139,11 @@ public class CallNotificationService extends Service {
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(2002, builder.build());
 
-        // 3. Force Start Activity (Additional push for foreground state)
+        
         try {
             startActivity(callIntent);
         } catch (Exception e) {
-            Log.e(TAG, "Failed to force startActivity: " + e.getMessage());
-        }
+            }
     }
 
     private void showGeneralNotification(String title, String message, String bId) {
@@ -152,14 +162,6 @@ public class CallNotificationService extends Service {
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(2003, builder.build());
-    }
-
-    private Notification buildSilentForegroundNotification() {
-        return new NotificationCompat.Builder(this, CHANNEL_ID_SERVICE)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("GapFix Calling Service")
-                .setContentText("Checking for incoming calls...")
-                .build();
     }
 
     @Override

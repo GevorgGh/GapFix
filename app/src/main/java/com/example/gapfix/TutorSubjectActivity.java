@@ -40,6 +40,7 @@ public class TutorSubjectActivity extends AppCompatActivity {
     private RadioGroup teachMode;
     private TutorSubjectAdapter adapter;
     private List<String> allSubjectsList = new ArrayList<>();
+    private final java.util.Map<String, String> translatedToCanonicalMap = new java.util.HashMap<>();
 
     private List<Subject> subjectList = new ArrayList<>();
 
@@ -48,10 +49,15 @@ public class TutorSubjectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor_subject);
 
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.backFr, new BackFragment())
+                .commit();
+
         subjectDropdown = findViewById(R.id.subjectDropdown);
         currencyDropdown = findViewById(R.id.currencyDropdown);
         etPrice = findViewById(R.id.etPrice);
-        etDuration = findViewById(R.id.etDuration); // New duration field
+        etDuration = findViewById(R.id.etDuration); 
         btnAddLocal = findViewById(R.id.btnAddSubjectLocal);
         btnFinalFirebase = findViewById(R.id.btnFinalSaveFirebase);
         rvSubjects = findViewById(R.id.rvSubjects);
@@ -65,14 +71,17 @@ public class TutorSubjectActivity extends AppCompatActivity {
 
 
         btnAddLocal.setOnClickListener(v -> {
-            String sub = subjectDropdown.getText().toString();
+            String translatedName = subjectDropdown.getText().toString();
             String price = etPrice.getText().toString();
             String curr = currencyDropdown.getText().toString();
             String duration = etDuration.getText().toString();
 
-            if (!sub.isEmpty() && !price.isEmpty() && !duration.isEmpty()) {
+            if (!translatedName.isEmpty() && !price.isEmpty() && !duration.isEmpty()) {
+                String canonicalName = translatedToCanonicalMap.get(translatedName);
+                if (canonicalName == null) canonicalName = translatedName; 
+
                 int durationMins = Integer.parseInt(duration);
-                subjectList.add(new Subject(sub, Double.parseDouble(price), curr, durationMins));
+                subjectList.add(new Subject(canonicalName, Double.parseDouble(price), curr, durationMins));
                 adapter.notifyItemInserted(subjectList.size() - 1);
 
                 etPrice.setText("");
@@ -115,9 +124,29 @@ public class TutorSubjectActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allSubjectsList.clear();
+                translatedToCanonicalMap.clear();
+
+                String lang = LocaleHelper.getLanguage(TutorSubjectActivity.this);
+
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    String s = data.getValue(String.class);
-                    if (s != null) allSubjectsList.add(s);
+                    String canonicalName = null;
+                    String translatedName = null;
+
+                    Object value = data.getValue();
+                    if (value instanceof String) {
+                        canonicalName = (String) value;
+                        translatedName = canonicalName;
+                    } else if (value instanceof java.util.Map) {
+                        java.util.Map<String, String> translations = (java.util.Map<String, String>) value;
+                        canonicalName = translations.get("en");
+                        translatedName = translations.get(lang);
+                        if (translatedName == null) translatedName = canonicalName;
+                    }
+
+                    if (canonicalName != null && translatedName != null) {
+                        allSubjectsList.add(translatedName);
+                        translatedToCanonicalMap.put(translatedName, canonicalName);
+                    }
                 }
                 Collections.sort(allSubjectsList);
 
@@ -131,8 +160,7 @@ public class TutorSubjectActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(TutorSubjectActivity.this, "Database Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                }
         });
     }
 
@@ -147,8 +175,6 @@ public class TutorSubjectActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         saveToFirebase();
-                    } else {
-                        Toast.makeText(this, "Firebase Error", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -177,15 +203,10 @@ public class TutorSubjectActivity extends AppCompatActivity {
                                                     if (lessonTask.isSuccessful()) {
                                                         startActivity(new Intent(TutorSubjectActivity.this, AddCertificatesActivity.class));
                                                         finish();
-                                                    } else {
-                                                        Toast.makeText(this, "Firebase Error", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                     }
                                 });
-                    }
-                    else{
-                        Toast.makeText(this, "Firebase Error", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

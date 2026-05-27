@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gapfix_bg"
+    android:clipToPadding="false"
+    android:paddingBottom="80dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvWelcome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/welcome"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gapfix_text_dark"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ext_here_is_your_learning_summary"
+                    android:alpha="0.6" />
+            </LinearLayout>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivMyProfilePic"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/person_circle"
+                app:shapeAppearanceOverlay="@style/ProfileImageShape"
+                app:strokeColor="@color/white"
+                app:strokeWidth="2dp"
+                android:elevation="4dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_hours_done" android:textSize="12sp" android:textAllCaps="true"/>
+                    <TextView android:id="@+id/tvHoursDone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0.0h" android:textSize="20sp" android:textStyle="bold" android:textColor="@color/gapfix_green"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_active_goals" android:textSize="12sp" android:textAllCaps="true"/>
+                    <TextView android:id="@+id/tvGoalsCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="20sp" android:textStyle="bold"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ext_up_next"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="12dp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textSize="14sp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardNextLesson"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tvNoLessons"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ext_no_upcoming_lessons_today_ntake"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:layout_gravity="center"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutLessonDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivTutorPhoto"
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:scaleType="centerCrop"
+                        app:shapeAppearanceOverlay="@style/ProfileImageShape"
+                        android:contentDescription="@string/ext_auto_tutor_name"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/person_circle" />
+
+                    <LinearLayout
+                        android:id="@+id/tutorInfoContainer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toEndOf="@id/ivTutorPhoto"
+                        app:layout_constraintEnd_toStartOf="@id/timeContainer"
+                        app:layout_constraintTop_toTopOf="@id/ivTutorPhoto"
+                        app:layout_constraintBottom_toBottomOf="@id/ivTutorPhoto">
+
+                        <TextView
+                            android:id="@+id/tvTutorName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ext_tutor_name"
+                            android:textStyle="bold"
+                            android:textSize="17sp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textColor="@color/gapfix_text_dark" />
+
+                        <TextView
+                            android:id="@+id/tvLessonSubject"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ext_subject"
+                            android:textColor="@color/gapfix_green"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/timeContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/ivTutorPhoto"
+                        app:layout_constraintBottom_toBottomOf="@id/ivTutorPhoto">
+
+                        <TextView
+                            android:id="@+id/tvLessonDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_text_muted"
+                            android:textSize="11sp"
+                            tools:text="Mon, Jan 1" />
+
+                        <TextView
+                            android:id="@+id/tvLessonTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ext_00_00"
+                            android:textStyle="bold"
+                            android:textColor="@color/gapfix_text_dark"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvLessonStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ext_status"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnJoinLesson"
+                        android:layout_width="match_parent"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/ext_join"
+                        android:visibility="gone"
+                        app:cornerRadius="12dp"
+                        app:backgroundTint="@color/gapfix_green"
+                        android:textAllCaps="false"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/ivTutorPhoto"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ext_quick_actions"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="12dp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textSize="14sp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGoToTutors"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/my_tutors"
+            app:cornerRadius="12dp"
+            android:layout_marginBottom="12dp"
+            app:strokeColor="@color/gapfix_green"
+            android:textColor="@color/gapfix_green"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGoToArchive"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/my_archives"
+            app:backgroundTint="@color/gapfix_green"
+            app:cornerRadius="12dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

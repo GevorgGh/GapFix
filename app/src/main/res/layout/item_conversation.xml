@@ -33,7 +33,7 @@
                 android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="User Name"
+                android:text="@string/ext_user_name"
                 android:textColor="@color/gapfix_text_dark"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -44,18 +44,38 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Last message content..."
+                android:text="@string/ext_last_message_content"
                 android:textSize="14sp"
                 android:alpha="0.6" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvTime"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="12:00"
-            android:textSize="12sp"
-            android:alpha="0.5" />
+            android:gravity="end"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ext_12_00"
+                android:textSize="12sp"
+                android:alpha="0.5" />
+
+            <TextView
+                android:id="@+id/tvUnreadCount"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/shape_unread_badge"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

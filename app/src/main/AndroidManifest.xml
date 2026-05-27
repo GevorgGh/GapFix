@@ -24,6 +24,7 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-sdk tools:overrideLibrary="androidx.pdf, androidx.pdf.viewer, androidx.pdf.document.service, androidx.pdf.viewer.fragment" />
 
     <queries>
         <package android:name="com.google.android.gms" />
@@ -38,7 +39,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.GapFix">
+        android:theme="@style/Theme.GapFix"
+        tools:replace="android:allowBackup,android:dataExtractionRules,android:fullBackupContent,android:label,android:icon,android:roundIcon">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name=".SessionsActivity"
             android:exported="false" />
@@ -61,7 +74,16 @@
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".EditProfileActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:exported="false" />
+        <activity
             android:name=".TutorSubjectActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
 
         <service
@@ -87,30 +109,20 @@
             android:name=".TutorActivity"
             android:exported="false" />
         <activity
-            android:name=".AddPriceTutorActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AddBioActivity"
-            android:exported="false" />
-        <activity
             android:name=".HomeTutorActivity"
             android:exported="false" />
         <activity
             android:name=".AddCertificatesActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false" />
-        <activity
-            android:name=".TutorPreferences"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".StudentPreferences"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".RoleSelectionActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SurveyActivity"
             android:exported="false" />
         <activity
             android:name=".ForgotPass"
@@ -124,6 +136,7 @@
         <activity
             android:name=".SignUpActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"

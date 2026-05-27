@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -33,10 +32,16 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
+
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private ActivityResultLauncher<Intent> googleSignInLauncher;
     private boolean redirected = false;
+    private boolean isAutoChecking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!redirected) {
                     setupUI();
                 }
-            }, 5000);
+            }, 3000);
 
+            isAutoChecking = true;
             checkDatabaseForProfile(currentUser.getUid());
         } else {
             setupUI();
@@ -81,10 +87,25 @@ public class MainActivity extends AppCompatActivity {
         Button login = findViewById(R.id.btn_goto_login);
         Button signup = findViewById(R.id.btn_goto_signup);
         ConstraintLayout googleBtn = findViewById(R.id.google_button);
+        View btnTestStudent = findViewById(R.id.btn_test_student);
+        View btnTestTutor = findViewById(R.id.btn_test_tutor);
 
         if (googleBtn != null) googleBtn.setOnClickListener(v -> signIn());
-        if (login != null) login.setOnClickListener(v -> startActivity(new Intent(this, LoginActivity.class)));
-        if (signup != null) signup.setOnClickListener(v -> startActivity(new Intent(this, SignUpRole.class)));
+        if (login != null) login.setOnClickListener(v -> {
+            isAutoChecking = false;
+            startActivity(new Intent(this, LoginActivity.class));
+        });
+        if (signup != null) signup.setOnClickListener(v -> {
+            isAutoChecking = false;
+            startActivity(new Intent(this, SignUpRole.class));
+        });
+
+        if (btnTestStudent != null) {
+            btnTestStudent.setOnClickListener(v -> performTestLogin("gapfix00@gmail.com", "044238228Gg."));
+        }
+        if (btnTestTutor != null) {
+            btnTestTutor.setOnClickListener(v -> performTestLogin("innovationcampus26@gmail.com", "044238228Gg."));
+        }
 
         View mainView = findViewById(R.id.main);
         if (mainView != null) {
@@ -97,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signIn() {
+        isAutoChecking = false;
         googleSignInLauncher.launch(mGoogleSignInClient.getSignInIntent());
     }
 
@@ -105,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             firebaseAuthWithGoogle(account.getIdToken());
         } catch (ApiException e) {
-            Toast.makeText(this, "Google sign in failed", Toast.LENGTH_SHORT).show();
+            
         }
     }
 
@@ -115,35 +137,77 @@ public class MainActivity extends AppCompatActivity {
             if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
                 checkDatabaseForProfile(mAuth.getCurrentUser().getUid());
             } else {
-                Toast.makeText(this, "Auth Failed", Toast.LENGTH_SHORT).show();
+                
             }
         });
     }
 
+    private void performTestLogin(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
+                        isAutoChecking = true;
+                        checkDatabaseForProfile(mAuth.getCurrentUser().getUid());
+                    }
+                });
+    }
+
     private void checkDatabaseForProfile(String uid) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-        
-        // We look for the 'email' field specifically.
-        // A 'ghost' profile created by the token logic will NOT have an email.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
         db.child("Users").child("Student").child(uid).get().addOnCompleteListener(task -> {
             if (redirected) return;
             DataSnapshot snapshot = task.getResult();
             if (task.isSuccessful() && snapshot.exists() && snapshot.hasChild("email")) {
-                redirected = true;
-                startActivity(new Intent(this, HomeStudentActivity.class));
-                finish();
+                Boolean isComplete = snapshot.child("isComplete").getValue(Boolean.class);
+                if (isComplete != null && isComplete) {
+                    redirected = true;
+                    startActivity(new Intent(this, HomeStudentActivity.class));
+                    finish();
+                } else if (!isAutoChecking) {
+                    
+                    redirected = true;
+                    if (currentUser != null && !currentUser.isEmailVerified() && 
+                        currentUser.getProviderData().stream().anyMatch(p -> p.getProviderId().equals("password"))) {
+                        Intent intent = new Intent(this, IsVerifiedActivity.class);
+                        intent.putExtra("ROLE", "Student");
+                        startActivity(intent);
+                    } else {
+                        startActivity(new Intent(this, StudentPreferences.class));
+                    }
+                    finish();
+                }
             } else {
                 db.child("Users").child("Tutor").child(uid).get().addOnCompleteListener(tutorTask -> {
                     if (redirected) return;
                     DataSnapshot tutorSnap = tutorTask.getResult();
                     if (tutorTask.isSuccessful() && tutorSnap.exists() && tutorSnap.hasChild("email")) {
+                        Boolean isComplete = tutorSnap.child("isComplete").getValue(Boolean.class);
+                        if (isComplete != null && isComplete) {
+                            redirected = true;
+                            startActivity(new Intent(this, HomeTutorActivity.class));
+                            finish();
+                        } else if (!isAutoChecking) {
+                            redirected = true;
+                            if (currentUser != null && !currentUser.isEmailVerified() && 
+                                currentUser.getProviderData().stream().anyMatch(p -> p.getProviderId().equals("password"))) {
+                                Intent intent = new Intent(this, IsVerifiedActivity.class);
+                                intent.putExtra("ROLE", "Tutor");
+                                startActivity(intent);
+                            } else {
+                                startActivity(new Intent(this, TutorSubjectActivity.class));
+                            }
+                            finish();
+                        }
+                    } else if (!isAutoChecking) {
+                        
                         redirected = true;
-                        startActivity(new Intent(this, HomeTutorActivity.class));
-                    } else {
-                        redirected = true;
-                        startActivity(new Intent(this, RoleSelectionActivity.class));
+                        Intent intent = new Intent(this, SignUpRole.class);
+                        intent.putExtra("isGoogle", true);
+                        startActivity(intent);
+                        finish();
                     }
-                    finish();
                 });
             }
         });

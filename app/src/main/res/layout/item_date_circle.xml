@@ -13,9 +13,9 @@
         android:id="@+id/tv_day_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mon"
+        android:text="@string/ext_mon"
         android:textAllCaps="false"
-        android:textColor="#757575"
+        android:textColor="@color/color_text_muted"
         android:textSize="12sp" />
 
     <com.google.android.material.card.MaterialCardView
@@ -23,7 +23,7 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginTop="4dp"
-        app:cardBackgroundColor="#E0E0E0"
+        app:cardBackgroundColor="@color/color_slate_medium"
         app:cardCornerRadius="22.5dp"
         app:cardElevation="0dp"
         app:strokeWidth="0dp">
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="15"
+            android:text="@string/ext_15"
             android:textColor="@color/gapfix_text_dark"
             android:textSize="16sp"
             android:textStyle="bold" />

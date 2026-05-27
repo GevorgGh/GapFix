@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,37 +18,94 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Map;
+
 public class NavFragment extends Fragment {
 
-    private ImageView imgHome, imgArchive, imgCal, imgChat, imgProfile;
-    private View notificationDot, calendarClickable;
+    private BottomNavigationView bottomNav;
     private DatabaseReference notifRef;
     private ValueEventListener notifListener;
+    private com.google.firebase.firestore.ListenerRegistration chatNotifListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nav, container, false);
 
-        imgHome = view.findViewById(R.id.nav_home);
-        imgArchive = view.findViewById(R.id.nav_archive);
-        imgCal = view.findViewById(R.id.nav_calendar_icon);
-        imgChat = view.findViewById(R.id.nav_chat);
-        imgProfile = view.findViewById(R.id.nav_profile);
-        notificationDot = view.findViewById(R.id.notification_dot);
-        calendarClickable = view.findViewById(R.id.nav_calendar_clickable);
+        bottomNav = view.findViewById(R.id.bottom_nav);
 
-        View.OnClickListener navClickListener = v -> updateMenu(v.getId());
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_dashboard) {
+                switchFragment(new StudentDashboardFragment());
+            } else if (id == R.id.nav_home) {
+                switchFragment(new TutorShopFragment());
+            } else if (id == R.id.nav_calendar) {
+                
+                bottomNav.removeBadge(R.id.nav_calendar);
+                if (notifRef != null) notifRef.removeValue();
+                switchFragment(new StudentCalendarFragment());
+            } else if (id == R.id.nav_chat) {
+                
+                bottomNav.removeBadge(R.id.nav_chat);
+                switchFragment(new StudentTutorsFragment());
+            } else if (id == R.id.nav_profile) {
+                switchFragment(new StudentSettingsFragment());
+            }
+            return true;
+        });
 
-        if (imgHome != null) imgHome.setOnClickListener(navClickListener);
-        if (imgArchive != null) imgArchive.setOnClickListener(navClickListener);
-        if (calendarClickable != null) calendarClickable.setOnClickListener(navClickListener);
-        if (imgChat != null) imgChat.setOnClickListener(navClickListener);
-        if (imgProfile != null) imgProfile.setOnClickListener(navClickListener);
-
-        updateMenu(R.id.nav_home);
+        
+        bottomNav.setSelectedItemId(R.id.nav_dashboard);
         listenForNotifications();
+        listenForChatNotifications();
 
         return view;
+    }
+
+    private void listenForChatNotifications() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+
+        chatNotifListener = com.google.firebase.firestore.FirebaseFirestore.getInstance("gapfix")
+                .collection("chats")
+                .whereArrayContains("participants", uid)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null || snapshots == null || !isAdded() || bottomNav == null) return;
+
+                    int totalUnread = 0;
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : snapshots.getDocuments()) {
+                        
+                        totalUnread += getCount(doc, "unreadChatCount", uid);
+                        totalUnread += getCount(doc, "unreadHomeworkCount", uid);
+                        
+                        
+                        if (totalUnread == 0) {
+                            totalUnread += getCount(doc, "unreadCount", uid);
+                        }
+                    }
+
+                    if (totalUnread > 0) {
+                        BadgeDrawable badge = bottomNav.getOrCreateBadge(R.id.nav_chat);
+                        badge.setVisible(true);
+                        badge.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_error));
+                    } else {
+                        bottomNav.removeBadge(R.id.nav_chat);
+                    }
+                });
+    }
+
+    private int getCount(com.google.firebase.firestore.DocumentSnapshot doc, String field, String uid) {
+        Object obj = doc.get(field);
+        if (obj instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) obj;
+            if (map.containsKey(uid)) {
+                Object val = map.get(uid);
+                if (val instanceof Number) {
+                    return ((Number) val).intValue();
+                }
+            }
+        }
+        return 0;
     }
 
     private void listenForNotifications() {
@@ -57,10 +116,13 @@ public class NavFragment extends Fragment {
         notifListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded() || bottomNav == null) return;
                 if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
-                    if (notificationDot != null) notificationDot.setVisibility(View.VISIBLE);
+                    BadgeDrawable badge = bottomNav.getOrCreateBadge(R.id.nav_calendar);
+                    badge.setVisible(true);
+                    badge.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_error));
                 } else {
-                    if (notificationDot != null) notificationDot.setVisibility(View.GONE);
+                    bottomNav.removeBadge(R.id.nav_calendar);
                 }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
@@ -69,30 +131,17 @@ public class NavFragment extends Fragment {
     }
 
     public void updateMenu(int clickedId) {
-        if (imgHome == null || imgArchive == null || imgCal == null || imgChat == null || imgProfile == null) return;
-
-        imgHome.setImageResource(R.drawable.shop);
-        imgArchive.setImageResource(R.drawable.archive);
-        imgCal.setImageResource(R.drawable.cal);
-        imgChat.setImageResource(R.drawable.user_act);
-        imgProfile.setImageResource(R.drawable.person);
-
-        if (clickedId == R.id.nav_home) {
-            imgHome.setImageResource(R.drawable.shop_clicked);
-            switchFragment(new TutorShopFragment());
-        } else if (clickedId == R.id.nav_archive) {
-            imgArchive.setImageResource(R.drawable.archive_clicked);
-        } else if (clickedId == R.id.nav_calendar_clickable) {
-            imgCal.setImageResource(R.drawable.cal_clicked);
-            if (notificationDot != null) notificationDot.setVisibility(View.GONE);
-            if (notifRef != null) notifRef.removeValue();
-            switchFragment(new StudentCalendarFragment());
+        if (bottomNav == null) return;
+        if (clickedId == R.id.nav_dashboard) {
+            bottomNav.setSelectedItemId(R.id.nav_dashboard);
+        } else if (clickedId == R.id.nav_home) {
+            bottomNav.setSelectedItemId(R.id.nav_home);
+        } else if (clickedId == R.id.nav_calendar) {
+            bottomNav.setSelectedItemId(R.id.nav_calendar);
         } else if (clickedId == R.id.nav_chat) {
-            imgChat.setImageResource(R.drawable.chat_filled);
-            switchFragment(new ChatListFragment());
+            bottomNav.setSelectedItemId(R.id.nav_chat);
         } else if (clickedId == R.id.nav_profile) {
-            imgProfile.setImageResource(R.drawable.person_clicked);
-            switchFragment(new StudentSettingsFragment());
+            bottomNav.setSelectedItemId(R.id.nav_profile);
         }
     }
 
@@ -107,6 +156,9 @@ public class NavFragment extends Fragment {
         super.onDestroy();
         if (notifRef != null && notifListener != null) {
             notifRef.removeEventListener(notifListener);
+        }
+        if (chatNotifListener != null) {
+            chatNotifListener.remove();
         }
     }
 }

@@ -21,12 +21,8 @@ import java.util.Random;
 
 public class TutorFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = "GapFix_FCM";
-
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d(TAG, "!!! FCM MESSAGE RECEIVED !!!");
-        
         if (remoteMessage.getData().size() > 0) {
             String title = remoteMessage.getData().get("title");
             String message = remoteMessage.getData().get("message");
@@ -41,6 +37,11 @@ public class TutorFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String message, String bId, boolean isCall) {
+        
+        if (isCall && bId != null && bId.equals(VideoCallActivity.activeBookingId)) {
+            return;
+        }
+
         String channelId = isCall ? "gapfix_call_notifications" : "gapfix_notifications";
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -55,7 +56,7 @@ public class TutorFirebaseMessagingService extends FirebaseMessagingService {
             manager.createNotificationChannel(channel);
         }
 
-        // Open VideoCallActivity for calls, MainActivity for others
+        
         Intent intent = new Intent(this, isCall ? VideoCallActivity.class : MainActivity.class);
         if (bId != null) {
             intent.putExtra("BOOKING_ID", bId);
@@ -76,7 +77,7 @@ public class TutorFirebaseMessagingService extends FirebaseMessagingService {
                 .setAutoCancel(true);
 
         if (isCall) {
-            // Full-screen intent makes it pop up like a real call
+            
             builder.setFullScreenIntent(pendingIntent, true);
             builder.addAction(R.drawable.baseline_mic_24, "ANSWER", pendingIntent);
             builder.setOngoing(true);

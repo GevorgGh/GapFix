@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/gapfix_bg"
     android:clipToPadding="false"
-    android:paddingBottom="20dp">
+    android:paddingBottom="80dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,21 +15,47 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <TextView
-            android:id="@+id/tvWelcome"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Barev, Gevorg!"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:textColor="@color/gapfix_text_dark"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Here is your teaching summary"
-            android:alpha="0.6"
-            android:layout_marginBottom="24dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvWelcome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ext_barev_gevorg"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gapfix_text_dark"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ext_here_is_your_teaching_summary"
+                    android:alpha="0.6" />
+            </LinearLayout>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivMyProfilePic"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/person_circle"
+                app:shapeAppearanceOverlay="@style/ProfileImageShape"
+                app:strokeColor="@color/white"
+                app:strokeWidth="2dp"
+                android:elevation="4dp"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,8 +75,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Earnings" android:textSize="12sp" android:textAllCaps="true"/>
-                    <TextView android:id="@+id/tvEarnings" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="$0.00" android:textSize="20sp" android:textStyle="bold" android:textColor="@color/gapfix_green"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_earnings" android:textSize="12sp" android:textAllCaps="true"/>
+                    <TextView android:id="@+id/tvEarnings" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/_0_00" android:textSize="20sp" android:textStyle="bold" android:textColor="@color/gapfix_green"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -66,8 +92,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lessons" android:textSize="12sp" android:textAllCaps="true"/>
-                    <TextView android:id="@+id/tvLessonCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="20sp" android:textStyle="bold"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_lessons" android:textSize="12sp" android:textAllCaps="true"/>
+                    <TextView android:id="@+id/tvLessonCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ext_0" android:textSize="20sp" android:textStyle="bold"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
@@ -75,7 +101,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Up Next"
+            android:text="@string/ext_up_next"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="12dp"
             android:textStyle="bold"
@@ -100,116 +126,158 @@
                     android:id="@+id/tvNoLessons"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No upcoming lessons today.\nTake a break! ☕"
+                    android:text="@string/ext_no_upcoming_lessons_today_ntake"
                     android:textSize="16sp"
                     android:gravity="center"
                     android:layout_gravity="center"/>
 
-                <RelativeLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layoutLessonDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone">
 
-                    <ImageView
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/ivStudentPhoto"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/person_circle"
-                        android:scaleType="centerCrop" />
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:scaleType="centerCrop"
+                        app:shapeAppearanceOverlay="@style/ProfileImageShape"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/person_circle" />
 
                     <LinearLayout
                         android:id="@+id/studentInfoContainer"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/ivStudentPhoto"
                         android:layout_marginStart="12dp"
-                        android:orientation="vertical">
+                        android:layout_marginEnd="8dp"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toEndOf="@id/ivStudentPhoto"
+                        app:layout_constraintEnd_toStartOf="@id/timeContainer"
+                        app:layout_constraintTop_toTopOf="@id/ivStudentPhoto"
+                        app:layout_constraintBottom_toBottomOf="@id/ivStudentPhoto">
 
                         <TextView
                             android:id="@+id/tvStudentName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Student Name"
+                            android:text="@string/ext_student_name"
                             android:textStyle="bold"
-                            android:textSize="16sp" />
+                            android:textSize="17sp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textColor="@color/gapfix_text_dark" />
 
                         <TextView
                             android:id="@+id/tvLessonSubject"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Subject"
-                            android:textColor="@color/gapfix_green" />
+                            android:text="@string/ext_subject"
+                            android:textColor="@color/gapfix_green"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/timeContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:gravity="end"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/ivStudentPhoto"
+                        app:layout_constraintBottom_toBottomOf="@id/ivStudentPhoto">
+
+                        <TextView
+                            android:id="@+id/tvLessonDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_text_muted"
+                            android:textSize="11sp"
+                            tools:text="Mon, Jan 1" />
+
+                        <TextView
+                            android:id="@+id/tvLessonTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ext_00_00"
+                            android:textStyle="bold"
+                            android:textColor="@color/gapfix_text_dark"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/tvLessonStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Status"
-                            android:textSize="12sp"
-                            android:textStyle="italic"
+                            android:text="@string/ext_status"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
                             android:textAllCaps="true"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
-                    <TextView
-                        android:id="@+id/tvLessonTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="00:00"
-                        android:textStyle="bold"
-                        android:textColor="@color/gapfix_text_dark" />
 
                     <LinearLayout
                         android:id="@+id/layoutLessonActions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/studentInfoContainer"
                         android:layout_marginTop="16dp"
-                        android:orientation="horizontal"
-                        android:weightSum="2"
-                        android:visibility="gone">
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/ivStudentPhoto"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/btnLesson">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnAccept"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginEnd="6dp"
-                            android:text="Accept"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:text="@string/ext_accept"
                             app:cornerRadius="12dp"
-                            app:backgroundTint="@color/gapfix_green" />
+                            app:backgroundTint="@color/gapfix_green"
+                            android:textAllCaps="false"
+                            android:textStyle="bold"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnReject"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="6dp"
-                            android:text="Reject"
-                            app:cornerRadius="12dp"
-                            app:backgroundTint="@color/error" />
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/ext_reject"
+                            android:textColor="@color/error"
+                            android:textAllCaps="false"
+                            android:textStyle="bold"/>
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnLesson"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/studentInfoContainer"
+                        android:layout_height="54dp"
                         android:layout_marginTop="16dp"
-                        android:text="JOIN"
+                        android:text="@string/ext_join"
                         android:visibility="gone"
                         app:cornerRadius="12dp"
-                        app:backgroundTint="@color/gapfix_green"/>
+                        app:backgroundTint="@color/gapfix_green"
+                        android:textAllCaps="false"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/layoutLessonActions"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
-                </RelativeLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Quick Actions"
+            android:text="@string/ext_quick_actions"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="12dp"
             android:textStyle="bold"
@@ -221,7 +289,7 @@
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Manage My Subjects"
+            android:text="@string/ext_manage_my_subjects"
             app:cornerRadius="12dp"
             android:layout_marginBottom="12dp"
             app:strokeColor="@color/gapfix_green"
@@ -231,7 +299,7 @@
             android:id="@+id/btnViewClasses"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="View My Classes"
+            android:text="@string/ext_view_my_classes"
             app:backgroundTint="@color/gapfix_green"
             app:cornerRadius="12dp" />
 
