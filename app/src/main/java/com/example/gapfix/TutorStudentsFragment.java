@@ -74,7 +74,7 @@ public class TutorStudentsFragment extends Fragment {
                         if (homeworkBottomSheet != null && homeworkBottomSheet.isShowing()) {
                             TextView tvStatus = homeworkBottomSheet.findViewById(R.id.tvHomeworkUploadStatus);
                             if (tvStatus != null) {
-                                // Get file name for better feedback
+                                
                                 String fileName = "File selected";
                                 try {
                                     android.database.Cursor cursor = requireContext().getContentResolver().query(uri, null, null, null, null);
@@ -206,7 +206,7 @@ public class TutorStudentsFragment extends Fragment {
                                         sm.setUnreadHomeworkCount(hwUnread);
                                         sm.setUnreadCount(chatUnread + hwUnread);
                                         
-                                        // Fallback for older data structure
+                                        
                                         if (chatUnread == 0 && hwUnread == 0) {
                                             sm.setUnreadCount(getFirestoreCount(doc, "unreadCount", currentUserId));
                                         }

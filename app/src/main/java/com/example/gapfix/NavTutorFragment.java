@@ -76,7 +76,7 @@ public class NavTutorFragment extends Fragment {
     }
 
     private int getCount(com.google.firebase.firestore.DocumentSnapshot doc, String field, String uid) {
-        // Try getting as nested map first
+        
         Object obj = doc.get(field);
         if (obj instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) obj;
@@ -87,7 +87,7 @@ public class NavTutorFragment extends Fragment {
                 }
             }
         }
-        // Try getting as flat key path
+        
         Object flatObj = doc.get(field + "." + uid);
         if (flatObj instanceof Number) {
             return ((Number) flatObj).intValue();

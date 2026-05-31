@@ -241,7 +241,7 @@ public class StudentArchiveFragment extends Fragment {
         AutoCompleteTextView subjectDropdown = sheetView.findViewById(R.id.subjectDropdown);
         
         MaterialButton btnSave = sheetView.findViewById(R.id.btnSaveArchive);
-        btnSave.setText(R.string.ext_add_to_archive); // Set text explicitly
+        btnSave.setText(R.string.ext_add_to_archive); 
         
         DatabaseReference subjectsRef = FirebaseDatabase.getInstance().getReference("Subjects");
         subjectsRef.addListenerForSingleValueEvent(new ValueEventListener() {

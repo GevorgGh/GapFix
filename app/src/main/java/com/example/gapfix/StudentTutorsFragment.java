@@ -185,7 +185,7 @@ public class StudentTutorsFragment extends Fragment {
                                             tm.setUnreadHomeworkCount(hwUnread);
                                             tm.setUnreadCount(chatUnread + hwUnread);
                                             
-                                            // Fallback for older data structure
+                                            
                                             if (chatUnread == 0 && hwUnread == 0) {
                                                 tm.setUnreadCount(getFirestoreCount(doc, "unreadCount", currentUserId));
                                             }
