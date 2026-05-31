@@ -8,7 +8,6 @@
     android:background="@color/gapfix_bg"
     tools:context=".EditProfileActivity">
 
-    <!-- Header Frame for Back Button -->
     <FrameLayout
         android:id="@+id/backFr"
         android:layout_width="wrap_content"
@@ -44,7 +43,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/noto_sans"
+                    android:fontFamily="@font/ping"
                     android:gravity="center"
                     android:text="@string/edit_profile"
                     android:textColor="@color/gapfix_green"
@@ -52,7 +51,6 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="24dp"/>
 
-                <!-- PROFILE PICTURE SECTION -->
                 <FrameLayout
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -84,18 +82,16 @@
                         android:contentDescription="@null" />
                 </FrameLayout>
 
-                <!-- PERSONAL DETAILS SECTION -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/noto_sans"
+                    android:fontFamily="@font/ping"
                     android:text="@string/personal_details"
                     android:textColor="@color/gapfix_text_dark"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <!-- Name -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -163,7 +159,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Date of Birth & Gender -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -228,7 +223,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- BIO -->
                 <TextView
                     android:id="@+id/tvBioLabel"
                     android:layout_width="match_parent"
@@ -253,18 +247,16 @@
                     android:textSize="14sp"
                     android:importantForAutofill="no" />
 
-                <!-- CONTACT INFORMATION SECTION -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/noto_sans"
+                    android:fontFamily="@font/ping"
                     android:text="@string/contact_information"
                     android:textColor="@color/gapfix_text_dark"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <!-- Email -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -291,7 +283,6 @@
                     android:enabled="false"
                     android:alpha="0.6"/>
 
-                <!-- Phone -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -319,7 +310,10 @@
                         app:ccp_showNameCode="false"
                         app:ccp_showPhoneCode="true"
                         app:ccp_textSize="14sp"
-                        app:ccp_autoFormatNumber="true" />
+                        app:ccp_autoFormatNumber="true"
+                        app:ccp_contentColor="@color/gapfix_text_dark"
+                        app:ccpDialog_backgroundColor="@color/color_surface"
+                        app:ccpDialog_textColor="@color/gapfix_text_dark" />
 
                     <EditText
                         android:id="@+id/editPhone"
@@ -331,18 +325,16 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- ACCOUNT SECURITY SECTION -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/noto_sans"
+                    android:fontFamily="@font/ping"
                     android:text="@string/account_security"
                     android:textColor="@color/gapfix_text_dark"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <!-- Change Password Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnGoToChangePassword"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -354,7 +346,6 @@
                     app:strokeColor="@color/gapfix_green"
                     app:cornerRadius="28dp" />
 
-                <!-- Save Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSaveProfile"
                     android:layout_width="match_parent"
@@ -366,7 +357,6 @@
                     android:textStyle="bold"
                     app:cornerRadius="28dp" />
 
-                <!-- Delete Account Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDeleteAccount"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -391,3 +381,4 @@
     </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

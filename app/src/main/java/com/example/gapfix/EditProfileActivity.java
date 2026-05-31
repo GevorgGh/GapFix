@@ -1,5 +1,4 @@
 package com.example.gapfix;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
@@ -21,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
@@ -35,16 +32,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hbb20.CountryCodePicker;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-
 public class EditProfileActivity extends AppCompatActivity {
-
     private EditText etFirstName, etLastName, etBio, etPhone, etEmail, etDOB;
     private Spinner genderSpinner;
     private ImageView ivProfile;
@@ -53,24 +47,19 @@ public class EditProfileActivity extends AppCompatActivity {
     private View layoutPhone, tvBioLabel;
     private Uri profileUri;
     private String currentImageUrl = "";
-    
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
     private String userId, userRole;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profile);
-
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.backFr, new BackFragment())
                 .commit();
-
         initCloudinary();
-
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
@@ -78,12 +67,9 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
         userId = user.getUid();
-        
-        
         userRole = getIntent().getStringExtra("ROLE");
         if (userRole == null) userRole = "Student";
         userRef = FirebaseDatabase.getInstance().getReference("Users").child(userRole).child(userId);
-
         etFirstName = findViewById(R.id.editFirstName);
         etLastName = findViewById(R.id.editLastName);
         etEmail = findViewById(R.id.editEmail);
@@ -96,31 +82,25 @@ public class EditProfileActivity extends AppCompatActivity {
         ccp = findViewById(R.id.ccp);
         layoutPhone = findViewById(R.id.layoutPhone);
         tvBioLabel = findViewById(R.id.tvBioLabel);
-
         if ("Student".equals(userRole)) {
             if (tvBioLabel != null) tvBioLabel.setVisibility(View.GONE);
             if (etBio != null) etBio.setVisibility(View.GONE);
         }
-
         ccp.registerCarrierNumberEditText(etPhone);
         setupGenderSpinner();
         etDOB.setOnClickListener(v -> showDatePicker());
-
         findViewById(R.id.fabEditPhoto).setOnClickListener(v -> showImageSourceDialog());
         findViewById(R.id.btnGoToChangePassword).setOnClickListener(v -> 
                 startActivity(new Intent(this, ChangePasswordActivity.class)));
         findViewById(R.id.btnSaveProfile).setOnClickListener(v -> saveProfile());
         findViewById(R.id.btnDeleteAccount).setOnClickListener(v -> showDeleteAccountDialog());
-
         loadUserData();
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
-
     private void loadUserData() {
         progressBar.setVisibility(View.VISIBLE);
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -135,7 +115,6 @@ public class EditProfileActivity extends AppCompatActivity {
                     String dob = snapshot.child("dob").getValue(String.class);
                     String gender = snapshot.child("gender").getValue(String.class);
                     currentImageUrl = snapshot.child("imageResourceLink").getValue(String.class);
-
                     if (fullName != null) {
                         String[] parts = fullName.split(" ", 2);
                         etFirstName.setText(parts[0]);
@@ -161,38 +140,32 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 progressBar.setVisibility(View.GONE);
             }
         });
     }
-
     private void setupGenderSpinner() {
         String[] genders = {getString(R.string.select_gender), getString(R.string.male), getString(R.string.female), getString(R.string.other)};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genders);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderSpinner.setAdapter(adapter);
     }
-
     private void showDatePicker() {
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText(getString(R.string.date_of_birth))
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .setTheme(R.style.MyDatePickerTheme)
                 .build();
-
         datePicker.addOnPositiveButtonClickListener(selection -> {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
             String date = sdf.format(new Date(selection));
             etDOB.setText(date);
         });
-
         datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
     }
-
     private void showImageSourceDialog() {
         String[] options = {getString(R.string.camera), getString(R.string.gallery)};
         new AlertDialog.Builder(this)
@@ -203,7 +176,6 @@ public class EditProfileActivity extends AppCompatActivity {
                             .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
                 }).show();
     }
-
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
@@ -211,17 +183,14 @@ public class EditProfileActivity extends AppCompatActivity {
                     ivProfile.setImageURI(uri);
                 }
             });
-
     private final ActivityResultLauncher<Void> takePicture =
             registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
                 if (bitmap != null) {
                     ivProfile.setImageBitmap(bitmap);
                 }
             });
-
     private void saveProfile() {
         resetErrors();
-
         String firstName = etFirstName.getText().toString().trim();
         String lastName = etLastName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
@@ -229,12 +198,10 @@ public class EditProfileActivity extends AppCompatActivity {
         String phone = ccp.getFullNumberWithPlus();
         String dob = etDOB.getText().toString().trim();
         String gender = genderSpinner.getSelectedItem().toString();
-
         boolean hasError = false;
         if (firstName.isEmpty()) { setError(etFirstName); hasError = true; }
         if (lastName.isEmpty()) { setError(etLastName); hasError = true; }
         if (dob.isEmpty()) { setError(etDOB); hasError = true; }
-
         if ("Tutor".equals(userRole)) {
             if (bio.isEmpty()) { setError(etBio); hasError = true; }
             if (currentImageUrl.isEmpty() && profileUri == null) {
@@ -242,30 +209,24 @@ public class EditProfileActivity extends AppCompatActivity {
                 hasError = true;
             }
         }
-
         if (genderSpinner.getSelectedItemPosition() == 0) {
             setError(genderSpinner);
             hasError = true;
         }
-        
         if (hasError) {
             Toast.makeText(this, R.string.err_fill_required, Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (!ccp.isValidFullNumber()) {
             setError(layoutPhone);
             Toast.makeText(this, R.string.err_invalid_phone, Toast.LENGTH_SHORT).show();
             return;
         }
-
         progressBar.setVisibility(View.VISIBLE);
         findViewById(R.id.btnSaveProfile).setEnabled(false);
-
         String fullName = firstName + " " + lastName;
         proceedToSaveProfile(fullName, email, bio, phone, dob, gender);
     }
-
     private void proceedToSaveProfile(String name, String email, String bio, String phone, String dob, String gender) {
         if (profileUri != null) {
             uploadImageAndSave(name, email, bio, phone, dob, gender);
@@ -273,7 +234,6 @@ public class EditProfileActivity extends AppCompatActivity {
             updateFirebaseProfile(name, email, bio, phone, currentImageUrl, dob, gender);
         }
     }
-
     private void uploadImageAndSave(String name, String email, String bio, String phone, String dob, String gender) {
         String folderPath = "Users/" + userId;
         MediaManager.get().upload(profileUri)
@@ -285,18 +245,15 @@ public class EditProfileActivity extends AppCompatActivity {
                         String url = (String) resultData.get("secure_url");
                         updateFirebaseProfile(name, email, bio, phone, url, dob, gender);
                     }
-
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
                         updateFirebaseProfile(name, email, bio, phone, currentImageUrl, dob, gender);
                     }
-
                     @Override public void onStart(String requestId) {}
                     @Override public void onProgress(String requestId, long bytes, long totalBytes) {}
                     @Override public void onReschedule(String requestId, ErrorInfo error) {}
                 }).dispatch();
     }
-
     private void updateFirebaseProfile(String name, String email, String bio, String phone, String imageUrl, String dob, String gender) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", name);
@@ -306,7 +263,6 @@ public class EditProfileActivity extends AppCompatActivity {
         updates.put("dob", dob);
         updates.put("gender", gender);
         updates.put("imageResourceLink", imageUrl);
-
         userRef.updateChildren(updates).addOnCompleteListener(task -> {
             progressBar.setVisibility(View.GONE);
             findViewById(R.id.btnSaveProfile).setEnabled(true);
@@ -318,11 +274,9 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
-
     private void setError(View view) {
         view.setBackgroundResource(R.drawable.rounded_input_field_error);
     }
-
     private void resetErrors() {
         etFirstName.setBackgroundResource(R.drawable.rounded_input_field);
         etLastName.setBackgroundResource(R.drawable.rounded_input_field);
@@ -332,7 +286,6 @@ public class EditProfileActivity extends AppCompatActivity {
         etBio.setBackgroundResource(R.drawable.rounded_input_field);
         genderSpinner.setBackgroundResource(R.drawable.rounded_input_field);
     }
-
     private void initCloudinary() {
         try {
             Map<String, String> config = new HashMap<>();
@@ -340,7 +293,6 @@ public class EditProfileActivity extends AppCompatActivity {
             MediaManager.init(this, config);
         } catch (Exception ignored) {}
     }
-
     private void showDeleteAccountDialog() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete_account_confirm_title)
@@ -349,24 +301,18 @@ public class EditProfileActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
-
     private void deleteAccount() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) return;
-
         progressBar.setVisibility(View.VISIBLE);
-        
-        
         userRef.removeValue().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                
                 user.delete().addOnCompleteListener(deleteTask -> {
                     progressBar.setVisibility(View.GONE);
                     if (deleteTask.isSuccessful()) {
                         Toast.makeText(this, R.string.msg_account_deleted, Toast.LENGTH_LONG).show();
                         navigateToMain();
                     } else {
-                        
                         if (deleteTask.getException() instanceof com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException) {
                             Toast.makeText(this, R.string.msg_reauth_required, Toast.LENGTH_LONG).show();
                             mAuth.signOut();
@@ -383,7 +329,6 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
-
     private void navigateToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

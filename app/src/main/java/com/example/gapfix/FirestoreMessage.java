@@ -1,8 +1,6 @@
 package com.example.gapfix;
-
 import com.google.firebase.Timestamp;
 import java.util.Objects;
-
 public class FirestoreMessage {
     public String senderId;
     public String receiverId; 
@@ -17,9 +15,7 @@ public class FirestoreMessage {
     public String solutionUrl; 
     public String tutorFeedback; 
     public String chatId; 
-
     public FirestoreMessage() {} 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -29,7 +25,6 @@ public class FirestoreMessage {
                Objects.equals(text, that.text) &&
                Objects.equals(timestamp, that.timestamp);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(senderId, text, timestamp);

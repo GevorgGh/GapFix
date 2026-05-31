@@ -1,5 +1,4 @@
 package com.example.gapfix;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,14 +6,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -30,63 +27,49 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-
 public class BookFreeLessonActivity extends AppCompatActivity {
-
     private String selectedSubject;
     private long selectedDateMs = -1;
     private int selectedHour = -1;
     private int selectedMinute = -1;
     private boolean isTrialRequested = false;
-
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private MaterialButton btnBook;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_book_free_lesson);
-
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
         Tutor tutor = (Tutor) getIntent().getSerializableExtra("tutor");
         isTrialRequested = getIntent().getBooleanExtra("isTrial", false);
-
         if (tutor == null) {
             finish();
             return;
         }
-
         String tutorId = tutor.getId();
         String studentId = mAuth.getCurrentUser().getUid();
-
         TextView titleLabel = findViewById(R.id.tvBookingTitle);
         if (titleLabel != null) {
             titleLabel.setText(isTrialRequested ? "Book Trial Lesson" : "Book Regular Lesson");
         }
-
         TextView tutorName = findViewById(R.id.tutor_name);
         tutorName.setText(tutor.getName());
-
         ImageView tutorImage = findViewById(R.id.tutor_image);
         Glide.with(this)
                 .load(tutor.getImageResourceLink() != null ? tutor.getImageResourceLink() : R.drawable.person_circle)
                 .placeholder(R.drawable.person_circle)
                 .circleCrop()
                 .into(tutorImage);
-
         ChipGroup tutorSubjectsGroup = findViewById(R.id.tutor_subjects_chips);
         tutorSubjectsGroup.removeAllViews();
-
         if (tutor.getPreferences() != null) {
             for (Tutor.SubjectPreference pref : tutor.getPreferences()) {
                 Chip chip = new Chip(this);
@@ -98,13 +81,11 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                 tutorSubjectsGroup.addView(chip);
             }
         }
-
         tutorSubjectsGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (!checkedIds.isEmpty()) {
                 Chip selectedChip = findViewById(checkedIds.get(0));
                 String fullText = selectedChip.getText().toString();
                 selectedSubject = fullText.split(" \\(")[0];
-                
                 if (isTrialRequested) {
                     checkIfTrialAvailable(tutorId, studentId, selectedSubject);
                 } else {
@@ -115,20 +96,15 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                 selectedSubject = null;
             }
         });
-
         MaterialButton btnSelectDate = findViewById(R.id.btnSelectDate);
         MaterialButton btnSelectTime = findViewById(R.id.btnSelectTime);
         btnBook = findViewById(R.id.btnConfirmBooking);
-
         if (isTrialRequested) {
             btnBook.setText("Confirm Free Trial");
         } else {
             btnBook.setText("Confirm Booking");
         }
-
         setupPickers(btnSelectDate, btnSelectTime);
-
-
         btnBook.setOnClickListener(v -> {
             if (selectedSubject == null) {
                 Toast.makeText(this, "Please select a subject", Toast.LENGTH_SHORT).show();
@@ -136,8 +112,6 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please select date and time", Toast.LENGTH_SHORT).show();
             } else {
                 long finalTimestamp = calculateTimestamp(selectedDateMs, selectedHour, selectedMinute);
-
-                
                 if (finalTimestamp < System.currentTimeMillis() + (1 * 60_000L)) {
                     } else {
                     String dateStr = btnSelectDate.getText().toString();
@@ -152,7 +126,6 @@ public class BookFreeLessonActivity extends AppCompatActivity {
             return insets;
         });
     }
-
     private void checkIfTrialAvailable(String tutorId, String studentId, String subject) {
         mDatabase.getReference("FreeLessonsUsed")
                 .child(studentId)
@@ -175,30 +148,25 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                     @Override public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
-
     private void setupPickers(MaterialButton btnDate, MaterialButton btnTime) {
         CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointForward.now());
-
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Select Lesson Date")
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .setCalendarConstraints(constraintsBuilder.build())
                 .build();
-
         btnDate.setOnClickListener(v -> datePicker.show(getSupportFragmentManager(), "DATE_PICKER"));
         datePicker.addOnPositiveButtonClickListener(selection -> {
             selectedDateMs = selection;
             btnDate.setText(datePicker.getHeaderText());
         });
-
         btnTime.setOnClickListener(v -> {
             MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
                     .setTimeFormat(TimeFormat.CLOCK_24H)
                     .setHour(12).setMinute(0)
                     .setTitleText("Select Lesson Time")
                     .build();
-
             timePicker.addOnPositiveButtonClickListener(tp -> {
                 selectedHour = timePicker.getHour();
                 selectedMinute = timePicker.getMinute();
@@ -208,21 +176,17 @@ public class BookFreeLessonActivity extends AppCompatActivity {
             timePicker.show(getSupportFragmentManager(), "TIME_PICKER");
         });
     }
-
     private long calculateTimestamp(long dateMs, int hour, int minute) {
         Calendar utcCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         utcCal.setTimeInMillis(dateMs);
         int year = utcCal.get(Calendar.YEAR);
         int month = utcCal.get(Calendar.MONTH);
         int day = utcCal.get(Calendar.DAY_OF_MONTH);
-
         Calendar localCal = Calendar.getInstance(); 
         localCal.set(year, month, day, hour, minute, 0);
         localCal.set(Calendar.MILLISECOND, 0);
-        
         return localCal.getTimeInMillis();
     }
-
     public void bookLesson(String subject, String date, String time, long timestamp, String tId, String sId) {
         if (isTrialRequested) {
             mDatabase.getReference("FreeLessonsUsed").child(sId).child(tId).child(subject)
@@ -241,14 +205,11 @@ public class BookFreeLessonActivity extends AppCompatActivity {
             proceedWithBooking(subject, date, time, timestamp, tId, sId, false);
         }
     }
-
     private void proceedWithBooking(String subject, String date, String time, long timestamp, String tId, String sId, boolean isTrial) {
         DatabaseReference bookingsRef = mDatabase.getReference("Bookings");
-        
         DatabaseReference newBookingRef = bookingsRef.push();
         String bId = newBookingRef.getKey();
         Booking newBooking = new Booking(bId, sId, tId, date, time, subject, timestamp);
-
         Tutor tutor = (Tutor) getIntent().getSerializableExtra("tutor");
         double lessonPrice = 0.0;
         int duration = 0;
@@ -261,13 +222,11 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                 }
             }
         }
-
         newBooking.setFree(isTrial);
         newBooking.setPrice(isTrial ? 0 : lessonPrice);
         if (tutor != null) {
             newBooking.setTutorName(tutor.getName());
         }
-
         if (isTrial) {
             newBooking.setDuration(30); 
             newBooking.setStatus("free_trial_pending");
@@ -277,7 +236,6 @@ public class BookFreeLessonActivity extends AppCompatActivity {
             }
             newBooking.setStatus("pending");
         }
-
         newBookingRef.setValue(newBooking)
                 .addOnSuccessListener(aVoid -> {
                     if (isTrial) {
@@ -290,7 +248,6 @@ public class BookFreeLessonActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Toast.makeText(BookFreeLessonActivity.this, "Failed to book", Toast.LENGTH_SHORT).show());
     }
-
     private void sendNewBookingNotification(String targetTutorId, String subject) {
         DatabaseReference notifRef = mDatabase.getReference("Notifications").child(targetTutorId).push();
         Map<String, Object> data = new HashMap<>();

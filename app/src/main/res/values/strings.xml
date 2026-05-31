@@ -8,7 +8,7 @@
     <string name="welcome">"Welcome !"</string>
     <string name="reg">Register</string>
     <string name="invalid_username">Not a valid username</string>
-    <!--    <string name="invalid_password">Password must be >5 characters</string>-->
+
     <string name="login_failed">"Login failed"</string>
     <string name="back">Back</string>
     <string name="back_arrow">Back Arrow</string>
@@ -22,7 +22,7 @@
     <string name="student">Student</string>
     <string name="a_person_who_is_dedicated_to_learn">A person who is dedicated to learn</string>
     <string name="full_name">Full name</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="uploading">Uploading...</string>
     <string name="file_uploaded">File Uploaded!</string>
     <string name="upload_success">Upload successful!</string>
@@ -270,12 +270,12 @@
     <string name="ext_subject_package_12_lessons_status">Subject (Package · 12 lessons) [STATUS]</string>
     <string name="ext_date">Date</string>
     <string name="ext_12_00">12:00</string>
-    <string name="ext_pattern_nmon_wed_n_view">Pattern:\nMon/Wed\n(View List)</string>
+    <string name="ext_pattern_nmon_wed_n_view">Pattern: Mon/Wed (View List)</string>
     <string name="ext_summary">Summary:</string>
     <string name="ext_start_may_18_2026">📅 Start: May 18, 2026.</string>
     <string name="ext_end_jun_12_2026">✅ End: Jun 12, 2026.</string>
     <string name="ext_selected_dates">Selected Dates:</string>
-    <string name="ext_may_18_n_may_20">• May 18\n• May 20\n• May 22\n• May 25\n+ 8 more</string>
+    <string name="ext_may_18_n_may_20" translatable="false">• May 18\n• May 20\n• May 22\n• May 25\n+ 8 more</string>
     <string name="ext_review_calendar">Review Calendar</string>
     <string name="ext_view_all_lessons_in_package_2">▼ View all lessons in package</string>
     <string name="ext_proposed_changes_for_package">🔄 Proposed Changes for Package</string>
@@ -561,4 +561,12 @@
     <string name="day_friday">Friday</string>
     <string name="day_saturday">Saturday</string>
     <string name="day_sunday">Sunday</string>
+    <string name="default_web_client_id" translatable="false">your_client_id_here.apps.googleusercontent.com</string>
+    <string name="reschedule">Reschedule</string>
+    <string name="test_student">Test Student</string>
+    <string name="test_tutor">Test Tutor</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="calendar">Calendar</string>
+    <string name="profile">Profile</string>
+    <string name="my_sessions">My Sessions</string>
 </resources>

@@ -84,7 +84,6 @@
             app:singleSelection="true"
             app:selectionRequired="true" />
 
-        <!-- Single Lesson Layout -->
         <LinearLayout
             android:id="@+id/layoutSingleLesson"
             android:layout_width="match_parent"
@@ -143,7 +142,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Package Layout -->
         <LinearLayout
             android:id="@+id/layoutPackage"
             android:layout_width="match_parent"
@@ -268,14 +266,12 @@
                 android:layout_marginTop="12dp" />
         </LinearLayout>
 
-        <!-- Summary and Payment Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="24dp">
 
-            <!-- Summary -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -335,7 +331,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Payment & Agreement -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

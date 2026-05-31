@@ -1,47 +1,36 @@
 package com.example.gapfix;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 public class IsVerifiedActivity extends AppCompatActivity {
-
     private FirebaseAuth mAuth;
     private String role;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_is_verified);
-
         mAuth = FirebaseAuth.getInstance();
         role = getIntent().getStringExtra("ROLE");
-
         Button btnVerified = findViewById(R.id.btnVerified);
         TextView btnResend = findViewById(R.id.btnResend);
-
         btnVerified.setOnClickListener(v -> checkEmailVerification());
         btnResend.setOnClickListener(v -> resendVerificationEmail());
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
-
     private void checkEmailVerification() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
@@ -59,7 +48,6 @@ public class IsVerifiedActivity extends AppCompatActivity {
             });
         }
     }
-
     private void resendVerificationEmail() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
@@ -73,7 +61,6 @@ public class IsVerifiedActivity extends AppCompatActivity {
             });
         }
     }
-
     private void redirectBasedOnRole() {
         Intent intent;
         if ("Student".equals(role)) {

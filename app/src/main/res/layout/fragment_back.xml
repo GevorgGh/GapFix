@@ -28,6 +28,6 @@
         android:textColor="@color/gapfix_green"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:fontFamily="@font/noto_sans" />
+        android:fontFamily="@font/ping" />
 
 </LinearLayout>

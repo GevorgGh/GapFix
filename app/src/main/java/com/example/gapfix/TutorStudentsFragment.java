@@ -1,5 +1,4 @@
 package com.example.gapfix;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -20,7 +18,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
@@ -39,7 +36,6 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,9 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 public class TutorStudentsFragment extends Fragment {
-
     private RecyclerView rvStudents;
     private TextView tvNoStudents;
     private StudentAdapter adapter;
@@ -59,7 +53,6 @@ public class TutorStudentsFragment extends Fragment {
     private String currentUserId;
     private DatabaseReference bookingsRef;
     private DatabaseReference studentsRef;
-
     private FirebaseFirestore db;
     private BottomSheetDialog homeworkBottomSheet;
     private HomeworkAdapter sheetHomeworkAdapter;
@@ -68,9 +61,7 @@ public class TutorStudentsFragment extends Fragment {
     private ActivityResultLauncher<String[]> documentPickerLauncher;
     private Uri pendingHomeworkUri = null;
     private String selectedOtherUserId, selectedChatId;
-
     public TutorStudentsFragment() {}
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,33 +74,41 @@ public class TutorStudentsFragment extends Fragment {
                         if (homeworkBottomSheet != null && homeworkBottomSheet.isShowing()) {
                             TextView tvStatus = homeworkBottomSheet.findViewById(R.id.tvHomeworkUploadStatus);
                             if (tvStatus != null) {
-                                tvStatus.setText(R.string.file_uploaded);
+                                // Get file name for better feedback
+                                String fileName = "File selected";
+                                try {
+                                    android.database.Cursor cursor = requireContext().getContentResolver().query(uri, null, null, null, null);
+                                    if (cursor != null && cursor.moveToFirst()) {
+                                        int nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME);
+                                        if (nameIndex != -1) fileName = cursor.getString(nameIndex);
+                                        cursor.close();
+                                    }
+                                } catch (Exception ignored) {}
+                                tvStatus.setText(getString(R.string.selected_file_prefix, fileName));
+                            }
+                            ImageView ivIcon = homeworkBottomSheet.findViewById(R.id.ivHomeworkUploadIcon);
+                            if (ivIcon != null) {
+                                ivIcon.setImageResource(R.drawable.baseline_check_24);
                             }
                         }
                     }
                 }
         );
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tutor_students, container, false);
-
         rvStudents = view.findViewById(R.id.rvStudents);
         tvNoStudents = view.findViewById(R.id.tvNoStudents);
         currentUserId = FirebaseAuth.getInstance().getUid();
         bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
         studentsRef = FirebaseDatabase.getInstance().getReference("Users").child("Student");
-
         setupRecyclerView();
         loadStudents();
-
         return view;
     }
-
     private void setupRecyclerView() {
         adapter = new StudentAdapter(studentList, student -> {
-            
         }, (student, action) -> {
             if ("chat".equals(action)) {
                 Intent intent = new Intent(getContext(), ChatActivity.class);
@@ -128,46 +127,35 @@ public class TutorStudentsFragment extends Fragment {
         rvStudents.setLayoutManager(new LinearLayoutManager(getContext()));
         rvStudents.setAdapter(adapter);
     }
-
     private void loadStudents() {
         if (currentUserId == null) return;
-
-        
         FirebaseDatabase.getInstance().getReference("Users").child("Tutor").child(currentUserId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (!snapshot.exists()) {
-                            
                             studentMap.clear();
                             updateList();
                             return;
                         }
-                        
-                        
                         startLoadingData();
                     }
                     @Override public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
-
     private void startLoadingData() {
-        
         bookingsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 long now = System.currentTimeMillis();
                 Map<String, Boolean> futureLessonMap = new HashMap<>();
-
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String dsTutorId = ds.child("tutorId").getValue(String.class);
                     if (dsTutorId == null) dsTutorId = ds.child("teacherId").getValue(String.class);
                     if (dsTutorId == null) dsTutorId = ds.child("teacherID").getValue(String.class);
-
                     if (currentUserId.equals(dsTutorId)) {
                         String dsStudentId = ds.child("studentId").getValue(String.class);
                         if (dsStudentId == null) dsStudentId = ds.child("studentID").getValue(String.class);
-                        
                         if (dsStudentId != null) {
                             Long ts = ds.child("timestamp").getValue(Long.class);
                             if (ts != null && ts > now) {
@@ -179,15 +167,12 @@ public class TutorStudentsFragment extends Fragment {
                             if (!futureLessonMap.containsKey(dsStudentId)) {
                                 futureLessonMap.put(dsStudentId, false);
                             }
-
                             if (!studentMap.containsKey(dsStudentId)) {
                                 addStudentToMap(dsStudentId);
                             }
                         }
                     }
                 }
-
-                
                 for (Map.Entry<String, Boolean> entry : futureLessonMap.entrySet()) {
                     StudentModel sm = studentMap.get(entry.getKey());
                     if (sm != null) {
@@ -198,8 +183,6 @@ public class TutorStudentsFragment extends Fragment {
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
-
-        
         db.collection("chats")
                 .whereArrayContains("participants", currentUserId)
                 .addSnapshotListener((snapshots, e) -> {
@@ -217,31 +200,15 @@ public class TutorStudentsFragment extends Fragment {
                                     }
                                     if (sm != null) {
                                         sm.setChatId(doc.getId());
-
+                                        int chatUnread = getFirestoreCount(doc, "unreadChatCount", currentUserId);
+                                        int hwUnread = getFirestoreCount(doc, "unreadHomeworkCount", currentUserId);
+                                        sm.setUnreadChatCount(chatUnread);
+                                        sm.setUnreadHomeworkCount(hwUnread);
+                                        sm.setUnreadCount(chatUnread + hwUnread);
                                         
-                                        Map<String, Object> unreadMap = (Map<String, Object>) doc.get("unreadCount");
-                                        if (unreadMap != null && unreadMap.containsKey(currentUserId)) {
-                                            Object count = unreadMap.get(currentUserId);
-                                            sm.setUnreadCount(count instanceof Number ? ((Number) count).intValue() : 0);
-                                        } else {
-                                            sm.setUnreadCount(0);
-                                        }
-
-                                        
-                                        Map<String, Object> chatUnreadMap = (Map<String, Object>) doc.get("unreadChatCount");
-                                        if (chatUnreadMap != null && chatUnreadMap.containsKey(currentUserId)) {
-                                            Object count = chatUnreadMap.get(currentUserId);
-                                            sm.setUnreadChatCount(count instanceof Number ? ((Number) count).intValue() : 0);
-                                        } else {
-                                            sm.setUnreadChatCount(0);
-                                        }
-
-                                        Map<String, Object> hwUnreadMap = (Map<String, Object>) doc.get("unreadHomeworkCount");
-                                        if (hwUnreadMap != null && hwUnreadMap.containsKey(currentUserId)) {
-                                            Object count = hwUnreadMap.get(currentUserId);
-                                            sm.setUnreadHomeworkCount(count instanceof Number ? ((Number) count).intValue() : 0);
-                                        } else {
-                                            sm.setUnreadHomeworkCount(0);
+                                        // Fallback for older data structure
+                                        if (chatUnread == 0 && hwUnread == 0) {
+                                            sm.setUnreadCount(getFirestoreCount(doc, "unreadCount", currentUserId));
                                         }
                                     }
                                 }
@@ -252,6 +219,19 @@ public class TutorStudentsFragment extends Fragment {
                 });
     }
 
+    private int getFirestoreCount(DocumentSnapshot doc, String field, String uid) {
+        Object obj = doc.get(field);
+        if (obj instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) obj;
+            if (map.containsKey(uid)) {
+                Object val = map.get(uid);
+                if (val instanceof Number) return ((Number) val).intValue();
+            }
+        }
+        Object flat = doc.get(field + "." + uid);
+        if (flat instanceof Number) return ((Number) flat).intValue();
+        return 0;
+    }
     private void addStudentToMap(String studentId) {
         StudentModel sm = new StudentModel();
         sm.setUid(studentId);
@@ -259,7 +239,6 @@ public class TutorStudentsFragment extends Fragment {
         studentMap.put(studentId, sm);
         fetchStudentDetails(studentId);
     }
-
     private void fetchStudentDetails(String studentId) {
         studentsRef.child(studentId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -276,23 +255,17 @@ public class TutorStudentsFragment extends Fragment {
                         }
                     }
                 } else {
-                    
                     studentMap.remove(studentId);
                     updateList();
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
-
     private void showHomeworkBottomSheet(StudentModel student) {
         if (homeworkBottomSheet != null && homeworkBottomSheet.isShowing()) return;
-
         selectedOtherUserId = student.getUid();
-
-        
         if (student.getChatId() != null && !student.getChatId().isEmpty()) {
             selectedChatId = student.getChatId();
         } else {
@@ -300,16 +273,11 @@ public class TutorStudentsFragment extends Fragment {
             ids.sort(null);
             selectedChatId = ids.get(0) + "_" + ids.get(1);
         }
-
-        homeworkBottomSheet = new BottomSheetDialog(requireContext());
-
-        
+        homeworkBottomSheet = new BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme);
         Map<String, Object> clear = new HashMap<>();
         clear.put("unreadHomeworkCount." + currentUserId, 0);
         db.collection("chats").document(selectedChatId).update(clear);
-
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_homework_bottom_sheet, null);
-
         TextView tvSheetTitle = view.findViewById(R.id.tvTitle);
         TextInputEditText etTitle = view.findViewById(R.id.etHomeworkTitle);
         AutoCompleteTextView autoCompleteLesson = view.findViewById(R.id.actvLessonSelector);
@@ -317,13 +285,10 @@ public class TutorStudentsFragment extends Fragment {
         MaterialCardView btnUpload = view.findViewById(R.id.btnUploadHomeworkFile);
         MaterialButton btnSave = view.findViewById(R.id.btnSaveHomework);
         RecyclerView rvHomeworks = view.findViewById(R.id.rvHomeworks);
-
         pendingHomeworkUri = null;
-
         if (tvSheetTitle != null) tvSheetTitle.setText(R.string.ext_add_homework);
         Map<String, List<Booking>> bookingsBySubject = new HashMap<>();
         List<String> subjectStrings = new ArrayList<>();
-
         bookingsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -331,34 +296,25 @@ public class TutorStudentsFragment extends Fragment {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Booking b = ds.getValue(Booking.class);
                     if (b != null) {
-                        
                         String sId = ds.child("studentId").getValue(String.class);
                         if (sId == null) sId = ds.child("studentID").getValue(String.class);
-                        
                         String tId = ds.child("tutorId").getValue(String.class);
                         if (tId == null) tId = ds.child("teacherId").getValue(String.class);
                         if (tId == null) tId = ds.child("teacherID").getValue(String.class);
-
                         boolean match = (tId != null && tId.equals(currentUserId) && sId != null && sId.equals(selectedOtherUserId));
-
                         if (match) {
-                            
                             Long ts = ds.child("timestamp").getValue(Long.class);
                             String status = ds.child("status").getValue(String.class);
                             String subject = ds.child("subject").getValue(String.class);
-                            
                             if (ts != null && ts > 0 && !"cancelled".equalsIgnoreCase(status)) {
                                 if (subject == null || subject.isEmpty()) {
                                     subject = getString(R.string.unspecified_subject);
                                 }
-
-                                
                                 b.setTimestamp(ts);
                                 b.setStatus(status);
                                 b.setSubject(subject);
                                 b.setStudentId(sId);
                                 b.setTutorId(tId);
-
                                 List<Booking> list = bookingsBySubject.computeIfAbsent(subject, k -> new ArrayList<>());
                                 list.add(b);
                                 if (!subjectStrings.contains(subject)) {
@@ -368,10 +324,8 @@ public class TutorStudentsFragment extends Fragment {
                         }
                     }
                 }
-
                 subjectStrings.sort(null);
                 if (!isAdded()) return;
-
                 ArrayAdapter<String> subjectAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, subjectStrings);
                 if (autoCompleteSubject != null) {
                     autoCompleteSubject.setAdapter(subjectAdapter);
@@ -379,17 +333,14 @@ public class TutorStudentsFragment extends Fragment {
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
-
         final Booking[] selectedBooking = {null};
         final String[] selectedSubjectName = {null};
         SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMM dd @ HH:mm", Locale.getDefault());
-
         if (autoCompleteSubject != null) {
             autoCompleteSubject.setOnItemClickListener((parent, v, position, id) -> {
                 selectedSubjectName[0] = subjectStrings.get(position);
                 selectedBooking[0] = null;
                 if (autoCompleteLesson != null) autoCompleteLesson.setText("");
-
                 List<Booking> filteredLessons = bookingsBySubject.get(selectedSubjectName[0]);
                 if (filteredLessons != null) {
                     filteredLessons.sort((b1, b2) -> Long.compare(b2.getTimestamp(), b1.getTimestamp()));
@@ -405,7 +356,6 @@ public class TutorStudentsFragment extends Fragment {
                 }
             });
         }
-
         if (autoCompleteLesson != null) {
             autoCompleteLesson.setOnItemClickListener((parent, v, position, id) -> {
                 if (selectedSubjectName[0] != null) {
@@ -416,11 +366,9 @@ public class TutorStudentsFragment extends Fragment {
                 }
             });
         }
-
         if (btnUpload != null) {
             btnUpload.setOnClickListener(v -> documentPickerLauncher.launch(new String[]{"image/*", "application/pdf"}));
         }
-
         if (btnSave != null) {
             btnSave.setOnClickListener(v -> {
                 String titleText = (etTitle != null && etTitle.getText() != null) ? etTitle.getText().toString().trim() : "";
@@ -439,7 +387,6 @@ public class TutorStudentsFragment extends Fragment {
                 uploadHomeworkImage(pendingHomeworkUri, titleText, selectedBooking[0].getTimestamp(), selectedBooking[0].getSubject());
             });
         }
-
         sheetHomeworkAdapter = new HomeworkAdapter(sheetHomeworkList, "Tutor", new HomeworkAdapter.OnHomeworkActionListener() {
             @Override public void onViewFile(String url) { openFile(url); }
             @Override public void onDeleteHomework(FirestoreMessage msg) { deleteHomework(msg); }
@@ -452,7 +399,6 @@ public class TutorStudentsFragment extends Fragment {
         });
         rvHomeworks.setLayoutManager(new LinearLayoutManager(getContext()));
         rvHomeworks.setAdapter(sheetHomeworkAdapter);
-
         if (sheetHomeworkListener != null) sheetHomeworkListener.remove();
         sheetHomeworkListener = db.collection("chats").document(selectedChatId).collection("messages")
                 .whereEqualTo("type", "homework")
@@ -473,24 +419,19 @@ public class TutorStudentsFragment extends Fragment {
                     });
                     sheetHomeworkAdapter.notifyDataSetChanged();
                 });
-
         homeworkBottomSheet.setContentView(view);
         homeworkBottomSheet.show();
     }
-
     private void openFile(String url) {
         if (url == null) return;
         if (url.toLowerCase().contains(".pdf")) {
             PdfHelper.openPdf(requireContext(), url);
         } else {
-            
             android.app.Dialog viewDialog = new android.app.Dialog(requireContext(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
         viewDialog.setContentView(R.layout.dialog_view_image);
-
         if (viewDialog.getWindow() != null) {
             viewDialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
         }
-
         ImageView ivFull = viewDialog.findViewById(R.id.ivFullImage);
         ImageButton btnClose = viewDialog.findViewById(R.id.btnClose);
         if (ivFull != null) com.bumptech.glide.Glide.with(this).load(url).into(ivFull);
@@ -498,11 +439,9 @@ public class TutorStudentsFragment extends Fragment {
         viewDialog.show();
     }
     }
-
     private void deleteHomework(FirestoreMessage msg) {
         db.collection("chats").document(selectedChatId).collection("messages").document(msg.documentId).delete();
     }
-
     private void updateFeedback(FirestoreMessage msg, String feedback) {
         db.collection("chats").document(selectedChatId).collection("messages").document(msg.documentId)
                 .update("tutorFeedback", feedback).addOnSuccessListener(a -> {
@@ -516,21 +455,45 @@ public class TutorStudentsFragment extends Fragment {
                     db.collection("chats").document(selectedChatId).set(meta, com.google.firebase.firestore.SetOptions.merge());
                 });
     }
-
     private void uploadHomeworkImage(Uri uri, String title, long lessonTs, String subject) {
+        if (homeworkBottomSheet != null) {
+            TextView tvStatus = homeworkBottomSheet.findViewById(R.id.tvHomeworkUploadStatus);
+            if (tvStatus != null) tvStatus.setText(R.string.uploading);
+            MaterialButton btnSave = homeworkBottomSheet.findViewById(R.id.btnSaveHomework);
+            if (btnSave != null) {
+                btnSave.setEnabled(false);
+                btnSave.setAlpha(0.5f);
+            }
+        }
+        
         Toast.makeText(getContext(), R.string.uploading, Toast.LENGTH_SHORT).show();
         MediaManager.get().upload(uri).unsigned("ml_default").option("folder", "Homeworks/" + selectedChatId).callback(new UploadCallback() {
             @Override public void onSuccess(String requestId, Map resultData) {
                 String url = (String) resultData.get("secure_url");
-                if (isAdded()) requireActivity().runOnUiThread(() -> sendHomeworkMessage(url, title, lessonTs, subject));
+                if (isAdded()) requireActivity().runOnUiThread(() -> {
+                    sendHomeworkMessage(url, title, lessonTs, subject);
+                    if (homeworkBottomSheet != null) homeworkBottomSheet.dismiss();
+                });
             }
-            @Override public void onError(String r, ErrorInfo e) {}
+            @Override public void onError(String r, ErrorInfo e) {
+                if (isAdded()) requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+                    if (homeworkBottomSheet != null) {
+                        MaterialButton btnSave = homeworkBottomSheet.findViewById(R.id.btnSaveHomework);
+                        if (btnSave != null) {
+                            btnSave.setEnabled(true);
+                            btnSave.setAlpha(1.0f);
+                        }
+                        TextView tvStatus = homeworkBottomSheet.findViewById(R.id.tvHomeworkUploadStatus);
+                        if (tvStatus != null) tvStatus.setText("Upload failed. Try again.");
+                    }
+                });
+            }
             @Override public void onStart(String r) {}
             @Override public void onProgress(String r, long b, long t) {}
             @Override public void onReschedule(String r, ErrorInfo e) {}
         }).dispatch();
     }
-
     private void sendHomeworkMessage(String url, String title, long lessonTs, String subject) {
         Map<String, Object> message = new HashMap<>();
         message.put("senderId", currentUserId);
@@ -542,7 +505,6 @@ public class TutorStudentsFragment extends Fragment {
         message.put("homeworkStatus", "pending");
         message.put("lessonTimestamp", lessonTs);
         message.put("subject", subject);
-
         db.collection("chats").document(selectedChatId).collection("messages").add(message).addOnSuccessListener(a -> {
             Map<String, Object> meta = new HashMap<>();
             meta.put("lastMessage", "[Assigned: " + title + "]");
@@ -557,22 +519,18 @@ public class TutorStudentsFragment extends Fragment {
             Toast.makeText(getContext(), R.string.homework_assigned, Toast.LENGTH_SHORT).show();
         });
     }
-
     private void updateList() {
         studentList.clear();
         for (StudentModel sm : studentMap.values()) {
-            
             if (!sm.isCanDelete() || (sm.getChatId() != null && !sm.getChatId().isEmpty())) {
                 studentList.add(sm);
             }
         }
-        
         if (isAdded()) {
             tvNoStudents.setVisibility(studentList.isEmpty() ? View.VISIBLE : View.GONE);
             adapter.notifyDataSetChanged();
         }
     }
-
     private void confirmAndDeleteStudent(StudentModel student) {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Delete Student Connection")
@@ -581,27 +539,21 @@ public class TutorStudentsFragment extends Fragment {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-
     private void deleteStudentChat(StudentModel student) {
         String cid = student.getChatId();
         if (cid == null || cid.isEmpty()) {
-            
             studentMap.remove(student.getUid());
             updateList();
             return;
         }
-
         db.collection("chats").document(cid).delete()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(), "Student removed from list", Toast.LENGTH_SHORT).show();
-                    
-                    
                     student.setChatId(null);
                     updateList();
                 })
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to delete chat", Toast.LENGTH_SHORT).show());
     }
-
     public static class StudentModel {
         private String uid;
         private String name;
@@ -613,7 +565,6 @@ public class TutorStudentsFragment extends Fragment {
         private int unreadCount = 0;
         private int unreadChatCount = 0;
         private int unreadHomeworkCount = 0;
-
         public String getUid() { return uid; }
         public void setUid(String uid) { this.uid = uid; }
         public String getName() { return name; }

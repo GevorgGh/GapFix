@@ -115,7 +115,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Controls Container -->
     <LinearLayout
         android:id="@+id/layout_controls"
         android:layout_width="wrap_content"

@@ -1,19 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.GapFix" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <item name="fontFamily">@font/noto_sans</item>
+        <item name="fontFamily">@font/ping</item>
 
-        <!-- Primary brand colors -->
         <item name="colorPrimary">@color/gapfix_green</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/color_icon_bg_green</item>
         <item name="colorOnPrimaryContainer">@color/gapfix_green</item>
 
-        <!-- Secondary brand colors -->
         <item name="colorSecondary">@color/color_success</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="colorSecondaryContainer">#1A2E1A</item>
+        <item name="colorSecondaryContainer">@color/nav_indicator_green</item>
         <item name="colorOnSecondaryContainer">@color/color_success</item>
+
+        <item name="colorTertiary">@color/color_info</item>
+
+        <item name="colorSurfaceVariant">@color/gapfix_green_background</item>
+        <item name="colorOnSurfaceVariant">@color/gapfix_text_dark</item>
+
+        <item name="android:statusBarColor">@color/gapfix_bg</item>
     </style>
 </resources>

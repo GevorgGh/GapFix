@@ -12,7 +12,7 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/color_surface"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
@@ -20,7 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:title="My Sessions"
+            app:navigationIconTint="@color/gapfix_green"
+            app:title="@string/my_sessions"
             app:titleTextColor="@color/gapfix_text_dark"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />
 

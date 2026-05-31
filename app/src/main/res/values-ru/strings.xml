@@ -274,11 +274,6 @@
     <string name="ext_start_may_18_2026">📅 Старт: 18 мая 2026 г.</string>
     <string name="ext_end_jun_12_2026">✅ Конец: 12 июня 2026 г.</string>
     <string name="ext_selected_dates">Выбранные даты:</string>
-    <string name="ext_may_18_n_may_20">• 18 мая
-• 20 мая
-• 22 мая
-• 25 мая
-+ еще 8</string>
     <string name="ext_review_calendar">Посмотреть календарь</string>
     <string name="ext_view_all_lessons_in_package_2">▼ Посмотреть все занятия в пакете</string>
     <string name="ext_proposed_changes_for_package">🔄 Предложенные изменения для пакета</string>
@@ -495,6 +490,7 @@
     <string name="msg_reauth_required">Безопасность: Пожалуйста, войдите снова, чтобы удалить аккаунт.</string>
     <string name="err_delete_account_failed">Не удалось удалить аккаунт: %1$s</string>
     <string name="msg_account_deleted">Аккаунт успешно удален</string>
+    <string name="msg_already_added">Уже добавлено</string>
     <string name="price_range_label">Ценовой диапазон ($)</string>
     <string name="apply_filters">Применить фильтры</string>
     <string name="subjects">Предметы</string>
@@ -566,4 +562,8 @@
     <string name="ext_auto_upload_homework_file">Загрузить файл домашнего задания</string>
     <string name="ext_auto_upload_pic_or_pdf">Загрузите изображение или PDF</string>
     <string name="ext_auto_uploaded_date">Дата загрузки</string>
+    <string name="dashboard">Главная</string>
+    <string name="calendar">Календарь</string>
+    <string name="profile">Профиль</string>
+    <string name="my_sessions">Мои занятия</string>
 </resources>

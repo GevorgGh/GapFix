@@ -22,7 +22,6 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
-        <!-- Profile Section -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -183,3 +182,4 @@
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
+

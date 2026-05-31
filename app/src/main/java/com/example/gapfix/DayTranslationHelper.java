@@ -1,13 +1,10 @@
 package com.example.gapfix;
-
 import android.content.Context;
 import java.util.HashMap;
 import java.util.Map;
-
 public class DayTranslationHelper {
     public static String translateDay(Context context, String day) {
         if (day == null) return "Current";
-        
         switch (day.toLowerCase()) {
             case "mondays": return context.getString(R.string.day_mondays);
             case "tuesdays": return context.getString(R.string.day_tuesdays);
@@ -26,7 +23,6 @@ public class DayTranslationHelper {
             default: return day;
         }
     }
-    
     public static String[] getTranslatedDaysArray(Context context) {
         return new String[] {
             context.getString(R.string.day_mondays),
@@ -38,7 +34,6 @@ public class DayTranslationHelper {
             context.getString(R.string.day_sundays)
         };
     }
-    
     public static String getEnglishDayFromTranslated(Context context, String translated) {
         if (translated.equals(context.getString(R.string.day_mondays))) return "Mondays";
         if (translated.equals(context.getString(R.string.day_tuesdays))) return "Tuesdays";

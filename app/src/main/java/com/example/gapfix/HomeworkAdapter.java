@@ -1,5 +1,4 @@
 package com.example.gapfix;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,23 +6,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.button.MaterialButton;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.HomeworkViewHolder> {
     private final List<FirestoreMessage> homeworks;
     private final String currentUserRole;
     private final OnHomeworkActionListener listener;
-
     public interface OnHomeworkActionListener {
         void onViewFile(String url);
         void onDeleteHomework(FirestoreMessage msg);
@@ -34,47 +28,38 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
         void onCouldnDoIt(FirestoreMessage msg);
         void onArchiveHomework(FirestoreMessage msg);
     }
-
     public HomeworkAdapter(List<FirestoreMessage> homeworks, String currentUserRole, OnHomeworkActionListener listener) {
         this.homeworks = homeworks;
         this.currentUserRole = currentUserRole;
         this.listener = listener;
     }
-
     @NonNull
     @Override
     public HomeworkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_homework, parent, false);
         return new HomeworkViewHolder(v);
     }
-
     @Override
     public void onBindViewHolder(@NonNull HomeworkViewHolder holder, int position) {
         FirestoreMessage msg = homeworks.get(position);
-
         holder.tvSubject.setVisibility(View.VISIBLE);
         if (msg.subject != null && !msg.subject.isEmpty()) {
             holder.tvSubject.setText(msg.subject.trim());
         } else {
             holder.tvSubject.setText("General");
         }
-
         holder.tvTitle.setText(msg.text != null ? msg.text : "Untitled Assignment");
-
         StringBuilder subtitle = new StringBuilder();
         if (msg.lessonTimestamp != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM dd @ HH:mm", Locale.getDefault());
             subtitle.append(sdf.format(new Date(msg.lessonTimestamp)));
         }
-
         if (subtitle.length() > 0) {
             holder.tvSubtitle.setText(subtitle.toString());
         } else {
             holder.tvSubtitle.setText(R.string.ext_click_to_view_file);
         }
-
         boolean isTutor = "Tutor".equalsIgnoreCase(currentUserRole);
-
         if (msg.fileUrl != null && msg.fileUrl.toLowerCase().endsWith(".pdf")) {
             holder.ivFileIcon.setImageResource(R.drawable.outline_assignment_24);
             holder.ivFileIcon.setColorFilter(android.graphics.Color.RED);
@@ -82,11 +67,9 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
             holder.ivFileIcon.setImageResource(R.drawable.outline_assignment_24);
             holder.ivFileIcon.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), R.color.gapfix_green));
         }
-
         holder.itemView.setOnClickListener(v -> {
             if (msg.fileUrl != null && listener != null) listener.onViewFile(msg.fileUrl);
         });
-
         holder.divider.setVisibility(View.GONE);
         holder.layoutStudentActions.setVisibility(View.GONE);
         holder.layoutSolutionDetails.setVisibility(View.GONE);
@@ -96,7 +79,6 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
         holder.btnDelete.setVisibility(View.GONE);
         holder.btnEdit.setVisibility(View.GONE);
         holder.ivArrow.setVisibility(View.VISIBLE);
-
         if (holder.btnAddToArchive != null) {
             if (isTutor) {
                 holder.btnAddToArchive.setVisibility(View.GONE);
@@ -107,7 +89,6 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
                 });
             }
         }
-
         if (isTutor && msg.solutionUrl == null && !"failed".equals(msg.homeworkStatus)) {
             holder.btnDelete.setVisibility(View.VISIBLE);
             holder.btnEdit.setVisibility(View.VISIBLE);
@@ -119,21 +100,21 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
                 if (listener != null) listener.onEditHomework(msg);
             });
         }
-
         if (msg.solutionUrl != null) {
             holder.divider.setVisibility(View.VISIBLE);
             holder.layoutSolutionDetails.setVisibility(View.VISIBLE);
             holder.btnViewSolution.setOnClickListener(v -> {
                 if (listener != null) listener.onViewFile(msg.solutionUrl);
             });
-
             holder.tvFeedbackBadge.setVisibility(View.VISIBLE);
             if (msg.tutorFeedback != null) {
-                holder.tvFeedbackBadge.setText("correct".equalsIgnoreCase(msg.tutorFeedback) ? "Correct" : "Incorrect");
-                holder.tvFeedbackBadge.setTextColor("correct".equalsIgnoreCase(msg.tutorFeedback) ? 0xFF059669 : 0xFFDC2626);
+                boolean isCorrect = "correct".equalsIgnoreCase(msg.tutorFeedback);
+                holder.tvFeedbackBadge.setText(isCorrect ? "Correct" : "Incorrect");
+                holder.tvFeedbackBadge.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), 
+                    isCorrect ? R.color.color_success : R.color.color_error));
             } else if (isTutor) {
                 holder.tvFeedbackBadge.setText("Review Required");
-                holder.tvFeedbackBadge.setTextColor(0xFFD97706);
+                holder.tvFeedbackBadge.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.color_warning));
                 holder.layoutTutorFeedbackActions.setVisibility(View.VISIBLE);
                 holder.btnMarkRight.setOnClickListener(v -> {
                     if (listener != null) listener.onMarkRight(msg);
@@ -143,14 +124,14 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
                 });
             } else {
                 holder.tvFeedbackBadge.setText("Awaiting Review");
-                holder.tvFeedbackBadge.setTextColor(0xFFD97706);
+                holder.tvFeedbackBadge.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.color_warning));
             }
         } else {
             if (!isTutor) {
                 if ("failed".equals(msg.homeworkStatus)) {
                     holder.tvHomeworkStatusBadge.setVisibility(View.VISIBLE);
                     holder.tvHomeworkStatusBadge.setText("Couldn't do it");
-                    holder.tvHomeworkStatusBadge.setTextColor(0xFFDC2626);
+                    holder.tvHomeworkStatusBadge.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.color_error));
                 } else {
                     holder.divider.setVisibility(View.VISIBLE);
                     holder.layoutStudentActions.setVisibility(View.VISIBLE);
@@ -163,14 +144,14 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
                 }
             } else {
                 holder.tvHomeworkStatusBadge.setVisibility(View.VISIBLE);
-                holder.tvHomeworkStatusBadge.setText("failed".equals(msg.homeworkStatus) ? "Couldn't do it" : "Pending");
-                holder.tvHomeworkStatusBadge.setTextColor("failed".equals(msg.homeworkStatus) ? 0xFFDC2626 : 0xFF2563EB);
+                boolean isFailed = "failed".equals(msg.homeworkStatus);
+                holder.tvHomeworkStatusBadge.setText(isFailed ? "Couldn't do it" : "Pending");
+                holder.tvHomeworkStatusBadge.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), 
+                    isFailed ? R.color.color_error : R.color.color_info));
             }
         }
     }
-
     @Override public int getItemCount() { return homeworks.size(); }
-
     public static class HomeworkViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvSubject, tvSubtitle, tvFeedbackBadge, tvHomeworkStatusBadge;
         View divider;
@@ -178,7 +159,6 @@ public class HomeworkAdapter extends RecyclerView.Adapter<HomeworkAdapter.Homewo
         MaterialButton btnDone, btnFailed, btnViewSolution, btnMarkRight, btnMarkWrong, btnAddToArchive;
         ImageView ivFileIcon, ivArrow;
         ImageButton btnDelete, btnEdit;
-
         public HomeworkViewHolder(@NonNull View v) {
             super(v);
             tvTitle = v.findViewById(R.id.tvHomeworkTitle);

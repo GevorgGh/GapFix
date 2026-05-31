@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header Section -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,7 +62,6 @@
                 app:layout_constraintTop_toBottomOf="@id/tvTutorName"
                 app:layout_constraintEnd_toStartOf="@+id/layoutTopRightInfo" />
 
-            <!-- Top Right Info -->
             <LinearLayout
                 android:id="@+id/layoutTopRightInfo"
                 android:layout_width="wrap_content"
@@ -120,7 +118,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Summary & Dates Section -->
         <LinearLayout
             android:id="@+id/layoutPackageSummary"
             android:layout_width="match_parent"
@@ -142,7 +139,6 @@
                 android:baselineAligned="false"
                 android:weightSum="2">
 
-                <!-- Left: Summary -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -182,7 +178,6 @@
                         app:drawableTint="@color/gapfix_green" />
                 </LinearLayout>
 
-                <!-- Right: Selected Dates -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -228,7 +223,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Toggle Button -->
         <TextView
             android:id="@+id/btn_expand_package"
             android:layout_width="match_parent"
@@ -241,7 +235,6 @@
             android:textStyle="bold"
             android:background="@color/gapfix_green_background" />
 
-        <!-- Expanded List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_package_lessons"
             android:layout_width="match_parent"
@@ -249,7 +242,6 @@
             android:layout_marginHorizontal="8dp"
             android:visibility="gone" />
 
-        <!-- Suggestion Review Block -->
         <LinearLayout
             android:id="@+id/layout_suggestion"
             android:layout_width="match_parent"
@@ -289,7 +281,6 @@
                 android:textColor="@color/gapfix_text_secondary"/>
         </LinearLayout>
 
-        <!-- Footer Action Bar -->
         <LinearLayout
             android:id="@+id/layout_actions"
             android:layout_width="match_parent"
@@ -341,7 +332,6 @@
 
         </LinearLayout>
 
-        <!-- Confirmed Action Bar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelStudent"
             android:layout_width="match_parent"

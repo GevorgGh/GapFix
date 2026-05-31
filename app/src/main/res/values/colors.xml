@@ -34,6 +34,7 @@
     <color name="color_pdf_viewer_bg">#F5F5F5</color>
     <color name="color_input_stroke">#D8DDD9</color>
     <color name="color_icon_bg_green">#E8F5E9</color>
+    <color name="nav_indicator_green">#E8F5E9</color>
     <color name="color_rating_star_normal">#D1D5DB</color>
     <color name="color_rating_star_active">#FBBF24</color>
     <color name="color_overlay_semi_transparent">#CC000000</color>

@@ -33,7 +33,8 @@
     <color name="bg_tint">#2A1D35</color>
     <color name="color_pdf_viewer_bg">#121212</color>
     <color name="color_input_stroke">#3E3E3E</color>
-    <color name="color_icon_bg_green">#132D21</color>
+    <color name="color_icon_bg_green">#388E3C</color>
+    <color name="nav_indicator_green">#2A5A3F</color>
     <color name="color_rating_star_normal">#3E3E3E</color>
     <color name="color_rating_star_active">#F59E0B</color>
     <color name="color_overlay_semi_transparent">#CC000000</color>

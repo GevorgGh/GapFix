@@ -21,7 +21,6 @@
         android:gravity="center_vertical"
         android:padding="12dp">
 
-        <!-- Icon Container with Dynamic Background -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/ivIconContainer"
             android:layout_width="52dp"

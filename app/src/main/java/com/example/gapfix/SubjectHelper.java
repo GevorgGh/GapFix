@@ -1,5 +1,4 @@
 package com.example.gapfix;
-
 import android.content.Context;
 import androidx.annotation.NonNull;
 import com.google.firebase.database.DataSnapshot;
@@ -8,15 +7,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 public class SubjectHelper {
     private static final Map<String, String> translationMap = new ConcurrentHashMap<>();
     private static boolean isLoading = false;
-
     public interface OnTranslationLoadedListener {
         void onTranslationsReady();
     }
-
     public static void loadTranslations(Context context, OnTranslationLoadedListener listener) {
         if (isLoading) return;
         isLoading = true;
@@ -42,14 +38,12 @@ public class SubjectHelper {
                 isLoading = false;
                 if (listener != null) listener.onTranslationsReady();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 isLoading = false;
             }
         });
     }
-
     public static String getTranslatedSubject(String canonical) {
         if (canonical == null) return "";
         String translated = translationMap.get(canonical);

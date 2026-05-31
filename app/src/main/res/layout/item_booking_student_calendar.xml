@@ -18,7 +18,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header: Tutor & Date -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -58,7 +57,6 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Subject & Lesson # & Time -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,7 +86,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Status -->
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
@@ -99,14 +96,12 @@
             android:textColor="@color/gapfix_green"
             android:textSize="13sp" />
 
-        <!-- Package Details & Actions container -->
         <LinearLayout
             android:id="@+id/layoutPackageSummary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Package & Duration -->
             <LinearLayout
                 android:id="@+id/layoutPackageInfo"
                 android:layout_width="wrap_content"
@@ -161,7 +156,6 @@
                 android:visibility="gone"
                 app:rippleColor="@color/gapfix_green_background" />
 
-            <!-- Hidden fields to maintain compatibility -->
             <TextView android:id="@+id/tvSummaryStart" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
             <TextView android:id="@+id/tvSummaryEnd" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
             <TextView android:id="@+id/tvDatesPreview" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
@@ -169,7 +163,6 @@
 
         </LinearLayout>
 
-        <!-- View all lessons toggle -->
         <TextView
             android:id="@+id/btnExpandPackage"
             android:layout_width="match_parent"
@@ -182,14 +175,12 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <!-- Expanded List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPackageLessons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <!-- Footer Buttons for Confirmed Lessons -->
         <LinearLayout
             android:id="@+id/layoutActions"
             android:layout_width="match_parent"
@@ -225,7 +216,6 @@
 
         </LinearLayout>
 
-        <!-- Package Pending Actions (matches big item_booking_package_student logic) -->
         <LinearLayout
             android:id="@+id/layout_package_actions"
             android:layout_width="match_parent"
@@ -262,7 +252,6 @@
                 app:cornerRadius="12dp" />
         </LinearLayout>
 
-        <!-- Suggestion Review Block -->
         <LinearLayout
             android:id="@+id/layout_suggestion"
             android:layout_width="match_parent"
@@ -336,7 +325,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Cancel/Change button for confirmed packages -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelStudent"
             android:layout_width="match_parent"
@@ -352,3 +340,4 @@
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
+

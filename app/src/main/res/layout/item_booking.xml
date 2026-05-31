@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header Section -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,7 +62,6 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_tutor_name"
                 app:layout_constraintEnd_toStartOf="@+id/layoutTopRightInfo" />
 
-            <!-- Top Right Info -->
             <LinearLayout
                 android:id="@+id/layoutTopRightInfo"
                 android:layout_width="wrap_content"
@@ -93,7 +91,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Status & Package Toggle (if needed) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -132,7 +129,6 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <!-- Tutor Suggestion Review Panel -->
         <LinearLayout
             android:id="@+id/layout_suggestion"
             android:layout_width="match_parent"
@@ -204,7 +200,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Footer Actions -->
         <LinearLayout
             android:id="@+id/footer"
             android:layout_width="match_parent"

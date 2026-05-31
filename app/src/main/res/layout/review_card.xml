@@ -61,7 +61,6 @@
             app:layout_constraintTop_toBottomOf="@id/student_photo"
             tools:text="A patient and knowledgeable tutor. Highly recommended." />
 
-        <!-- Hidden but kept for potential ID compatibility if needed in code -->
         <TextView
             android:id="@+id/review_rating"
             android:layout_width="wrap_content"
@@ -80,3 +79,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
+

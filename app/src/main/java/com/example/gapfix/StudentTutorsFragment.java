@@ -1,5 +1,4 @@
 package com.example.gapfix;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -21,7 +19,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -35,7 +32,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,9 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 public class StudentTutorsFragment extends Fragment {
-
     private RecyclerView rvTutors;
     private TextView tvNoTutors;
     private StudentTutorAdapter adapter;
@@ -56,7 +50,6 @@ public class StudentTutorsFragment extends Fragment {
     private String currentUserId;
     private DatabaseReference bookingsRef;
     private DatabaseReference tutorsRef;
-
     private FirebaseFirestore db;
     private BottomSheetDialog homeworkBottomSheet;
     private HomeworkAdapter sheetHomeworkAdapter;
@@ -65,14 +58,11 @@ public class StudentTutorsFragment extends Fragment {
     private ActivityResultLauncher<String[]> solutionPickerLauncher;
     private FirestoreMessage activeSolvingMessage = null;
     private String selectedOtherUserId, selectedChatId;
-
     public StudentTutorsFragment() {}
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = com.google.firebase.firestore.FirebaseFirestore.getInstance("gapfix");
-
         solutionPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.OpenDocument(),
                 uri -> {
@@ -82,26 +72,20 @@ public class StudentTutorsFragment extends Fragment {
                 }
         );
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_student_tutors, container, false);
-
         rvTutors = view.findViewById(R.id.rvTutors);
         tvNoTutors = view.findViewById(R.id.tvNoTutors);
         currentUserId = FirebaseAuth.getInstance().getUid();
         bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
         tutorsRef = FirebaseDatabase.getInstance().getReference("Users").child("Tutor");
-
         setupRecyclerView();
         loadTutors();
-
         return view;
     }
-
     private void setupRecyclerView() {
         adapter = new StudentTutorAdapter(tutorList, tutor -> {
-            
         }, (tutor, action) -> {
             if ("chat".equals(action)) {
                 Intent intent = new Intent(getContext(), ChatActivity.class);
@@ -120,11 +104,8 @@ public class StudentTutorsFragment extends Fragment {
         rvTutors.setLayoutManager(new LinearLayoutManager(getContext()));
         rvTutors.setAdapter(adapter);
     }
-
     private void loadTutors() {
         if (currentUserId == null) return;
-
-        
         FirebaseDatabase.getInstance().getReference("Users").child("Student").child(currentUserId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -139,24 +120,19 @@ public class StudentTutorsFragment extends Fragment {
                     @Override public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
-
     private void startLoadingData() {
-        
         bookingsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 long now = System.currentTimeMillis();
                 Map<String, Boolean> futureLessonMap = new HashMap<>();
-
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String sId = ds.child("studentId").getValue(String.class);
                     if (sId == null) sId = ds.child("studentID").getValue(String.class);
-
                     if (currentUserId.equals(sId)) {
                         String tId = ds.child("tutorId").getValue(String.class);
                         if (tId == null) tId = ds.child("teacherId").getValue(String.class);
                         if (tId == null) tId = ds.child("teacherID").getValue(String.class);
-                        
                         if (tId != null) {
                             Long ts = ds.child("timestamp").getValue(Long.class);
                             if (ts != null && ts > now) {
@@ -168,15 +144,12 @@ public class StudentTutorsFragment extends Fragment {
                             if (!futureLessonMap.containsKey(tId)) {
                                 futureLessonMap.put(tId, false);
                             }
-
                             if (!tutorMap.containsKey(tId)) {
                                 addTutorToMap(tId);
                             }
                         }
                     }
                 }
-
-                
                 for (Map.Entry<String, Boolean> entry : futureLessonMap.entrySet()) {
                     TutorModel tm = tutorMap.get(entry.getKey());
                     if (tm != null) {
@@ -187,8 +160,6 @@ public class StudentTutorsFragment extends Fragment {
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
-
-        
         db.collection("chats")
                 .whereArrayContains("participants", currentUserId)
                 .addSnapshotListener((snapshots, e) -> {
@@ -208,31 +179,15 @@ public class StudentTutorsFragment extends Fragment {
                                         }
                                         if (tm != null) {
                                             tm.setChatId(doc.getId());
+                                            int chatUnread = getFirestoreCount(doc, "unreadChatCount", currentUserId);
+                                            int hwUnread = getFirestoreCount(doc, "unreadHomeworkCount", currentUserId);
+                                            tm.setUnreadChatCount(chatUnread);
+                                            tm.setUnreadHomeworkCount(hwUnread);
+                                            tm.setUnreadCount(chatUnread + hwUnread);
                                             
-                                            
-                                            Map<String, Object> unreadMap = (Map<String, Object>) doc.get("unreadCount");
-                                            if (unreadMap != null && unreadMap.containsKey(currentUserId)) {
-                                                Object count = unreadMap.get(currentUserId);
-                                                tm.setUnreadCount(count instanceof Number ? ((Number) count).intValue() : 0);
-                                            } else {
-                                                tm.setUnreadCount(0);
-                                            }
-
-                                            
-                                            Map<String, Object> chatUnreadMap = (Map<String, Object>) doc.get("unreadChatCount");
-                                            if (chatUnreadMap != null && chatUnreadMap.containsKey(currentUserId)) {
-                                                Object count = chatUnreadMap.get(currentUserId);
-                                                tm.setUnreadChatCount(count instanceof Number ? ((Number) count).intValue() : 0);
-                                            } else {
-                                                tm.setUnreadChatCount(0);
-                                            }
-
-                                            Map<String, Object> hwUnreadMap = (Map<String, Object>) doc.get("unreadHomeworkCount");
-                                            if (hwUnreadMap != null && hwUnreadMap.containsKey(currentUserId)) {
-                                                Object count = hwUnreadMap.get(currentUserId);
-                                                tm.setUnreadHomeworkCount(count instanceof Number ? ((Number) count).intValue() : 0);
-                                            } else {
-                                                tm.setUnreadHomeworkCount(0);
+                                            // Fallback for older data structure
+                                            if (chatUnread == 0 && hwUnread == 0) {
+                                                tm.setUnreadCount(getFirestoreCount(doc, "unreadCount", currentUserId));
                                             }
                                         }
                                     }
@@ -244,6 +199,19 @@ public class StudentTutorsFragment extends Fragment {
                 });
     }
 
+    private int getFirestoreCount(DocumentSnapshot doc, String field, String uid) {
+        Object obj = doc.get(field);
+        if (obj instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) obj;
+            if (map.containsKey(uid)) {
+                Object val = map.get(uid);
+                if (val instanceof Number) return ((Number) val).intValue();
+            }
+        }
+        Object flat = doc.get(field + "." + uid);
+        if (flat instanceof Number) return ((Number) flat).intValue();
+        return 0;
+    }
     private void addTutorToMap(String tutorId) {
         TutorModel tm = new TutorModel();
         tm.setUid(tutorId);
@@ -251,7 +219,6 @@ public class StudentTutorsFragment extends Fragment {
         tutorMap.put(tutorId, tm);
         fetchTutorDetails(tutorId);
     }
-
     private void fetchTutorDetails(String tutorId) {
         tutorsRef.child(tutorId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -263,7 +230,6 @@ public class StudentTutorsFragment extends Fragment {
                         if (tm != null) {
                             tm.setName(user.getName());
                             tm.setEmail(user.getEmail());
-                            
                             String img = user.getImageResourceLink();
                             if (img == null) {
                                 img = snapshot.child("profilePicture").getValue(String.class);
@@ -280,13 +246,9 @@ public class StudentTutorsFragment extends Fragment {
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
-
     private void showHomeworkBottomSheet(TutorModel tutor) {
         if (homeworkBottomSheet != null && homeworkBottomSheet.isShowing()) return;
-
         selectedOtherUserId = tutor.getUid();
-        
-        
         if (tutor.getChatId() != null && !tutor.getChatId().isEmpty()) {
             selectedChatId = tutor.getChatId();
         } else {
@@ -294,16 +256,11 @@ public class StudentTutorsFragment extends Fragment {
             ids.sort(null);
             selectedChatId = ids.get(0) + "_" + ids.get(1);
         }
-
-        homeworkBottomSheet = new BottomSheetDialog(requireContext());
-        
-        
+        homeworkBottomSheet = new BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme);
         Map<String, Object> clear = new HashMap<>();
         clear.put("unreadHomeworkCount." + currentUserId, 0);
         db.collection("chats").document(selectedChatId).update(clear);
-
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_homework_bottom_sheet, null, false);
-
         TextView tvSheetTitle = view.findViewById(R.id.tvTitle);
         View tilTitle = view.findViewById(R.id.tilHomeworkTitle);
         View tilLesson = view.findViewById(R.id.tilLessonSelector);
@@ -311,16 +268,12 @@ public class StudentTutorsFragment extends Fragment {
         View btnUpload = view.findViewById(R.id.btnUploadHomeworkFile);
         View btnSave = view.findViewById(R.id.btnSaveHomework);
         RecyclerView rvHomeworks = view.findViewById(R.id.rvHomeworks);
-
         if (tvSheetTitle != null) tvSheetTitle.setText(R.string.ext_homeworks);
-        
-        
         if (tilTitle != null) tilTitle.setVisibility(View.GONE);
         if (tilLesson != null) tilLesson.setVisibility(View.GONE);
         if (tilSubject != null) tilSubject.setVisibility(View.GONE);
         if (btnUpload != null) btnUpload.setVisibility(View.GONE);
         if (btnSave != null) btnSave.setVisibility(View.GONE);
-
         sheetHomeworkList.clear();
         sheetHomeworkAdapter = new HomeworkAdapter(sheetHomeworkList, "Student", new HomeworkAdapter.OnHomeworkActionListener() {
             @Override public void onViewFile(String url) { openFile(url); }
@@ -334,7 +287,6 @@ public class StudentTutorsFragment extends Fragment {
         });
         rvHomeworks.setLayoutManager(new LinearLayoutManager(getContext()));
         rvHomeworks.setAdapter(sheetHomeworkAdapter);
-
         if (sheetHomeworkListener != null) sheetHomeworkListener.remove();
         sheetHomeworkListener = db.collection("chats").document(selectedChatId).collection("messages")
                 .whereEqualTo("type", "homework")
@@ -355,21 +307,17 @@ public class StudentTutorsFragment extends Fragment {
                     });
                     sheetHomeworkAdapter.notifyDataSetChanged();
                 });
-
         homeworkBottomSheet.setContentView(view);
         homeworkBottomSheet.show();
     }
-
     private void uploadSolution(FirestoreMessage msg) {
         activeSolvingMessage = msg;
         solutionPickerLauncher.launch(new String[]{"image/*", "application/pdf"});
     }
-
     private void uploadSolutionImage(android.net.Uri uri, final FirestoreMessage msg) {
         if (selectedChatId == null) {
             return;
         }
-        
         Toast.makeText(getContext(), "Uploading solution...", Toast.LENGTH_SHORT).show();
         com.cloudinary.android.MediaManager.get().upload(uri)
                 .unsigned("ml_default")
@@ -385,8 +333,6 @@ public class StudentTutorsFragment extends Fragment {
                         db.collection("chats").document(selectedChatId).collection("messages").document(msg.documentId).update(updates)
                                 .addOnSuccessListener(a -> {
                                     if (isAdded()) Toast.makeText(getContext(), "Solution uploaded", Toast.LENGTH_SHORT).show();
-                                    
-                                    
                                     Map<String, Object> meta = new HashMap<>();
                                     meta.put("participants", Arrays.asList(currentUserId, selectedOtherUserId));
                                     meta.put("lastMessage", "[Solution Uploaded]");
@@ -410,7 +356,6 @@ public class StudentTutorsFragment extends Fragment {
             @Override public void onReschedule(String r, com.cloudinary.android.callback.ErrorInfo e) {}
         }).dispatch();
     }
-
     private void markFailed(FirestoreMessage msg) {
         db.collection("chats").document(selectedChatId).collection("messages").document(msg.documentId)
                 .update("homeworkStatus", "failed").addOnSuccessListener(a -> {
@@ -424,20 +369,17 @@ public class StudentTutorsFragment extends Fragment {
                     db.collection("chats").document(selectedChatId).set(meta, com.google.firebase.firestore.SetOptions.merge());
                 });
     }
-
     private void archiveHomework(FirestoreMessage msg) {
         if (msg.fileUrl == null) return;
         String title = msg.text != null ? msg.text : "Archived Homework";
         String subject = msg.subject != null ? msg.subject : "General";
         String safeTitle = title.replaceAll("[.#$\\[\\]/]", "_");
         String safeSubject = subject.replaceAll("[.#$\\[\\]/]", "_");
-
         ArchiveItem item = new ArchiveItem(msg.documentId, currentUserId, safeSubject, msg.fileUrl, safeTitle, System.currentTimeMillis());
         FirebaseDatabase.getInstance().getReference("Users").child("Student").child(currentUserId)
                 .child("Archives").child(safeSubject).child(safeTitle).setValue(item)
                 .addOnSuccessListener(a -> Toast.makeText(getContext(), "Added to Archive", Toast.LENGTH_SHORT).show());
     }
-
     private void openFile(String url) {
         if (url == null) return;
         if (url.toLowerCase().contains(".pdf")) {
@@ -445,11 +387,9 @@ public class StudentTutorsFragment extends Fragment {
         } else {
             android.app.Dialog viewDialog = new android.app.Dialog(requireContext(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
         viewDialog.setContentView(R.layout.dialog_view_image);
-
         if (viewDialog.getWindow() != null) {
             viewDialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
         }
-
         ImageView ivFull = viewDialog.findViewById(R.id.ivFullImage);
         ImageButton btnClose = viewDialog.findViewById(R.id.btnClose);
         if (ivFull != null) com.bumptech.glide.Glide.with(this).load(url).into(ivFull);
@@ -457,7 +397,6 @@ public class StudentTutorsFragment extends Fragment {
         viewDialog.show();
     }
     }
-
     private void updateList() {
         tutorList.clear();
         for (TutorModel tm : tutorMap.values()) {
@@ -470,7 +409,6 @@ public class StudentTutorsFragment extends Fragment {
             adapter.notifyDataSetChanged();
         }
     }
-
     private void confirmAndDeleteTutor(TutorModel tutor) {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Remove Tutor")
@@ -487,14 +425,12 @@ public class StudentTutorsFragment extends Fragment {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-
     public static class TutorModel {
         private String uid, name, email, profileImage, chatId;
         private boolean isExpanded = false, canDelete = false;
         private int unreadCount = 0;
         private int unreadChatCount = 0;
         private int unreadHomeworkCount = 0;
-
         public String getUid() { return uid; }
         public void setUid(String uid) { this.uid = uid; }
         public String getName() { return name; }

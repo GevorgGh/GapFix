@@ -43,7 +43,7 @@
                 android:textColor="@color/gapfix_text_dark"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/noto_sans" />
+                android:fontFamily="@font/ping" />
 
             <TextView
                 android:id="@+id/tvCertStatus"
@@ -53,7 +53,7 @@
                 android:textColor="@color/gapfix_text_secondary"
                 android:textSize="12sp"
                 android:layout_marginTop="2dp"
-                android:fontFamily="@font/noto_sans" />
+                android:fontFamily="@font/ping" />
         </LinearLayout>
 
         <ImageButton

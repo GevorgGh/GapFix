@@ -1,43 +1,33 @@
 package com.example.gapfix;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 public class ArchiveSubjectAdapter extends RecyclerView.Adapter<ArchiveSubjectAdapter.ArchiveSubjectViewHolder> {
-
     private List<SubjectArchiveModel> subjects = new ArrayList<>();
     private OnSubjectClickListener clickListener;
     private final java.util.Map<String, String> subjectsTranslationMap = new java.util.HashMap<>();
     private boolean isTranslating = false;
-
     public interface OnSubjectClickListener {
         void onSubjectClick(String subject);
     }
-
     public void setOnSubjectClickListener(OnSubjectClickListener clickListener) {
         this.clickListener = clickListener;
     }
-
     public void setSubjects(List<SubjectArchiveModel> subjects) {
         this.subjects = subjects;
         notifyDataSetChanged();
     }
-
     private String getTranslatedSubject(android.content.Context context, String canonical) {
         if (canonical == null) return "";
         if (subjectsTranslationMap.isEmpty() && !isTranslating) {
@@ -46,7 +36,6 @@ public class ArchiveSubjectAdapter extends RecyclerView.Adapter<ArchiveSubjectAd
         String translated = subjectsTranslationMap.get(canonical);
         return translated != null ? translated : canonical;
     }
-
     private void loadSubjectTranslations(android.content.Context context) {
         isTranslating = true;
         FirebaseDatabase.getInstance().getReference("Subjects").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -76,46 +65,35 @@ public class ArchiveSubjectAdapter extends RecyclerView.Adapter<ArchiveSubjectAd
             }
         });
     }
-
     @NonNull
     @Override
     public ArchiveSubjectViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_archive_subject, parent, false);
         return new ArchiveSubjectViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ArchiveSubjectViewHolder holder, int position) {
         SubjectArchiveModel model = subjects.get(position);
         String subjectCanonical = model.getSubjectName();
         String subjectDisplay = getTranslatedSubject(holder.itemView.getContext(), subjectCanonical);
-        
         holder.tvSubjectName.setText(subjectDisplay);
-        
-        
         applySubjectStyle(holder, subjectCanonical);
-        
         if (holder.tvFileCount != null) {
             holder.tvFileCount.setText(holder.itemView.getContext().getString(R.string.ext_materials_reviewed, model.getReviewedFiles(), model.getTotalFiles()));
         }
-
         if (holder.pbProgress != null) {
             holder.pbProgress.setProgress(model.getProgress());
         }
-
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
                 clickListener.onSubjectClick(subjectCanonical);
             }
         });
     }
-
     private void applySubjectStyle(ArchiveSubjectViewHolder holder, String subject) {
         String name = subject.toLowerCase();
         int color;
         int iconRes = R.drawable.archive;
-
-        
         if (name.contains("math") || name.contains("calc") || name.contains("algebra") || name.contains("stat") || name.contains("physic")) {
             color = 0xFF1976D2; 
         } else if (name.contains("science") || name.contains("chem") || name.contains("biol") || name.contains("medicine") || name.contains("health")) {
@@ -133,7 +111,6 @@ public class ArchiveSubjectAdapter extends RecyclerView.Adapter<ArchiveSubjectAd
         } else if (name.contains("sport") || name.contains("gym") || name.contains("danc") || name.contains("fit")) {
             color = 0xFFD32F2F; 
         } else {
-            
             int[] vibrantPalette = {
                     0xFF0288D1, 
                     0xFFFBC02D, 
@@ -153,7 +130,6 @@ public class ArchiveSubjectAdapter extends RecyclerView.Adapter<ArchiveSubjectAd
             int hash = Math.abs(subject.hashCode());
             color = vibrantPalette[hash % vibrantPalette.length];
         }
-
         if (holder.ivIconContainer != null) {
             holder.ivIconContainer.setCardBackgroundColor(color);
         }
@@ -161,18 +137,15 @@ public class ArchiveSubjectAdapter extends RecyclerView.Adapter<ArchiveSubjectAd
             holder.ivSubjectIcon.setImageResource(iconRes);
         }
     }
-
     @Override
     public int getItemCount() {
         return subjects.size();
     }
-
     static class ArchiveSubjectViewHolder extends RecyclerView.ViewHolder {
         TextView tvSubjectName, tvFileCount;
         ImageView ivSubjectIcon;
         com.google.android.material.card.MaterialCardView ivIconContainer;
         android.widget.ProgressBar pbProgress;
-
         public ArchiveSubjectViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSubjectName = itemView.findViewById(R.id.tvSubjectName);

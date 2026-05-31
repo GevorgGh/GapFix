@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-05-27T03:15:36.756934300Z">
+        <DropdownSelection timestamp="2026-05-30T17:32:27.578660100Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Gevorg\.android\avd\Pixel_Tablet_2_2.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=D:\Android\.android\avd\Pixel_9a.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -15,12 +15,12 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Gevorg\.android\avd\Pixel_Tablet_2_2.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=D:\Android\.android\avd\Medium_Phone.avd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Gevorg\.android\avd\Pixel_Tablet.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=D:\Android\.android\avd\Pixel_9a.avd" />
               </handle>
             </Target>
           </targets>

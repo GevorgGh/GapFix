@@ -3,15 +3,15 @@
     <item
         android:id="@+id/nav_dashboard"
         android:icon="@drawable/user_act"
-        android:title="Dashboard" />
+        android:title="@string/dashboard" />
     <item
         android:id="@+id/nav_calendar"
         android:icon="@drawable/cal"
-        android:title="Calendar" />
+        android:title="@string/calendar" />
     <item
         android:id="@+id/nav_subjects"
         android:icon="@drawable/journal"
-        android:title="Subjects" />
+        android:title="@string/subjects" />
     <item
         android:id="@+id/nav_chat"
         android:icon="@drawable/student"
@@ -19,5 +19,5 @@
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/person_circle"
-        android:title="Profile" />
+        android:title="@string/profile" />
 </menu>

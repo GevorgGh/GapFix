@@ -8,7 +8,6 @@
     tools:context=".ForgotPass"
     android:background="@color/gapfix_bg">
 
-    <!-- Header Frame for Back Button -->
     <FrameLayout
         android:id="@+id/backFr"
         android:layout_width="wrap_content"
@@ -35,7 +34,6 @@
             android:paddingVertical="16dp"
             android:gravity="center_vertical">
 
-            <!-- Illustration or Text Icon Header (Optional but beautiful, we'll use clean Text) -->
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
@@ -44,7 +42,7 @@
                 android:textColor="@color/gapfix_green"
                 android:textSize="32sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/noto_sans"
+                android:fontFamily="@font/ping"
                 android:layout_marginBottom="8dp" />
 
             <TextView
@@ -54,10 +52,9 @@
                 android:text="@string/ext_enter_your_email_below_and"
                 android:textColor="@color/gapfix_text_secondary"
                 android:textSize="16sp"
-                android:fontFamily="@font/noto_sans"
+                android:fontFamily="@font/ping"
                 android:layout_marginBottom="32dp" />
 
-            <!-- Email Input Field -->
             <EditText
                 android:id="@+id/editTextText"
                 android:layout_width="match_parent"
@@ -75,9 +72,8 @@
                 android:textColor="@color/gapfix_text_dark"
                 android:textColorHint="@color/gapfix_text_secondary"
                 android:textSize="16sp"
-                android:fontFamily="@font/noto_sans" />
+                android:fontFamily="@font/ping" />
 
-            <!-- Send Email Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button"
                 android:layout_width="match_parent"

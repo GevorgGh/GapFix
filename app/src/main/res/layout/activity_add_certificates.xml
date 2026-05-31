@@ -8,7 +8,6 @@
     android:background="@color/gapfix_bg"
     tools:context=".AddCertificatesActivity">
 
-    <!-- Header Frame for Back Button -->
     <FrameLayout
         android:id="@+id/backFr"
         android:layout_width="wrap_content"
@@ -60,7 +59,7 @@
                 android:layout_marginTop="32dp"
                 android:text="@string/_1_add_certificate_pdf_image"
                 android:textStyle="bold"
-                android:fontFamily="@font/noto_sans" />
+                android:fontFamily="@font/ping" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardCert"
@@ -104,7 +103,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/no_file_selected_label"
                             android:textColor="@color/gapfix_text_secondary"
-                            android:fontFamily="@font/noto_sans" />
+                            android:fontFamily="@font/ping" />
 
                         <Button
                             android:id="@+id/btnSelectFile"
@@ -137,7 +136,7 @@
                 android:text="@string/uploaded_certs_label"
                 android:textColor="@color/gapfix_text_dark"
                 android:textStyle="bold"
-                android:fontFamily="@font/noto_sans" />
+                android:fontFamily="@font/ping" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCertificates"

@@ -1,5 +1,4 @@
 package com.example.gapfix;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,9 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 public class StudentPreferences extends AppCompatActivity {
-
     private ChipGroup chipGroupSelected;
     private NestedScrollView chipScroll;
     private final List<String> selectedSubjects = new ArrayList<>();
@@ -38,44 +35,35 @@ public class StudentPreferences extends AppCompatActivity {
     private final java.util.Map<String, String> translatedToCanonicalMap = new java.util.HashMap<>();
     private ArrayAdapter<String> adapter;
     private boolean isEditMode = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_preferences);
-
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.backFr, new BackFragment())
                 .commit();
-
         chipGroupSelected = findViewById(R.id.chipGroupSelected);
         ListView listSuggestions = findViewById(R.id.listSuggestions);
         chipScroll = findViewById(R.id.chipScroll);
         SearchView searchView = findViewById(R.id.searchView);
-
         listSuggestions.setNestedScrollingEnabled(true);
-
         adapter = new ArrayAdapter<>(this, R.layout.item_subject_suggestion, R.id.tvSubjectName, allSubjectsList);
         listSuggestions.setAdapter(adapter);
-
         checkIfEditMode();
         loadSubjectsFromFirebase();
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 adapter.getFilter().filter(newText);
                 return false;
             }
         });
-
         listSuggestions.setOnItemClickListener((parent, view, position, id) -> {
             String translatedName = adapter.getItem(position);
             if (translatedName != null) {
@@ -84,19 +72,15 @@ public class StudentPreferences extends AppCompatActivity {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         });
-
         findViewById(R.id.btnSave).setOnClickListener(v -> saveToFirebase());
         findViewById(R.id.tvSkip).setOnClickListener(v -> skipRegistration());
     }
-
     private void skipRegistration() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
-
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
                 .child("Student")
                 .child(user.getUid());
-
         userRef.child("isComplete").setValue(true);
         userRef.child("skippedRegistration").setValue(true)
                 .addOnSuccessListener(aVoid -> {
@@ -106,11 +90,9 @@ public class StudentPreferences extends AppCompatActivity {
                     finish();
                 });
     }
-
     private void checkIfEditMode() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
-
         FirebaseDatabase.getInstance().getReference("Users")
                 .child("Student")
                 .child(user.getUid())
@@ -128,12 +110,10 @@ public class StudentPreferences extends AppCompatActivity {
                             }
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
-
     private void loadSubjectsFromFirebase() {
         DatabaseReference subjectsRef = FirebaseDatabase.getInstance().getReference("Subjects");
         subjectsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -142,13 +122,10 @@ public class StudentPreferences extends AppCompatActivity {
                 allSubjectsList.clear();
                 canonicalToTranslatedMap.clear();
                 translatedToCanonicalMap.clear();
-
                 String lang = LocaleHelper.getLanguage(StudentPreferences.this);
-
                 for (DataSnapshot data : snapshot.getChildren()) {
                     String canonicalName = null;
                     String translatedName = null;
-
                     Object value = data.getValue();
                     if (value instanceof String) {
                         canonicalName = (String) value;
@@ -159,7 +136,6 @@ public class StudentPreferences extends AppCompatActivity {
                         translatedName = translations.get(lang);
                         if (translatedName == null) translatedName = canonicalName;
                     }
-
                     if (canonicalName != null && translatedName != null) {
                         allSubjectsList.add(translatedName);
                         canonicalToTranslatedMap.put(canonicalName, translatedName);
@@ -168,26 +144,20 @@ public class StudentPreferences extends AppCompatActivity {
                 }
                 Collections.sort(allSubjectsList);
                 adapter.notifyDataSetChanged();
-
-                
                 loadExistingPreferences();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 }
         });
     }
-
     private void loadExistingPreferences() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
-
         DatabaseReference prefRef = FirebaseDatabase.getInstance().getReference("Users")
                 .child("Student")
                 .child(user.getUid())
                 .child("preferences");
-
         prefRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -201,21 +171,17 @@ public class StudentPreferences extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
-
     private void addChip(String translatedName) {
         String canonicalName = translatedToCanonicalMap.get(translatedName);
         if (canonicalName == null) canonicalName = translatedName; 
-
         if (selectedSubjects.contains(canonicalName)) {
             Toast.makeText(this, R.string.msg_already_added, Toast.LENGTH_SHORT).show();
             return;
         }
-
         Chip chip = new Chip(this);
         chip.setText(translatedName);
         chip.setCloseIconVisible(true);
@@ -224,33 +190,26 @@ public class StudentPreferences extends AppCompatActivity {
         chip.setChipBackgroundColorResource(R.color.gapfix_green_background);
         chip.setChipStrokeColorResource(R.color.color_input_stroke);
         chip.setChipStrokeWidth(1.0f);
-
         final String finalCanonicalName = canonicalName;
         chip.setOnCloseIconClickListener(v -> {
             chipGroupSelected.removeView(chip);
             selectedSubjects.remove(finalCanonicalName);
         });
-
         chipGroupSelected.addView(chip);
         selectedSubjects.add(canonicalName);
-
         chipScroll.post(() -> chipScroll.fullScroll(View.FOCUS_DOWN));
     }
-
     private void saveToFirebase() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(this, R.string.err_session_expired, Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (selectedSubjects.isEmpty()) {
             Toast.makeText(this, R.string.err_select_at_least_one, Toast.LENGTH_SHORT).show();
             return;
         }
-
         findViewById(R.id.btnSave).setEnabled(false);
-
         FirebaseDatabase.getInstance().getReference("Users")
                 .child("Student")
                 .child(user.getUid())
@@ -260,10 +219,8 @@ public class StudentPreferences extends AppCompatActivity {
                     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
                             .child("Student")
                             .child(user.getUid());
-                    
                     userRef.child("isComplete").setValue(true);
                     userRef.child("skippedRegistration").setValue(false);
-
                     if (isEditMode) {
                         Toast.makeText(this, R.string.msg_preferences_updated, Toast.LENGTH_SHORT).show();
                         finish();

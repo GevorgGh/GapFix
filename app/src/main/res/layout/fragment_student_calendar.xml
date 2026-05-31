@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Header -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_header"
             android:layout_width="match_parent"
@@ -66,7 +65,6 @@
             </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Calendar Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_calendar"
             android:layout_width="match_parent"
@@ -83,7 +81,6 @@
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <!-- Calendar Header -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -119,7 +116,6 @@
                         app:tint="@color/gapfix_green" />
                 </LinearLayout>
 
-                <!-- Week Days -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -156,7 +152,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_calendar" />
 
-        <!-- Container for Bookings or Empty State -->
         <LinearLayout
             android:id="@+id/bookings_container"
             android:layout_width="match_parent"

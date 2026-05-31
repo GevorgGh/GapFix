@@ -1,5 +1,4 @@
 package com.example.gapfix;
-
 public class ArchiveItem {
     public String documentId;
     public String studentId;
@@ -8,11 +7,8 @@ public class ArchiveItem {
     public String fileName; 
     public long timestamp;
     public boolean reviewed;
-
     public ArchiveItem() {
-        
     }
-
     public ArchiveItem(String documentId, String studentId, String subject, String fileUrl, String fileName, long timestamp) {
         this.documentId = documentId;
         this.studentId = studentId;

@@ -259,6 +259,7 @@
     <string name="ext_subject_package_12_lessons_status">Առարկա (Փաթեթ · 12 դաս) [ԿԱՐԳԱՎԻՃԱԿ]</string>
     <string name="ext_date">Ամսաթիվ</string>
     <string name="ext_12_00">12:00</string>
+    <string name="ext_pattern_nmon_wed_n_view">Դիզայն՝ Երկ/Չոր (Դիտել ցանկը)</string>
     <string name="ext_summary">Ամփոփում:</string>
     <string name="ext_start_may_18_2026">📅 Սկիզբ: Մայիսի 18, 2026.</string>
     <string name="ext_end_jun_12_2026">✅ Ավարտ: Հունիսի 12, 2026.</string>
@@ -471,6 +472,7 @@
     <string name="msg_reauth_required">Անվտանգություն. Խնդրում ենք նորից մուտք գործել՝ հաշիվը ջնջելու համար:</string>
     <string name="err_delete_account_failed">Չհաջողվեց ջնջել հաշիվը. %1$s</string>
     <string name="msg_account_deleted">Հաշիվը հաջողությամբ ջնջվեց</string>
+    <string name="msg_already_added">Արդեն ավելացված է</string>
     <string name="price_range_label">Գնային միջակայք ($)</string>
     <string name="apply_filters">Կիրառել ֆիլտրերը</string>
     <string name="subjects">Առարկաներ</string>
@@ -542,4 +544,17 @@
     <string name="day_friday">Ուրբաթ</string>
     <string name="day_saturday">Շաբաթ</string>
     <string name="day_sunday">Կիրակի</string>
+    <string name="ext_email_example_com">email@example.com</string>
+    <string name="ext_may_19">Մայիսի 19</string>
+    <string name="ext_14_30">14:30</string>
+    <string name="ext_quot_i_have_a_conflict">"Ես հիմա չորեքշաբթի օրերին կոնֆլիկտ ունեմ:"</string>
+    <string name="ext_quot_reason_message_here_quot">"Պատճառի հաղորդագրությունն այստեղ..."</string>
+    <string name="ext_gev">Գև</string>
+    <string name="ext_proposed_pattern_nfri_mon_wed">Առաջարկվող օրինաչափություն:\nՈւրբ/Երկ/Չոր\n(Դիտել ցանկը)</string>
+    <string name="ext_tue_may_20_14_00">Երեքշաբթի, Մայիսի 20 • 14:00</string>
+    <string name="ext_0_00">-$0.00</string>
+    <string name="dashboard">Գլխավոր</string>
+    <string name="calendar">Օրացույց</string>
+    <string name="profile">Պրոֆիլ</string>
+    <string name="my_sessions">Իմ դասերը</string>
 </resources>

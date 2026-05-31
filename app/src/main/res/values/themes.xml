@@ -1,29 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.GapFix" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="fontFamily">@font/noto_sans</item>
+        <item name="fontFamily">@font/ping</item>
 
-        <!-- Primary brand colors -->
         <item name="colorPrimary">@color/gapfix_green</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/color_icon_bg_green</item>
         <item name="colorOnPrimaryContainer">@color/gapfix_green</item>
 
-        <!-- Secondary brand colors -->
         <item name="colorSecondary">@color/color_success</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="colorSecondaryContainer">@color/color_icon_bg_green</item>
         <item name="colorOnSecondaryContainer">@color/gapfix_green</item>
 
-        <!-- Accent/Tertiary -->
         <item name="colorTertiary">@color/color_info</item>
 
-        <!-- Surface variants (often used for backgrounds) -->
         <item name="colorSurfaceVariant">@color/gapfix_green_background</item>
         <item name="colorOnSurfaceVariant">@color/gapfix_text_dark</item>
 
-        <!-- Fix: Remove purple status bar and match it to app background -->
         <item name="android:statusBarColor">@color/gapfix_bg</item>
-        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="MyDatePickerTheme" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
@@ -55,7 +49,7 @@
         <item name="colorControlActivated">@color/color_rating_star_active</item>
     </style>
 
-    <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="BottomSheetDialogTheme" parent="Theme.Material3.DayNight.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
     </style>
 
@@ -64,18 +58,18 @@
     </style>
 
     <style name="NavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/color_icon_bg_green</item>
+        <item name="android:color">@color/gapfix_green</item>
     </style>
 
     <style name="NavLabelActive" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">13sp</item>
-        <item name="fontFamily">@font/noto_sans</item>
+        <item name="fontFamily">@font/ping</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="NavLabelInactive" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">12sp</item>
-        <item name="fontFamily">@font/noto_sans</item>
+        <item name="fontFamily">@font/ping</item>
     </style>
 
     <style name="Theme.GapFix" parent="Base.Theme.GapFix" />

@@ -8,7 +8,6 @@
     android:background="@color/gapfix_bg"
     tools:context=".RoleSelectionActivity">
 
-    <!-- Header Frame for Back Button -->
     <FrameLayout
         android:id="@+id/backFr"
         android:layout_width="wrap_content"
@@ -35,7 +34,6 @@
             android:paddingVertical="40dp"
             android:gravity="center_horizontal">
 
-            <!-- Title -->
             <TextView
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
@@ -45,10 +43,9 @@
                 android:textColor="@color/gapfix_green"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/noto_sans"
+                android:fontFamily="@font/ping"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Subtitle -->
             <TextView
                 android:id="@+id/textViewSubtitle"
                 android:layout_width="wrap_content"
@@ -57,10 +54,9 @@
                 android:textAlignment="center"
                 android:textColor="@color/gapfix_text_secondary"
                 android:textSize="15sp"
-                android:fontFamily="@font/noto_sans"
+                android:fontFamily="@font/ping"
                 android:layout_marginBottom="32dp" />
 
-            <!-- Tutor Card Selection -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/tutorCard"
                 android:layout_width="match_parent"
@@ -91,7 +87,7 @@
                     android:textColor="@color/gapfix_green"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:fontFamily="@font/noto_sans"
+                    android:fontFamily="@font/ping"
                     app:layout_constraintStart_toEndOf="@+id/imageView9"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -105,14 +101,13 @@
                     android:text="@string/ext_share_your_knowledge_schedule_classes"
                     android:textColor="@color/gapfix_text_secondary"
                     android:textSize="13sp"
-                    android:fontFamily="@font/noto_sans"
+                    android:fontFamily="@font/ping"
                     app:layout_constraintStart_toEndOf="@+id/imageView9"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Student Card Selection -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/studentCard"
                 android:layout_width="match_parent"
@@ -143,7 +138,7 @@
                     android:textColor="@color/gapfix_green"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:fontFamily="@font/noto_sans"
+                    android:fontFamily="@font/ping"
                     app:layout_constraintStart_toEndOf="@+id/imageView11"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -157,21 +152,19 @@
                     android:text="@string/ext_find_expert_tutors_customize_schedules"
                     android:textColor="@color/gapfix_text_secondary"
                     android:textSize="13sp"
-                    android:fontFamily="@font/noto_sans"
+                    android:fontFamily="@font/ping"
                     app:layout_constraintStart_toEndOf="@+id/imageView11"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Divider Line -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/color_slate_dark"
                 android:layout_marginBottom="24dp" />
 
-            <!-- DOB Field Section Header -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -179,11 +172,10 @@
                 android:textColor="@color/gapfix_text_dark"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/noto_sans"
+                android:fontFamily="@font/ping"
                 android:layout_gravity="start"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Date of Birth EditText -->
             <EditText
                 android:id="@+id/editTextDate2"
                 android:layout_width="match_parent"
@@ -202,10 +194,9 @@
                 android:textColor="@color/gapfix_text_dark"
                 android:textColorHint="@color/gapfix_text_secondary"
                 android:textSize="16sp"
-                android:fontFamily="@font/noto_sans"
+                android:fontFamily="@font/ping"
                 android:clickable="true" />
 
-            <!-- Continue Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button2"
                 android:layout_width="match_parent"

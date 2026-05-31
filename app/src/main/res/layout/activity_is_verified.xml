@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Custom premium icon envelope -->
         <ImageView
             android:layout_width="96dp"
             android:layout_height="96dp"
@@ -28,7 +27,6 @@
             android:scaleType="centerInside"
             android:contentDescription="Verification email icon" />
 
-        <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,9 +35,8 @@
             android:textColor="@color/gapfix_green"
             android:textSize="26sp"
             android:textStyle="bold"
-            android:fontFamily="@font/noto_sans" />
+            android:fontFamily="@font/ping" />
 
-        <!-- Instructions -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,10 +45,9 @@
             android:text="@string/ext_we_ve_sent_a_verification"
             android:textColor="@color/gapfix_text_secondary"
             android:textSize="16sp"
-            android:fontFamily="@font/noto_sans"
+            android:fontFamily="@font/ping"
             android:lineSpacingExtra="4dp" />
 
-        <!-- Action Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVerified"
             android:layout_width="match_parent"
@@ -66,7 +62,6 @@
             app:cornerRadius="14dp"
             app:elevation="2dp" />
 
-        <!-- Resend Link -->
         <TextView
             android:id="@+id/btnResend"
             android:layout_width="wrap_content"
@@ -77,7 +72,7 @@
             android:textColor="@color/gapfix_green"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:fontFamily="@font/noto_sans"
+            android:fontFamily="@font/ping"
             android:clickable="true"
             android:focusable="true" />
 
